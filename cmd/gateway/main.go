@@ -2,22 +2,25 @@ package main
 
 import (
 	"fmt"
+	"github.com/BRBussy/bizzle/package/authenticator"
+	"github.com/sirupsen/logrus"
 	"log"
 	"net/http"
 	"os"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	log.Print("Hello world received a request.")
+	log.Print("Gateway received a request.")
 	target := os.Getenv("TARGET")
 	if target == "" {
 		target = "World"
 	}
-	fmt.Fprintf(w, "Hello %s!\n", target)
+	fmt.Fprintf(w, "Hello from gateway %s!\n", target)
 }
 
 func main() {
-	log.Print("Hello world sample started.")
+	logrus.Info("The bizzle gateway has started!")
+	authenticator.Auth()
 
 	http.HandleFunc("/", handler)
 
