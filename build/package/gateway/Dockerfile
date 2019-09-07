@@ -1,3 +1,13 @@
+#
+# to build image run the following from root of bizzle:
+# docker build -f build/package/gateway/Dockerfile -t gcr.io/$(gcloud config get-value project)/gateway .
+#
+# to push:
+# docker push gcr.io/$(gcloud config get-value project)/gateway
+#
+# ensure that docker is is authorised to push to gcloud. set up with:
+# gcloud auth configure-docker
+
 # Base build image
 FROM golang:latest AS build_base
 
