@@ -20,7 +20,7 @@ COPY . .
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
-RUN go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o gateway ./main.go
+RUN go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o gateway cmd/gateway/main.go
 
 # this last stage produces the final lean production image
 # start from a fresh Alpine image to reduce the image size
