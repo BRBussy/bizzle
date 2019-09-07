@@ -5,10 +5,11 @@ import (
 	"flag"
 	"fmt"
 	gatewayConfig "github.com/BRBussy/bizzle/configs/gateway"
+	basicJsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client/basic"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	authenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
-	basicAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/basic"
+	jsonRpcAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRpc"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
@@ -26,8 +27,10 @@ func main() {
 		log.Fatal().Err(err).Msg("getting config from file")
 	}
 
+	BasicJsonRpcClient := basicJsonRpcClient.New(config.AuthenticatorURL)
+
 	// create service providers
-	BasicAuthenticator := basicAuthenticator.New()
+	JsonRpcAuthenticator := jsonRpcAuthenticator.New(BasicJsonRpcClient)
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
@@ -38,7 +41,7 @@ func main() {
 
 	// register service providers
 	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
-		authenticatorJsonRpcAdaptor.New(BasicAuthenticator),
+		authenticatorJsonRpcAdaptor.New(JsonRpcAuthenticator),
 	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}
