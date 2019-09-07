@@ -42,7 +42,7 @@ RUN apk add --no-cache ca-certificates
 COPY --from=builder /authenticator/authenticator /authenticator
 
 # Copy config file to the production image from the builder stage
-COPY --from=builder /gateway/config.toml /config.toml
+COPY --from=builder /authenticator/config.toml /config.toml
 
 # Run the web service on container startup
 CMD ["/authenticator"]
