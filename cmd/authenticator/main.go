@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	gatewayConfig "github.com/BRBussy/bizzle/configs/gateway"
+	authenticatorConfig "github.com/BRBussy/bizzle/configs/authenticator"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	authenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/package/authenticator/adaptor/jsonRpc"
@@ -17,8 +17,8 @@ var configFileName = flag.String("config-file-name", "config", "specify config f
 func main() {
 	flag.Parse()
 
-	// get gateway config
-	config, err := gatewayConfig.GetConfig(configFileName)
+	// get authenticator config
+	config, err := authenticatorConfig.GetConfig(configFileName)
 	if err != nil {
 		log.Fatal().Err(err).Msg("getting config from file")
 	}
