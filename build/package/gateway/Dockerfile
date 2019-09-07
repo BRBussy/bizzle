@@ -41,7 +41,7 @@ RUN apk add --no-cache ca-certificates
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /gateway/gateway /gateway
 
-# Copy secrets.json to the production image from the builder stage
+# Copy config file to the production image from the builder stage
 COPY --from=builder /gateway/config.toml /config.toml
 
 # Run the web service on container startup
