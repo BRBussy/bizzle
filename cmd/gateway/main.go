@@ -15,7 +15,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if target == "" {
 		target = "World"
 	}
-	fmt.Fprintf(w, "Hello from gateway %s!\n", target)
+	fmt.Fprintf(w, "Hello from gateway yet again!!! %s!\n", target)
 }
 
 func main() {
