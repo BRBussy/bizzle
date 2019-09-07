@@ -2,7 +2,7 @@ package jsonRpc
 
 import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
-	"github.com/BRBussy/bizzle/package/authenticator"
+	"github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	"net/http"
 )
 

@@ -1,7 +1,7 @@
 package basic
 
 import (
-	brizzleAuthenticator "github.com/BRBussy/bizzle/package/authenticator"
+	brizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 )
 
 type authenticator struct {
