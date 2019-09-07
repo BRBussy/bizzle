@@ -14,15 +14,21 @@ import (
 )
 
 type client struct {
-	url string
+	url                  string
+	additionalHeaderKeys map[string]string
 }
 
 func New(
 	url string,
 ) jsonRpcClient.Client {
 	return &client{
-		url: url,
+		url:                  url,
+		additionalHeaderKeys: make(map[string]string),
 	}
+}
+
+func (c *client) AddAdditionalHeaderEntry(key, value string) {
+
 }
 
 func (c *client) Post(request *jsonRpcClient.Request) (*jsonRpcClient.Response, error) {
@@ -44,6 +50,11 @@ func (c *client) Post(request *jsonRpcClient.Request) (*jsonRpcClient.Response, 
 	// set the required headers on the request
 	postRequest.Header.Set("Content-Type", "application/json")
 	postRequest.Header.Set("Access-Control-Allow-Origin", "*")
+
+	// set additional headers on request
+	for key, value := range c.additionalHeaderKeys {
+		postRequest.Header.Set(key, value)
+	}
 
 	// create the http client
 	httpClient := &http.Client{

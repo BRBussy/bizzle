@@ -4,6 +4,7 @@ import (
 	"cloud.google.com/go/compute/metadata"
 	"flag"
 	"fmt"
+	"github.com/BRBussy/bizzle/configs/authenticator"
 	gatewayConfig "github.com/BRBussy/bizzle/configs/gateway"
 	basicJsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client/basic"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
@@ -27,7 +28,11 @@ func main() {
 		log.Fatal().Err(err).Msg("getting config from file")
 	}
 
+	// create json rpc client to access the authenticator
 	BasicJsonRpcClient := basicJsonRpcClient.New(config.AuthenticatorURL)
+	if config.Environment == authenticator.ProductionEnvironment {
+
+	}
 
 	// create service providers
 	JsonRpcAuthenticator := jsonRpcAuthenticator.New(BasicJsonRpcClient)

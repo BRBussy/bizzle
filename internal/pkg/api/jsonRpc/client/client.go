@@ -7,6 +7,7 @@ import (
 type Client interface {
 	Post(request *Request) (*Response, error)
 	JsonRpcRequest(method string, request, response interface{}) error
+	AddAdditionalHeaderEntry(key, value string)
 }
 
 type Request struct {

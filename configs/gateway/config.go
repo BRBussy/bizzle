@@ -1,6 +1,7 @@
 package gateway
 
 import (
+	"github.com/BRBussy/bizzle/internal/pkg/environment"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
@@ -12,18 +13,13 @@ func init() {
 	}
 
 	// set default configuration
-	viper.SetDefault("Environment", ProductionEnvironment)
+	viper.SetDefault("Environment", environment.Development)
 	viper.SetDefault("ServerPort", "8080")
 	viper.SetDefault("AuthenticatorURL", "http://localhost:8081")
 }
 
-const DevelopmentEnvironment = "Development"
-const ProductionEnvironment = "Production"
-
-type Environment string
-
 type Config struct {
-	Environment      Environment
+	Environment      environment.Environment
 	ServerPort       string
 	AuthenticatorURL string
 }
