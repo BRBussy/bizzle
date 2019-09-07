@@ -1,4 +1,4 @@
-package gateway
+package authenticator
 
 import (
 	"github.com/rs/zerolog/log"
@@ -23,14 +23,13 @@ const ProductionEnvironment = "Production"
 type Environment string
 
 type Config struct {
-	Environment      Environment
-	ServerPort       string
-	AuthenticatorURL string
+	Environment Environment
+	ServerPort  string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {
 	// set places to look for config file
-	viper.AddConfigPath("configs/gateway")
+	viper.AddConfigPath("configs/authenticator")
 	viper.AddConfigPath("config")
 	viper.AddConfigPath(".")
 
