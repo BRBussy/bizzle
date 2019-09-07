@@ -6,6 +6,9 @@ import (
 	"fmt"
 	gatewayConfig "github.com/BRBussy/bizzle/configs/gateway"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
+	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	authenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/package/authenticator/adaptor/jsonRpc"
+	basicAuthenticator "github.com/BRBussy/bizzle/package/authenticator/basic"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
@@ -23,13 +26,22 @@ func main() {
 		log.Fatal().Err(err).Msg("getting config from file")
 	}
 
+	// create service providers
+	BasicAuthenticator := basicAuthenticator.New()
+
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
 		"/",
 		"0.0.0.0",
 		config.ServerPort,
 	)
+
 	// register service providers
+	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
+		authenticatorJsonRpcAdaptor.New(BasicAuthenticator),
+	}); err != nil {
+		log.Fatal().Err(err).Msg("registering batch service providers")
+	}
 
 	// start server
 	log.Info().Msgf("starting gateway json rpc http api server started on port %s", config.ServerPort)

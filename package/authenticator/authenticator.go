@@ -1,7 +1,15 @@
 package authenticator
 
-import "fmt"
+type Authenticator interface {
+	SignUp(*SignUpRequest) (*SignUpResponse, error)
+}
 
-func Auth() {
-	fmt.Println("auth says yes!!!")
+const ServiceProvider = "Authenticator"
+const SignUpService = ServiceProvider + ".SignUp"
+
+type SignUpRequest struct {
+}
+
+type SignUpResponse struct {
+	Msg string
 }
