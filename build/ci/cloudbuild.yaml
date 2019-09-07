@@ -4,8 +4,8 @@ steps:
     args:
       - kms
       - decrypt
-      - --ciphertext-file=secrets.json.enc
-      - --plaintext-file=secrets.json
+      - --ciphertext-file=$($_SERVICE)/config.toml.enc
+      - --plaintext-file=config.toml
       - --location=global
       - --keyring=bizzle
       - --key=cryptographer

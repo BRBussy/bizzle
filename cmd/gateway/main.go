@@ -4,29 +4,42 @@ import (
 	"cloud.google.com/go/compute/metadata"
 	"flag"
 	"fmt"
-	"github.com/BRBussy/bizzle/internal/pkg/secrets"
-	log "github.com/sirupsen/logrus"
+	gatewayConfig "github.com/BRBussy/bizzle/configs/gateway"
+	"github.com/rs/zerolog/log"
 	"net/http"
-	"os"
 )
 
-var env = flag.String("env", "prod", "specify environment")
-var secretsFile = flag.String("secrets-file", "secrets.json", "specify environment")
-var bizzleSecrets *secrets.Secrets
+var configFileName = flag.String("config-file-name", "config", "specify config file")
+
+func main() {
+	flag.Parse()
+	var err error
+
+	config, err := gatewayConfig.GetConfig(configFileName)
+	if err != nil {
+		log.Fatal().Err(err).Msg("getting config from file")
+	}
+
+	fmt.Println("conf", *config)
+
+	http.HandleFunc("/", handler)
+
+	log.Fatal().Err(http.ListenAndServe(fmt.Sprintf(":%s", config.ServerPort), nil))
+}
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	log.Info("Gateway received a request.")
+	log.Info().Msg("Gateway received a request.")
 
-	response, err := makeGetRequest(bizzleSecrets.AuthenticatorURL)
+	response, err := makeGetRequest("/")
 	if err != nil {
 		fmt.Fprintf(w, "could not get to authenticator :( %s!\n", err.Error())
-		log.Error("could not get to authenticator!! ", err)
+		log.Error().Err(err).Msg("could not get to authenticator!! ")
 		return
 	}
 
 	var bodyBytes []byte
 	if _, err := response.Body.Read(bodyBytes); err != nil {
-		log.Error("error reading response body! ", err)
+		log.Error().Err(err).Msg("error reading response body! ")
 		fmt.Fprintf(w, "could not read authenticators body bytes :( %s!\n", err.Error())
 		return
 	}
@@ -44,7 +57,7 @@ func makeGetRequest(serviceURL string) (*http.Response, error) {
 		return nil, err
 	}
 
-	if *env == "prod" {
+	if "prod" == "prod" {
 		// query the id_token with ?audience as the serviceURL
 		tokenURL := fmt.Sprintf("/instance/service-accounts/default/identity?audience=%s", serviceURL)
 		idToken, err := metadata.Get(tokenURL)
@@ -55,27 +68,4 @@ func makeGetRequest(serviceURL string) (*http.Response, error) {
 	}
 
 	return http.DefaultClient.Do(req)
-}
-
-func main() {
-	flag.Parse()
-	var err error
-
-	// get the secrets
-	bizzleSecrets, err = secrets.GetSecrets(*secretsFile)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	fmt.Printf("%v\n", *bizzleSecrets)
-
-	log.Info("The bizzle gateway has started!")
-
-	http.HandleFunc("/", handler)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8081"
-	}
-
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
