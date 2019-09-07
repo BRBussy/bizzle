@@ -3,9 +3,9 @@ package main
 import (
 	"cloud.google.com/go/compute/metadata"
 	"fmt"
+	"github.com/BRBussy/bizzle/internal/pkg/secrets"
 	"github.com/BRBussy/bizzle/package/authenticator"
-	"github.com/sirupsen/logrus"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 )
@@ -39,7 +39,14 @@ func makeGetRequest(serviceURL string) (*http.Response, error) {
 }
 
 func main() {
-	logrus.Info("The bizzle gateway has started!")
+	// get the secrets
+	bizzleSecrets, err := secrets.GetSecrets("secrets.json")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	fmt.Printf("%v\n", *bizzleSecrets)
+
+	log.Info("The bizzle gateway has started!")
 	authenticator.Auth()
 
 	http.HandleFunc("/", handler)
