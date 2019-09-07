@@ -14,7 +14,7 @@ func init() {
 	// set default configuration
 	viper.SetDefault("Environment", ProductionEnvironment)
 	viper.SetDefault("ServerPort", "8080")
-	viper.SetDefault("AuthenticatorURL", "8081")
+	viper.SetDefault("AuthenticatorURL", "http://localhost:8081")
 }
 
 const DevelopmentEnvironment = "Development"
