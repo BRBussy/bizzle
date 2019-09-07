@@ -28,7 +28,7 @@ func New(
 }
 
 func (c *client) AddAdditionalHeaderEntry(key, value string) {
-
+	c.additionalHeaderKeys[key] = value
 }
 
 func (c *client) Post(request *jsonRpcClient.Request) (*jsonRpcClient.Response, error) {
