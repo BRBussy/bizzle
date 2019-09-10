@@ -4,6 +4,7 @@ import (
 	jsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client"
 	brizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	brizzleAuthenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
+	"github.com/rs/zerolog/log"
 )
 
 type authenticator struct {
@@ -24,6 +25,7 @@ func (a *authenticator) SignUp(*brizzleAuthenticator.SignUpRequest) (*brizzleAut
 		brizzleAuthenticator.SignUpService,
 		brizzleAuthenticatorJsonRpcAdaptor.SignUpRequest{},
 		signUpResponse); err != nil {
+		log.Error().Err(err).Msg("authenticator json rpc SignUp")
 		return nil, err
 	}
 
