@@ -7,6 +7,7 @@ import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	authenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
 	basicAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/basic"
+	"github.com/BRBussy/bizzle/internal/pkg/mongoDb"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -22,6 +23,17 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("getting config from file")
 	}
+
+	// create new mongo db connection
+	mongoDbClient, err := mongoDb.New(config.MongoDbHosts, config.MongoDBConnectionString)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating new mongo db client")
+	}
+	defer func() {
+		if err := mongoDbClient.CloseConnection(); err != nil {
+			log.Error().Err(err).Msg("closing mongo db client connection")
+		}
+	}()
 
 	// create service providers
 	BasicAuthenticator := basicAuthenticator.New()
