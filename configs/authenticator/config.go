@@ -15,12 +15,14 @@ func init() {
 	// set default configuration
 	viper.SetDefault("Environment", environment.Development)
 	viper.SetDefault("ServerPort", "8080")
-	viper.SetDefault("AuthenticatorURL", "http://localhost:8081")
+	viper.SetDefault("MongoDbHosts", []string{"localhost:27017"})
 }
 
 type Config struct {
-	Environment environment.Environment
-	ServerPort  string
+	Environment             environment.Environment
+	ServerPort              string
+	MongoDBConnectionString string
+	MongoDbHosts            []string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {
