@@ -8,8 +8,18 @@ import (
 )
 
 type Wrapped struct {
-	Type  criterion.Type  `json:"type"`
-	Value json.RawMessage `json:"value"`
+	Type      criterion.Type      `json:"type"`
+	Value     json.RawMessage     `json:"value"`
+	Criterion criterion.Criterion `json:"-"`
+}
+
+func (w *Wrapped) UnmarshalJSON(data []byte) error {
+	unwrapped, err := w.Unwrap()
+	if err != nil {
+		return err
+	}
+	w.Criterion = unwrapped
+	return nil
 }
 
 func (w Wrapped) Unwrap() (criterion.Criterion, error) {
