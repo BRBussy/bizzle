@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const Type = criterion.Substring
+const Type = criterion.SubstringCriterionType
 
 type Criterion struct {
 	Field string `json:"field"`

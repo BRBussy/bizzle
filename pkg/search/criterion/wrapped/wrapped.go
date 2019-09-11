@@ -5,7 +5,7 @@ import (
 	"errors"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 	"github.com/BRBussy/bizzle/pkg/search/criterion/operation/or"
-	"github.com/BRBussy/bizzle/pkg/search/criterion/substring"
+	"github.com/BRBussy/bizzle/pkg/search/criterion/string/substring"
 	"github.com/rs/zerolog/log"
 )
 
@@ -54,7 +54,7 @@ func (w *Wrapped) UnmarshalJSON(data []byte) error {
 
 func (w *Wrapped) Unwrap() error {
 	switch w.Type {
-	case searchCriterion.Substring:
+	case searchCriterion.SubstringCriterionType:
 		var unmarshalledCriterion substring.Criterion
 		if err := json.Unmarshal(w.Value, &unmarshalledCriterion); err != nil {
 			return errors.New("unmarshalling failed: " + err.Error())
