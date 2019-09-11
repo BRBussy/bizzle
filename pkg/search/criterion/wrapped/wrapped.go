@@ -90,3 +90,15 @@ func (w *Wrapped) Unwrap() error {
 
 	return nil
 }
+
+func Wrap(criterion searchCriterion.Criterion) (*Wrapped, error) {
+	value, err := json.Marshal(criterion)
+	if err != nil {
+		return nil, errors.New("json marshalling: " + err.Error())
+	}
+
+	return &Wrapped{
+		Type:  criterion.Type(),
+		Value: value,
+	}, nil
+}
