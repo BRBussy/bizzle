@@ -32,7 +32,7 @@ type FindRequest struct {
 type FindResponse struct {
 }
 
-func (a *adaptor) SignUp(r *http.Request, request *FindRequest, response *FindResponse) error {
+func (a *adaptor) Find(r *http.Request, request *FindRequest, response *FindResponse) error {
 	_, err := a.store.Find(
 		&exerciseStore.FindRequest{},
 	)

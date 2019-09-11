@@ -7,6 +7,8 @@ import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	authenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
 	jsonRpcAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRpc"
+	exerciseStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/store/adaptor/jsonRpc"
+	jsonRpcExerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store/jsonRpc"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -28,6 +30,10 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating json rpc authenticator")
 	}
+	JsonRpcExerciseStore, err := jsonRpcExerciseStore.New(config.Environment, config.ExerciseURL)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating json rpc exercise store")
+	}
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
@@ -39,6 +45,7 @@ func main() {
 	// register service providers
 	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
 		authenticatorJsonRpcAdaptor.New(JsonRpcAuthenticator),
+		exerciseStoreJsonRpcAdaptor.New(JsonRpcExerciseStore),
 	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}

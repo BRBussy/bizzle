@@ -22,9 +22,9 @@ func New(
 	var client jsonRpcClient.Client
 	var err error
 	switch env {
-	case environment.Production:
-		client = basicJsonRpcClient.New(authenticatorURL)
 	case environment.Development:
+		client = basicJsonRpcClient.New(authenticatorURL)
+	case environment.Production:
 		client, err = authenticatedJsonRpcClient.New(authenticatorURL)
 		if err != nil {
 			log.Error().Err(err).Msg("creating new authenticated json rpc client")

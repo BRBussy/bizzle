@@ -16,12 +16,14 @@ func init() {
 	viper.SetDefault("Environment", environment.Development)
 	viper.SetDefault("ServerPort", "8080")
 	viper.SetDefault("AuthenticatorURL", "http://localhost:8081")
+	viper.SetDefault("ExerciseURL", "http://localhost:8082")
 }
 
 type Config struct {
 	Environment      environment.Environment
 	ServerPort       string
 	AuthenticatorURL string
+	ExerciseURL      string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {
