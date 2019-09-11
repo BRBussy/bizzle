@@ -4,19 +4,22 @@ import (
 	"encoding/json"
 	"errors"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
-	"github.com/BRBussy/bizzle/pkg/search/criterion/operation"
-	string2 "github.com/BRBussy/bizzle/pkg/search/criterion/string"
+	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
+	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
 	"github.com/rs/zerolog/log"
 )
 
+// Wrapped represents a wrapped criterion. Used in json marshalling and unmarshalling.
 type Wrapped struct {
 	Type      searchCriterion.Type      `json:"type"`
 	Value     json.RawMessage           `json:"value"`
 	Criterion searchCriterion.Criterion `json:"-"`
 }
 
+// Slice is a slice of Wrapped criterion
 type Slice []Wrapped
 
+// ToCriteria can be called on a slice of wrapped criterion to convert it into a slice of criteria
 func (s Slice) ToCriteria() []searchCriterion.Criterion {
 	criteria := make([]searchCriterion.Criterion, 0)
 	for _, wrappedCriterion := range s {
@@ -25,15 +28,18 @@ func (s Slice) ToCriteria() []searchCriterion.Criterion {
 	return criteria
 }
 
+// unmarshalHolder is used during initial unmarshalling of a Wrapped criterion to avoid infinite recursion
 type unmarshalHolder struct {
 	Type  searchCriterion.Type `json:"type"`
 	Value json.RawMessage      `json:"value"`
 }
 
+// orWrapped is used in an intermediate step when unmarshalling a wrapped or criterion
 type orWrapped struct {
 	Criteria []Wrapped `json:"criteria"`
 }
 
+// UnmarshallJSON is written for Wrapped so that it implements the Unmarshaller interface. This is called during unmarshalling.
 func (w *Wrapped) UnmarshalJSON(data []byte) error {
 	// unmarshal into intermediate holder to avoid an infinite recursion loop
 	var holder unmarshalHolder
@@ -41,6 +47,7 @@ func (w *Wrapped) UnmarshalJSON(data []byte) error {
 		log.Error().Err(err).Msg("unmarshalling wrapped criterion")
 		return errors.New("unmarshalling failed: " + err.Error())
 	}
+
 	// update data on wrapped criterion
 	w.Type = holder.Type
 	w.Value = holder.Value
@@ -52,21 +59,24 @@ func (w *Wrapped) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// UnWrap is called on a Wrapped criterion to populate it's Criterion interface field
 func (w *Wrapped) Unwrap() error {
 	switch w.Type {
 	case searchCriterion.StringSubstringCriterionType:
-		var unmarshalledCriterion string2.Substring
+		var unmarshalledCriterion stringCriterion.Substring
 		if err := json.Unmarshal(w.Value, &unmarshalledCriterion); err != nil {
 			return errors.New("unmarshalling failed: " + err.Error())
 		}
 		w.Criterion = unmarshalledCriterion
 
 	case searchCriterion.OperationOrCriterionType:
+		var unmarshalledCriterion operationCriterion.Or
+		// first unmarshal into a wrapped or
 		var unmarshalledWrappedOr orWrapped
-		var unmarshalledCriterion operation.Or
 		if err := json.Unmarshal(w.Value, &unmarshalledWrappedOr); err != nil {
 			return errors.New("unmarshalling failed: " + err.Error())
 		}
+		// then unwrap each wrapped criterion in the wrapped or
 		unmarshalledCriterion.Criteria = make([]searchCriterion.Criterion, 0)
 		for _, wrappedCrit := range unmarshalledWrappedOr.Criteria {
 			if err := wrappedCrit.Unwrap(); err != nil {
@@ -80,10 +90,10 @@ func (w *Wrapped) Unwrap() error {
 		return errors.New("invalid/unsupported criterion type: " + w.Type.String())
 	}
 
+	// check that unmarshalled criterion is valid
 	if w.Criterion == nil {
 		return errors.New("criterion still nil")
 	}
-
 	if err := w.Criterion.IsValid(); err != nil {
 		return errors.New("criterion not valid: " + err.Error())
 	}
@@ -91,9 +101,10 @@ func (w *Wrapped) Unwrap() error {
 	return nil
 }
 
+// Wrap is used to wrap a Criterion before passing into an untyped environment
 func Wrap(criterion searchCriterion.Criterion) (*Wrapped, error) {
 	switch typedCriterion := criterion.(type) {
-	case operation.Or:
+	case operationCriterion.Or:
 		wrappedOr := orWrapped{Criteria: make([]Wrapped, 0)}
 		for _, critToWrap := range typedCriterion.Criteria {
 			wrappedCrit, err := Wrap(critToWrap)
