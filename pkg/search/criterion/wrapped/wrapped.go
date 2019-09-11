@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
+	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
 	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
 	"github.com/rs/zerolog/log"
@@ -62,6 +63,13 @@ func (w *Wrapped) UnmarshalJSON(data []byte) error {
 // UnWrap is called on a Wrapped criterion to populate it's Criterion interface field
 func (w *Wrapped) Unwrap() error {
 	switch w.Type {
+	case searchCriterion.NumberRangeCriterionType:
+		var unmarshalledCriterion numberCriterion.Range
+		if err := json.Unmarshal(w.Value, &unmarshalledCriterion); err != nil {
+			return errors.New("unmarshalling failed: " + err.Error())
+		}
+		w.Criterion = unmarshalledCriterion
+
 	case searchCriterion.StringSubstringCriterionType:
 		var unmarshalledCriterion stringCriterion.Substring
 		if err := json.Unmarshal(w.Value, &unmarshalledCriterion); err != nil {
