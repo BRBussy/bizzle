@@ -34,7 +34,9 @@ func (s Substring) Type() criterion.Type {
 
 func (s Substring) ToFilter() map[string]interface{} {
 	return map[string]interface{}{
-		"$regex":   ".*" + s.Text + ".*",
-		"$options": "i",
+		s.Field: map[string]interface{}{
+			"$regex":   ".*" + s.Text + ".*",
+			"$options": "i",
+		},
 	}
 }
