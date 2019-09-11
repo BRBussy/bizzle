@@ -12,3 +12,6 @@ const OperationOrCriterionType Type = "OperationOr"
 // string criterion types
 const StringSubstringCriterionType Type = "StringSubstring"
 const StringExactCriterionType Type = "StringExact"
+
+// number criterion types
+const NumberRangeCriterionType Type = "NumberRange"
