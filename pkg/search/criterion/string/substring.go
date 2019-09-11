@@ -1,9 +1,7 @@
 package string
 
 import (
-	"errors"
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
-	"strings"
 )
 
 const Type = criterion.StringSubstringCriterionType
@@ -26,7 +24,7 @@ func (c Substring) IsValid() error {
 	}
 
 	if len(reasonsInvalid) > 0 {
-		return errors.New(strings.Join(reasonsInvalid, "; "))
+		return criterion.ErrInvalid{Reasons: reasonsInvalid}
 	}
 
 	return nil
