@@ -92,13 +92,33 @@ func (w *Wrapped) Unwrap() error {
 }
 
 func Wrap(criterion searchCriterion.Criterion) (*Wrapped, error) {
-	value, err := json.Marshal(criterion)
-	if err != nil {
-		return nil, errors.New("json marshalling: " + err.Error())
-	}
+	switch typedCriterion := criterion.(type) {
+	case or.Criterion:
+		wrappedOr := orWrapped{Criteria: make([]Wrapped, 0)}
+		for _, critToWrap := range typedCriterion.Criteria {
+			wrappedCrit, err := Wrap(critToWrap)
+			if err != nil {
+				return nil, errors.New("wrapping an or crit: " + err.Error())
+			}
+			wrappedOr.Criteria = append(wrappedOr.Criteria, *wrappedCrit)
+		}
+		value, err := json.Marshal(wrappedOr)
+		if err != nil {
+			return nil, errors.New("json marshalling: " + err.Error())
+		}
+		return &Wrapped{
+			Type:  criterion.Type(),
+			Value: value,
+		}, nil
 
-	return &Wrapped{
-		Type:  criterion.Type(),
-		Value: value,
-	}, nil
+	default:
+		value, err := json.Marshal(criterion)
+		if err != nil {
+			return nil, errors.New("json marshalling: " + err.Error())
+		}
+		return &Wrapped{
+			Type:  criterion.Type(),
+			Value: value,
+		}, nil
+	}
 }
