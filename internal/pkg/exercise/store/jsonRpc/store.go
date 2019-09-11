@@ -4,10 +4,10 @@ import (
 	jsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client"
 	authenticatedJsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client/authenticated"
 	basicJsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client/basic"
-	brizzleAuthenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
 	"github.com/BRBussy/bizzle/internal/pkg/environment"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
+	exerciseStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/store/adaptor/jsonRpc"
 	wrappedCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/wrapped"
 	"github.com/rs/zerolog/log"
 )
@@ -40,19 +40,24 @@ func New(
 }
 
 func (a *store) Find(request *exerciseStore.FindRequest) (*exerciseStore.FindResponse, error) {
-	signUpResponse := new(brizzleAuthenticatorJsonRpcAdaptor.SignUpResponse)
 
 	wrappedCriteria := make([]wrappedCriterion.Wrapped, 0)
 	for _, crit := range request.Criteria {
-		wrappedCriteria = append(wrappedCriteria)
+		wrappedCrit, err := wrappedCriterion.Wrap(crit)
+		if err != nil {
+			log.Error().Err(err).Msg("wrapping criterion")
+			return nil, err
+		}
+		wrappedCriteria = append(wrappedCriteria, *wrappedCrit)
 	}
 
+	findResponse := new(exerciseStoreJsonRpcAdaptor.FindResponse)
 	if err := a.jsonRpcClient.JsonRpcRequest(
 		exerciseStore.FindService,
-		exerciseStore.FindRequest{
-			Criteria: nil,
+		exerciseStoreJsonRpcAdaptor.FindRequest{
+			Criteria: wrappedCriteria,
 		},
-		signUpResponse); err != nil {
+		findResponse); err != nil {
 		log.Error().Err(err).Msg("authenticator json rpc SignUp")
 		return nil, err
 	}
