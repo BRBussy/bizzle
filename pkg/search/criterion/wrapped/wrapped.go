@@ -3,46 +3,64 @@ package wrapped
 import (
 	"encoding/json"
 	"errors"
-	"github.com/BRBussy/bizzle/pkg/search/criterion"
+	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 	"github.com/BRBussy/bizzle/pkg/search/criterion/substring"
 )
 
 type Wrapped struct {
-	Type      criterion.Type      `json:"type"`
-	Value     json.RawMessage     `json:"value"`
-	Criterion criterion.Criterion `json:"-"`
+	Type      searchCriterion.Type      `json:"type"`
+	Value     json.RawMessage           `json:"value"`
+	Criterion searchCriterion.Criterion `json:"-"`
+}
+
+type Slice []Wrapped
+
+func (s Slice) ToCriteria() []searchCriterion.Criterion {
+	criteria := make([]searchCriterion.Criterion, 0)
+	for _, wrappedCriterion := range s {
+		criteria = append(criteria, wrappedCriterion.Criterion)
+	}
+	return criteria
+}
+
+type unmarshalHolder struct {
+	Type  searchCriterion.Type `json:"type"`
+	Value json.RawMessage      `json:"value"`
 }
 
 func (w *Wrapped) UnmarshalJSON(data []byte) error {
-	unwrapped, err := w.Unwrap()
-	if err != nil {
-		return err
+	// unmarshal into intermediate holder to avoid an infinite recursion loop
+	var holder unmarshalHolder
+	if err := json.Unmarshal(data, &holder); err != nil {
+		return errors.New("unmarshalling failed: " + err.Error())
 	}
-	w.Criterion = unwrapped
-	return nil
+	// update data on wrapped criterion
+	w.Type = holder.Type
+	w.Value = holder.Value
+
+	// unwrap the wrapped criterion
+	return w.Unwrap()
 }
 
-func (w Wrapped) Unwrap() (criterion.Criterion, error) {
-	var result criterion.Criterion = nil
-
+func (w Wrapped) Unwrap() error {
 	switch w.Type {
-	case criterion.Substring:
+	case searchCriterion.Substring:
 		var unmarshalledCriterion substring.Criterion
 		if err := json.Unmarshal(w.Value, &unmarshalledCriterion); err != nil {
-			return nil, errors.New("unmarshalling failed: " + err.Error())
+			return errors.New("unmarshalling failed: " + err.Error())
 		}
-		result = unmarshalledCriterion
+		w.Criterion = unmarshalledCriterion
 	default:
-		return nil, errors.New("invalid/unsupported criterion type")
+		return errors.New("invalid/unsupported criterion type")
 	}
 
-	if result == nil {
-		return nil, errors.New("criterion still nil")
+	if w.Criterion == nil {
+		return errors.New("criterion still nil")
 	}
 
-	if err := result.IsValid(); err != nil {
-		return nil, errors.New("criterion not valid: " + err.Error())
+	if err := w.Criterion.IsValid(); err != nil {
+		return errors.New("criterion not valid: " + err.Error())
 	}
 
-	return result, nil
+	return nil
 }

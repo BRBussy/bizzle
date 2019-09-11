@@ -3,6 +3,7 @@ package jsonRpc
 import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
+	wrappedCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/wrapped"
 	"net/http"
 )
 
@@ -27,6 +28,7 @@ func (a *adaptor) MethodRequiresAuthorization(method string) bool {
 }
 
 type FindRequest struct {
+	Criteria wrappedCriterion.Criteria `json:"criteria"`
 }
 
 type FindResponse struct {
@@ -34,7 +36,9 @@ type FindResponse struct {
 
 func (a *adaptor) Find(r *http.Request, request *FindRequest, response *FindResponse) error {
 	_, err := a.store.Find(
-		&exerciseStore.FindRequest{},
+		&exerciseStore.FindRequest{
+			Criteria: request.Criteria.ToCriteria(),
+		},
 	)
 	if err != nil {
 		return err
