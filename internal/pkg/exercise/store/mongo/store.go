@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"fmt"
 	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
 )
 
@@ -12,5 +13,7 @@ func New() exerciseStore.Store {
 }
 
 func (s Store) Find(request *exerciseStore.FindRequest) (*exerciseStore.FindResponse, error) {
+	filter := request.Criteria.ToFilter()
+	fmt.Println(filter)
 	return &exerciseStore.FindResponse{}, nil
 }

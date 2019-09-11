@@ -40,7 +40,6 @@ func New(
 }
 
 func (a *store) Find(request *exerciseStore.FindRequest) (*exerciseStore.FindResponse, error) {
-
 	wrappedCriteria := make([]wrappedCriterion.Wrapped, 0)
 	for _, crit := range request.Criteria {
 		wrappedCrit, err := wrappedCriterion.Wrap(crit)

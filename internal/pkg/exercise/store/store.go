@@ -12,7 +12,7 @@ const ServiceProvider = "Exercise-Store"
 const FindService = ServiceProvider + ".Find"
 
 type FindRequest struct {
-	Criteria []searchCriterion.Criterion
+	Criteria searchCriterion.Criteria
 }
 
 type FindResponse struct {

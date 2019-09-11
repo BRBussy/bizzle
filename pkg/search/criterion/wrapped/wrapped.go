@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
-	"github.com/BRBussy/bizzle/pkg/search/criterion/or"
+	"github.com/BRBussy/bizzle/pkg/search/criterion/operation/or"
 	"github.com/BRBussy/bizzle/pkg/search/criterion/substring"
 	"github.com/rs/zerolog/log"
 )
