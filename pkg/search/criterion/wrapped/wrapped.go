@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
-	"github.com/BRBussy/bizzle/pkg/search/criterion/operation/or"
-	"github.com/BRBussy/bizzle/pkg/search/criterion/string/substring"
+	"github.com/BRBussy/bizzle/pkg/search/criterion/operation"
+	string2 "github.com/BRBussy/bizzle/pkg/search/criterion/string"
 	"github.com/rs/zerolog/log"
 )
 
@@ -54,16 +54,16 @@ func (w *Wrapped) UnmarshalJSON(data []byte) error {
 
 func (w *Wrapped) Unwrap() error {
 	switch w.Type {
-	case searchCriterion.SubstringCriterionType:
-		var unmarshalledCriterion substring.Criterion
+	case searchCriterion.StringSubstringCriterionType:
+		var unmarshalledCriterion string2.Substring
 		if err := json.Unmarshal(w.Value, &unmarshalledCriterion); err != nil {
 			return errors.New("unmarshalling failed: " + err.Error())
 		}
 		w.Criterion = unmarshalledCriterion
 
-	case searchCriterion.OrCriterionType:
+	case searchCriterion.OperationOrCriterionType:
 		var unmarshalledWrappedOr orWrapped
-		var unmarshalledCriterion or.Criterion
+		var unmarshalledCriterion operation.Or
 		if err := json.Unmarshal(w.Value, &unmarshalledWrappedOr); err != nil {
 			return errors.New("unmarshalling failed: " + err.Error())
 		}
@@ -93,7 +93,7 @@ func (w *Wrapped) Unwrap() error {
 
 func Wrap(criterion searchCriterion.Criterion) (*Wrapped, error) {
 	switch typedCriterion := criterion.(type) {
-	case or.Criterion:
+	case operation.Or:
 		wrappedOr := orWrapped{Criteria: make([]Wrapped, 0)}
 		for _, critToWrap := range typedCriterion.Criteria {
 			wrappedCrit, err := Wrap(critToWrap)

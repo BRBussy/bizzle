@@ -1,4 +1,4 @@
-package substring
+package string
 
 import (
 	"errors"
@@ -6,14 +6,14 @@ import (
 	"strings"
 )
 
-const Type = criterion.SubstringCriterionType
+const Type = criterion.StringSubstringCriterionType
 
-type Criterion struct {
+type Substring struct {
 	Field string `json:"field"`
 	Text  string `json:"text"`
 }
 
-func (c Criterion) IsValid() error {
+func (c Substring) IsValid() error {
 
 	reasonsInvalid := make([]string, 0)
 
@@ -32,11 +32,11 @@ func (c Criterion) IsValid() error {
 	return nil
 }
 
-func (c Criterion) Type() criterion.Type {
+func (c Substring) Type() criterion.Type {
 	return Type
 }
 
-func (c Criterion) ToFilter() map[string]interface{} {
+func (c Substring) ToFilter() map[string]interface{} {
 	return map[string]interface{}{
 		"$regex":   ".*" + c.Text + ".*",
 		"$options": "i",

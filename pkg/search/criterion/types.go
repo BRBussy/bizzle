@@ -6,8 +6,9 @@ func (t Type) String() string {
 	return string(t)
 }
 
-// criterion operations
-const OrCriterionType Type = "OrCriterionType"
+// criterion operation types
+const OperationOrCriterionType Type = "OperationOr"
 
-// basic criteria
-const SubstringCriterionType Type = "SubstringCriterionType"
+// string criterion types
+const StringSubstringCriterionType Type = "StringSubstring"
+const StringExactCriterionType Type = "StringExact"
