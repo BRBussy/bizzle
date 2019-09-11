@@ -4,22 +4,20 @@ import (
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 )
 
-const Type = criterion.StringSubstringCriterionType
-
 type Substring struct {
 	Field string `json:"field"`
 	Text  string `json:"text"`
 }
 
-func (c Substring) IsValid() error {
+func (s Substring) IsValid() error {
 
 	reasonsInvalid := make([]string, 0)
 
-	if c.Text == "" {
+	if s.Text == "" {
 		reasonsInvalid = append(reasonsInvalid, "text is blank")
 	}
 
-	if c.Field == "" {
+	if s.Field == "" {
 		reasonsInvalid = append(reasonsInvalid, "field is blank")
 	}
 
@@ -30,13 +28,13 @@ func (c Substring) IsValid() error {
 	return nil
 }
 
-func (c Substring) Type() criterion.Type {
-	return Type
+func (s Substring) Type() criterion.Type {
+	return criterion.StringSubstringCriterionType
 }
 
-func (c Substring) ToFilter() map[string]interface{} {
+func (s Substring) ToFilter() map[string]interface{} {
 	return map[string]interface{}{
-		"$regex":   ".*" + c.Text + ".*",
+		"$regex":   ".*" + s.Text + ".*",
 		"$options": "i",
 	}
 }

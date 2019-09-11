@@ -1,0 +1,35 @@
+package string
+
+import "github.com/BRBussy/bizzle/pkg/search/criterion"
+
+type Exact struct {
+	Field string `json:"field"`
+	Text  string `json:"text"`
+}
+
+func (e Exact) IsValid() error {
+
+	reasonsInvalid := make([]string, 0)
+
+	if e.Text == "" {
+		reasonsInvalid = append(reasonsInvalid, "text is blank")
+	}
+
+	if e.Field == "" {
+		reasonsInvalid = append(reasonsInvalid, "field is blank")
+	}
+
+	if len(reasonsInvalid) > 0 {
+		return criterion.ErrInvalid{Reasons: reasonsInvalid}
+	}
+
+	return nil
+}
+
+func (e Exact) Type() criterion.Type {
+	return criterion.StringExactCriterionType
+}
+
+func (e Exact) ToFilter() map[string]interface{} {
+	return map[string]interface{}{e.Field: e.Text}
+}
