@@ -6,11 +6,11 @@ func (t Type) String() string {
 	return string(t)
 }
 
+// criterion operations
+const OrCriterionType Type = "OrCriterionType"
+
 // basic criteria
 const Substring Type = "Substring"
-
-// compound criteria
-const Or Type = "Or"
 
 // list criteria
 const ListText Type = "ListText"

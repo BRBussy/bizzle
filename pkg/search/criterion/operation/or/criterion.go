@@ -5,7 +5,7 @@ import (
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 )
 
-const Type = criterion.Or
+const Type = criterion.OrCriterionType
 
 type Criterion struct {
 	Criteria []criterion.Criterion

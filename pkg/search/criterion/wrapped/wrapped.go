@@ -61,7 +61,7 @@ func (w *Wrapped) Unwrap() error {
 		}
 		w.Criterion = unmarshalledCriterion
 
-	case searchCriterion.Or:
+	case searchCriterion.OrCriterionType:
 		var unmarshalledWrappedOr orWrapped
 		var unmarshalledCriterion or.Criterion
 		if err := json.Unmarshal(w.Value, &unmarshalledWrappedOr); err != nil {
