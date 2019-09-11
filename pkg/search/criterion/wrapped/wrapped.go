@@ -69,6 +69,13 @@ func (w *Wrapped) Unwrap() error {
 		}
 		w.Criterion = unmarshalledCriterion
 
+	case searchCriterion.StringExactCriterionType:
+		var unmarshalledCriterion stringCriterion.Exact
+		if err := json.Unmarshal(w.Value, &unmarshalledCriterion); err != nil {
+			return errors.New("unmarshalling failed: " + err.Error())
+		}
+		w.Criterion = unmarshalledCriterion
+
 	case searchCriterion.OperationOrCriterionType:
 		var unmarshalledCriterion operationCriterion.Or
 		// first unmarshal into a wrapped or
