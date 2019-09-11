@@ -17,6 +17,16 @@ type RangeValue struct {
 }
 
 func (r Range) IsValid() error {
+	reasonsInvalid := make([]string, 0)
+
+	if r.Field == "" {
+		reasonsInvalid = append(reasonsInvalid, "field is blank")
+	}
+
+	if len(reasonsInvalid) > 0 {
+		return criterion.ErrInvalid{Reasons: reasonsInvalid}
+	}
+
 	return nil
 }
 

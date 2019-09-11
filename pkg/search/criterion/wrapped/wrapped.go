@@ -56,6 +56,7 @@ func (w *Wrapped) UnmarshalJSON(data []byte) error {
 	// unwrap the wrapped criterion
 	if err := w.Unwrap(); err != nil {
 		log.Error().Err(err).Msg("unwrapping wrapped criterion")
+		return err
 	}
 	return nil
 }
