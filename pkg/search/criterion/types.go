@@ -2,6 +2,10 @@ package criterion
 
 type Type string
 
+func (t Type) String() string {
+	return string(t)
+}
+
 // basic criteria
 const Substring Type = "Substring"
 
