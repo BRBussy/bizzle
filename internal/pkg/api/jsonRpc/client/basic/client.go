@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-type client struct {
+type Client struct {
 	url                  string
 	additionalHeaderKeys map[string]string
 }
@@ -21,17 +21,17 @@ type client struct {
 func New(
 	url string,
 ) jsonRpcClient.Client {
-	return &client{
+	return &Client{
 		url:                  url,
 		additionalHeaderKeys: make(map[string]string),
 	}
 }
 
-func (c *client) AddAdditionalHeaderEntry(key, value string) {
+func (c *Client) AddAdditionalHeaderEntry(key, value string) {
 	c.additionalHeaderKeys[key] = value
 }
 
-func (c *client) Post(request *jsonRpcClient.Request) (*jsonRpcClient.Response, error) {
+func (c *Client) Post(request *jsonRpcClient.Request) (*jsonRpcClient.Response, error) {
 	// marshal the request message
 	marshalledRequest, err := json.Marshal(*request)
 	if err != nil {
@@ -56,7 +56,7 @@ func (c *client) Post(request *jsonRpcClient.Request) (*jsonRpcClient.Response, 
 		postRequest.Header.Set(key, value)
 	}
 
-	// create the http client
+	// create the http Client
 	httpClient := &http.Client{
 		//Timeout: time.Second * 5,
 	}
@@ -97,7 +97,7 @@ func (c *client) Post(request *jsonRpcClient.Request) (*jsonRpcClient.Response, 
 	return &response, nil
 }
 
-func (c *client) JsonRpcRequest(method string, request, response interface{}) error {
+func (c *Client) JsonRpcRequest(method string, request, response interface{}) error {
 	jsonRpcRequest := jsonRpcClient.NewRequest(uuid.NewV4().String(), method, [1]interface{}{request})
 
 	jsonRpcResponse, err := c.Post(&jsonRpcRequest)
