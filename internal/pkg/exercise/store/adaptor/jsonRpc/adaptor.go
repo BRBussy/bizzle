@@ -28,7 +28,7 @@ func (a *adaptor) MethodRequiresAuthorization(method string) bool {
 }
 
 type FindRequest struct {
-	Criteria wrappedCriterion.Criteria `json:"criteria"`
+	Criteria wrappedCriterion.Slice `json:"criteria"`
 }
 
 type FindResponse struct {
