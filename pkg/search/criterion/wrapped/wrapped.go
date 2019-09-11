@@ -52,7 +52,7 @@ func (w *Wrapped) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (w Wrapped) Unwrap() error {
+func (w *Wrapped) Unwrap() error {
 	switch w.Type {
 	case searchCriterion.Substring:
 		var unmarshalledCriterion substring.Criterion
