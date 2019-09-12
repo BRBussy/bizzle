@@ -72,8 +72,11 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 				for operationOrField, value := range serializedCriterion {
 					crit, err := parse(operationOrField, value)
 					if err != nil {
-						log.Error().Err(err).Msg("parsing an or criterion")
-						return nil, errors.New("parsing an or criterion: " + err.Error())
+						err = ErrUnmarshal{Reasons: []string{
+							"element in or",
+							err.Error(),
+						}}
+						return nil, err
 					}
 					andCriterion.Criteria = append(andCriterion.Criteria, crit)
 				}
@@ -82,8 +85,11 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 				for operationOrField, value := range serializedCriterion {
 					crit, err := parse(operationOrField, value)
 					if err != nil {
-						log.Error().Err(err).Msg("parsing an or criterion")
-						return nil, errors.New("parsing an or criterion: " + err.Error())
+						err = ErrUnmarshal{Reasons: []string{
+							"element in or",
+							err.Error(),
+						}}
+						return nil, err
 					}
 					orCriterion.Criteria = append(orCriterion.Criteria, crit)
 				}
