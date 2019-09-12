@@ -55,4 +55,11 @@ func (t serializedTest) Test() {
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":\"string\"}")),
 	)
+
+	t.Equal(
+		ErrInvalidSerializedCriteria{Reasons: []string{
+			searchCriterion.ErrInvalid{Reasons: []string{"or operation criterion has an empty criterion array"}}.Error(),
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":[]}")),
+	)
 }

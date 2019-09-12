@@ -140,7 +140,9 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 		return nil, errors.New("criterion still nil")
 	}
 	if err := parsedCriterion.IsValid(); err != nil {
-		return nil, errors.New("criterion not valid: " + err.Error())
+		return nil, ErrInvalidSerializedCriteria{Reasons: []string{
+			err.Error(),
+		}}
 	}
 
 	return parsedCriterion, nil
