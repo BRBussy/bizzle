@@ -7,6 +7,11 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+var serializedSubstring = []byte(fmt.Sprintf(
+	"{\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
+	searchCriterion.StringSubstringCriterionType,
+))
+
 type serializedTest struct {
 	suite.Suite
 }
@@ -108,10 +113,6 @@ func (t serializedTest) TestFieldCriterionFailures() {
 }
 
 func (t serializedTest) TestStringSubstringCriterion() {
-	serializedSubstring := []byte(fmt.Sprintf(
-		"{\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
-		searchCriterion.StringSubstringCriterionType,
-	))
 	testSubstringCriterion := Serialized{}
 	t.Equal(
 		nil,
