@@ -71,4 +71,41 @@ func (t *rangeTest) Test() {
 			},
 		},
 	)
+
+	testCriterion.Start.Ignore = true
+	testCriterion.Start.Inclusive = true
+	testCriterion.End.Ignore = false
+	testCriterion.End.Inclusive = false
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{
+				"$lt": 321.123,
+			},
+		},
+	)
+
+	testCriterion.Start.Ignore = false
+	testCriterion.Start.Inclusive = false
+	testCriterion.End.Ignore = true
+	testCriterion.End.Inclusive = false
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{
+				"$gt": 123.321,
+			},
+		},
+	)
+
+	testCriterion.Start.Ignore = true
+	testCriterion.Start.Inclusive = false
+	testCriterion.End.Ignore = true
+	testCriterion.End.Inclusive = false
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{},
+		},
+	)
 }
