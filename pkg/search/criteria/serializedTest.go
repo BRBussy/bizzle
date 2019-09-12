@@ -9,9 +9,7 @@ type serializedTest struct {
 	suite.Suite
 }
 
-func (t serializedTest) Test() {
-	// testCase := "{\"name\":{\"type\":\"StringSubstring\",\"string\":\"sam\"}}"
-
+func (t serializedTest) TestSerializedCriteriaInvalidInput() {
 	// test fringe invalid json inputs
 	t.Equal(
 		ErrInvalidSerializedCriteria{Reasons: []string{"json criterion data is nil"}},
@@ -32,7 +30,9 @@ func (t serializedTest) Test() {
 		make([]searchCriterion.Criterion, 0),
 		testEmpty.Criteria,
 	)
+}
 
+func (t serializedTest) TestSerializedCriteriaOROperator() {
 	// invalid value provided for $or operator
 	t.Equal(
 		ErrUnmarshal{Reasons: []string{
@@ -55,7 +55,7 @@ func (t serializedTest) Test() {
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":\"string\"}")),
 	)
-
+	// empty array
 	t.Equal(
 		ErrInvalidSerializedCriteria{Reasons: []string{
 			searchCriterion.ErrInvalid{Reasons: []string{"or operation criterion has an empty criterion array"}}.Error(),

@@ -55,8 +55,8 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 
 	switch operationOrField {
 	case searchCriterion.OROperator:
-		var oh jsonObjectArray
-		if err := json.Unmarshal(value, &oh); err != nil {
+		var orSerializedArray jsonObjectArray
+		if err := json.Unmarshal(value, &orSerializedArray); err != nil {
 			err = ErrUnmarshal{Reasons: []string{
 				"or array unmarshal",
 				err.Error(),
@@ -66,7 +66,7 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 		}
 		var orCriterion operationCriterion.Or
 		orCriterion.Criteria = make([]searchCriterion.Criterion, 0)
-		for _, serializedCriterion := range oh {
+		for _, serializedCriterion := range orSerializedArray {
 			if len(serializedCriterion) > 1 {
 				var andCriterion = operationCriterion.And{Criteria: make([]searchCriterion.Criterion, 0)}
 				for operationOrField, value := range serializedCriterion {
