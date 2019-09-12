@@ -54,13 +54,26 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 		var orCriterion operationCriterion.Or
 		orCriterion.Criteria = make([]searchCriterion.Criterion, 0)
 		for _, serializedCriterion := range oh {
-			for operationOrField, value := range serializedCriterion {
-				crit, err := parse(operationOrField, value)
-				if err != nil {
-					log.Error().Err(err).Msg("parsing an or criterion")
-					return nil, errors.New("parsing an or criterion: " + err.Error())
+			if len(serializedCriterion) > 1 {
+				var andCriterion = operationCriterion.And{Criteria: make([]searchCriterion.Criterion, 0)}
+				for operationOrField, value := range serializedCriterion {
+					crit, err := parse(operationOrField, value)
+					if err != nil {
+						log.Error().Err(err).Msg("parsing an or criterion")
+						return nil, errors.New("parsing an or criterion: " + err.Error())
+					}
+					andCriterion.Criteria = append(andCriterion.Criteria, crit)
 				}
-				orCriterion.Criteria = append(orCriterion.Criteria, crit)
+				orCriterion.Criteria = append(orCriterion.Criteria, andCriterion)
+			} else {
+				for operationOrField, value := range serializedCriterion {
+					crit, err := parse(operationOrField, value)
+					if err != nil {
+						log.Error().Err(err).Msg("parsing an or criterion")
+						return nil, errors.New("parsing an or criterion: " + err.Error())
+					}
+					orCriterion.Criteria = append(orCriterion.Criteria, crit)
+				}
 			}
 		}
 		parsedCriterion = orCriterion

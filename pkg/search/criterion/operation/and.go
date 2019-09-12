@@ -4,27 +4,27 @@ import (
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 )
 
-type Or struct {
+type And struct {
 	Criteria []criterion.Criterion
 }
 
-func (c Or) IsValid() error {
+func (c And) IsValid() error {
 	//if len(c.Criteria) == 0 {
 	//	return criterion.ErrInvalid{Reasons: []string{"no criteria to or together"}}
 	//}
 	return nil
 }
 
-func (c Or) Type() criterion.Type {
-	return criterion.OperationOrCriterionType
+func (c And) Type() criterion.Type {
+	return criterion.OperationAndCriterionType
 }
 
-func (c Or) ToFilter() map[string]interface{} {
+func (c And) ToFilter() map[string]interface{} {
 	filter := make(map[string]interface{})
 	criteriaFilters := make([]map[string]interface{}, 0)
 	for _, crit := range c.Criteria {
 		criteriaFilters = append(criteriaFilters, crit.ToFilter())
 	}
-	filter["$or"] = criteriaFilters
+	filter["$and"] = criteriaFilters
 	return filter
 }
