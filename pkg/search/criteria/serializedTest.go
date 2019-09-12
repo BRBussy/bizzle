@@ -33,10 +33,26 @@ func (t serializedTest) Test() {
 		testEmpty.Criteria,
 	)
 
+	// invalid value provided for $or operator
 	t.Equal(
 		ErrUnmarshal{Reasons: []string{
-			"or array",
+			"or array unmarshal",
+			"json: cannot unmarshal object into Go value of type criteria.jsonObjectArray",
 		}},
-		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":[]}")),
+		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":{}}")),
+	)
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"or array unmarshal",
+			"json: cannot unmarshal number into Go value of type criteria.jsonObjectArray",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":6}")),
+	)
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"or array unmarshal",
+			"json: cannot unmarshal string into Go value of type criteria.jsonObjectArray",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":\"string\"}")),
 	)
 }

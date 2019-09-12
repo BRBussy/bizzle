@@ -58,7 +58,7 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 		var oh jsonObjectArray
 		if err := json.Unmarshal(value, &oh); err != nil {
 			err = ErrUnmarshal{Reasons: []string{
-				"or array",
+				"or array unmarshal",
 				err.Error(),
 			}}
 			log.Error().Err(err)
