@@ -7,10 +7,23 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-var serializedSubstring = []byte(fmt.Sprintf(
-	"{\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
-	searchCriterion.StringSubstringCriterionType,
-))
+type testCase struct {
+	serializedCriterion []byte
+	criterion           searchCriterion.Criterion
+	expectedError       error
+}
+
+var substring1 = testCase{
+	serializedCriterion: []byte(fmt.Sprintf(
+		"{\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
+		searchCriterion.StringSubstringCriterionType,
+	)),
+	criterion: stringCriterion.Substring{
+		Field:  "someField",
+		String: "someSubstring",
+	},
+	expectedError: nil,
+}
 
 type serializedTest struct {
 	suite.Suite
@@ -116,14 +129,11 @@ func (t serializedTest) TestStringSubstringCriterion() {
 	testSubstringCriterion := Serialized{}
 	t.Equal(
 		nil,
-		(&testSubstringCriterion).UnmarshalJSON(serializedSubstring),
+		(&testSubstringCriterion).UnmarshalJSON(substring1.serializedCriterion),
 	)
 	t.Equal(
 		[]searchCriterion.Criterion{
-			stringCriterion.Substring{
-				Field:  "someField",
-				String: "someSubstring",
-			},
+			substring1.criterion,
 		},
 		testSubstringCriterion.Criteria,
 	)
