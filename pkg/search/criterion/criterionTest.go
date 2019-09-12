@@ -9,12 +9,15 @@ type criterionTest struct {
 func (t criterionTest) Test() {
 	var testType Type = "testType"
 
-	t.Equal(testType.String(), "testType")
+	t.Equal(
+		"testType",
+		testType.String(),
+	)
 
 	t.Equal(
+		"criterion is invalid: r1, r2",
 		ErrInvalid{
 			Reasons: []string{"r1", "r2"},
 		}.Error(),
-		"criterion is invalid: r1, r2",
 	)
 }

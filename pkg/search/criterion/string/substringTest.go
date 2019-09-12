@@ -12,38 +12,53 @@ type substringTest struct {
 func (t *substringTest) Test() {
 	testCriterion := Substring{}
 
-	t.Equal(testCriterion.Type(), criterion.StringSubstringCriterionType)
+	t.Equal(
+		criterion.StringSubstringCriterionType,
+		testCriterion.Type(),
+	)
 
-	t.Equal(testCriterion.IsValid(), criterion.ErrInvalid{Reasons: []string{
-		"string is blank",
-		"field is blank",
-	}})
+	t.Equal(
+		criterion.ErrInvalid{Reasons: []string{
+			"string is blank",
+			"field is blank",
+		}},
+		testCriterion.IsValid(),
+	)
 
 	testCriterion.String = "string"
 
-	t.Equal(testCriterion.IsValid(), criterion.ErrInvalid{Reasons: []string{
-		"field is blank",
-	}})
+	t.Equal(
+		criterion.ErrInvalid{Reasons: []string{
+			"field is blank",
+		}},
+		testCriterion.IsValid(),
+	)
 
 	testCriterion.String = ""
 	testCriterion.Field = "someField"
 
-	t.Equal(testCriterion.IsValid(), criterion.ErrInvalid{Reasons: []string{
-		"string is blank",
-	}})
+	t.Equal(
+		criterion.ErrInvalid{Reasons: []string{
+			"string is blank",
+		}},
+		testCriterion.IsValid(),
+	)
 
 	testCriterion.String = "string"
 	testCriterion.Field = "someField"
 
-	t.Equal(testCriterion.IsValid(), nil)
+	t.Equal(
+		nil,
+		testCriterion.IsValid(),
+	)
 
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$regex":   ".*string.*",
 				"$options": "i",
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 }

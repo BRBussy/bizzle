@@ -14,16 +14,25 @@ func (t *rangeTest) Test() {
 	testCriterion := Range{}
 
 	// confirm is valid fails with field is blank
-	t.Equal(testCriterion.IsValid(), criterion.ErrInvalid{Reasons: []string{"field is blank"}})
+	t.Equal(
+		testCriterion.IsValid(),
+		criterion.ErrInvalid{Reasons: []string{"field is blank"}},
+	)
 
 	// confirm that type returns correct type
-	t.Equal(testCriterion.Type(), criterion.NumberRangeCriterionType)
+	t.Equal(
+		criterion.NumberRangeCriterionType,
+		testCriterion.Type(),
+	)
 
 	// populate field
 	testCriterion.Field = "someField"
 
 	// confirm is valid does not fail
-	t.Equal(testCriterion.IsValid(), nil)
+	t.Equal(
+		nil,
+		testCriterion.IsValid(),
+	)
 
 	// set start and end numbers
 	testCriterion.Start.Number = 123.321
@@ -36,13 +45,13 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = false
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gt": 123.321,
 				"$lt": 321.123,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = true
@@ -50,12 +59,12 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = false
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$lt": 321.123,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = false
@@ -63,13 +72,13 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = false
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gte": 123.321,
 				"$lt":  321.123,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = true
@@ -77,12 +86,12 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = false
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$lt": 321.123,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = false
@@ -90,12 +99,12 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = false
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gt": 123.321,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = true
@@ -103,10 +112,10 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = false
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = false
@@ -114,12 +123,12 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = false
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gte": 123.321,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = true
@@ -127,10 +136,10 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = false
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = false
@@ -138,13 +147,13 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = true
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gt":  123.321,
 				"$lte": 321.123,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = true
@@ -152,12 +161,12 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = true
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$lte": 321.123,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = false
@@ -165,13 +174,13 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = true
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gte": 123.321,
 				"$lte": 321.123,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = true
@@ -179,12 +188,12 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = true
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$lte": 321.123,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = false
@@ -192,12 +201,12 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = true
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gt": 123.321,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = true
@@ -205,10 +214,10 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = true
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = false
@@ -216,12 +225,12 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = true
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gte": 123.321,
 			},
 		},
+		testCriterion.ToFilter(),
 	)
 
 	testCriterion.Start.Ignore = true
@@ -229,9 +238,9 @@ func (t *rangeTest) Test() {
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = true
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": map[string]interface{}{},
 		},
+		testCriterion.ToFilter(),
 	)
 }

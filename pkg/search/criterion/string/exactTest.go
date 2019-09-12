@@ -12,35 +12,50 @@ type exactTest struct {
 func (t *exactTest) Test() {
 	testCriterion := Exact{}
 
-	t.Equal(testCriterion.Type(), criterion.StringExactCriterionType)
+	t.Equal(
+		criterion.StringExactCriterionType,
+		testCriterion.Type(),
+	)
 
-	t.Equal(testCriterion.IsValid(), criterion.ErrInvalid{Reasons: []string{
-		"string is blank",
-		"field is blank",
-	}})
+	t.Equal(
+		criterion.ErrInvalid{Reasons: []string{
+			"string is blank",
+			"field is blank",
+		}},
+		testCriterion.IsValid(),
+	)
 
 	testCriterion.String = "string"
 
-	t.Equal(testCriterion.IsValid(), criterion.ErrInvalid{Reasons: []string{
-		"field is blank",
-	}})
+	t.Equal(
+		criterion.ErrInvalid{Reasons: []string{
+			"field is blank",
+		}},
+		testCriterion.IsValid(),
+	)
 
 	testCriterion.String = ""
 	testCriterion.Field = "someField"
 
-	t.Equal(testCriterion.IsValid(), criterion.ErrInvalid{Reasons: []string{
-		"string is blank",
-	}})
+	t.Equal(
+		criterion.ErrInvalid{Reasons: []string{
+			"string is blank",
+		}},
+		testCriterion.IsValid(),
+	)
 
 	testCriterion.String = "string"
 	testCriterion.Field = "someField"
 
-	t.Equal(testCriterion.IsValid(), nil)
+	t.Equal(
+		nil,
+		testCriterion.IsValid(),
+	)
 
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": "string",
 		},
+		testCriterion.ToFilter(),
 	)
 }

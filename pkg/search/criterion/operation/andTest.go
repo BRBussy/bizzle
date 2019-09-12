@@ -14,9 +14,15 @@ type andTest struct {
 func (t *andTest) Test() {
 	testCriteria := And{}
 
-	t.Equal(testCriteria.Type(), criterion.OperationAndCriterionType)
+	t.Equal(
+		criterion.OperationAndCriterionType,
+		testCriteria.Type(),
+	)
 
-	t.Equal(testCriteria.IsValid(), criterion.ErrInvalid{Reasons: []string{"no criteria to and together"}})
+	t.Equal(
+		criterion.ErrInvalid{Reasons: []string{"no criteria to and together"}},
+		testCriteria.IsValid(),
+	)
 
 	numberCriteria := numberCriterion.Exact{
 		Field:  "amountDue",
@@ -43,10 +49,12 @@ func (t *andTest) Test() {
 		},
 	}
 
-	t.Equal(testCriteria.IsValid(), nil)
+	t.Equal(
+		nil,
+		testCriteria.IsValid(),
+	)
 
 	t.Equal(
-		testCriteria.ToFilter(),
 		map[string]interface{}{
 			"$and": []map[string]interface{}{
 				numberCriteria.ToFilter(),
@@ -58,5 +66,6 @@ func (t *andTest) Test() {
 				},
 			},
 		},
+		testCriteria.ToFilter(),
 	)
 }

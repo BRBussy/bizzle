@@ -14,23 +14,32 @@ func (t *exactTest) Test() {
 	testCriterion := Exact{}
 
 	// confirm is valid fails with field is blank
-	t.Equal(testCriterion.IsValid(), criterion.ErrInvalid{Reasons: []string{"field is blank"}})
+	t.Equal(
+		criterion.ErrInvalid{Reasons: []string{"field is blank"}},
+		testCriterion.IsValid(),
+	)
 
 	// confirm that type returns correct type
-	t.Equal(testCriterion.Type(), criterion.NumberExactCriterionType)
+	t.Equal(
+		criterion.NumberExactCriterionType,
+		testCriterion.Type(),
+	)
 
 	// populate field and value
 	testCriterion.Field = "someField"
 	testCriterion.Number = 123.123
 
 	// confirm is valid does not fail
-	t.Equal(testCriterion.IsValid(), nil)
+	t.Equal(
+		nil,
+		testCriterion.IsValid(),
+	)
 
 	// confirm return value of ToFilter
 	t.Equal(
-		testCriterion.ToFilter(),
 		map[string]interface{}{
 			"someField": 123.123,
 		},
+		testCriterion.ToFilter(),
 	)
 }

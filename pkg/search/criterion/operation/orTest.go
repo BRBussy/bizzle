@@ -14,9 +14,15 @@ type orTest struct {
 func (t *orTest) Test() {
 	testCriteria := Or{}
 
-	t.Equal(testCriteria.Type(), criterion.OperationOrCriterionType)
+	t.Equal(
+		criterion.OperationOrCriterionType,
+		testCriteria.Type(),
+	)
 
-	t.Equal(testCriteria.IsValid(), criterion.ErrInvalid{Reasons: []string{"no criteria to or together"}})
+	t.Equal(
+		criterion.ErrInvalid{Reasons: []string{"no criteria to or together"}},
+		testCriteria.IsValid(),
+	)
 
 	numberCriteria := numberCriterion.Exact{
 		Field:  "amountDue",
@@ -43,10 +49,12 @@ func (t *orTest) Test() {
 		},
 	}
 
-	t.Equal(testCriteria.IsValid(), nil)
+	t.Equal(
+		nil,
+		testCriteria.IsValid(),
+	)
 
 	t.Equal(
-		testCriteria.ToFilter(),
 		map[string]interface{}{
 			"$or": []map[string]interface{}{
 				numberCriteria.ToFilter(),
@@ -58,5 +66,6 @@ func (t *orTest) Test() {
 				},
 			},
 		},
+		testCriteria.ToFilter(),
 	)
 }
