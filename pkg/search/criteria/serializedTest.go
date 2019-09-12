@@ -68,6 +68,26 @@ var numberExact1 = testCase{
 	},
 }
 
+var and1 = testCase{
+	serializedCriterion: []byte(fmt.Sprintf(
+		"{\"someField\":{\"type\":\"%s\",\"number\":123.45},\"someOtherField\":{\"type\":\"%s\",\"string\":\"someExactString\"}}",
+		searchCriterion.NumberExactCriterionType,
+		searchCriterion.StringExactCriterionType,
+	)),
+	criterion: operationCriterion.And{
+		Criteria: []searchCriterion.Criterion{
+			numberCriterion.Exact{
+				Field:  "someField",
+				Number: 123.45,
+			},
+			stringCriterion.Exact{
+				Field:  "someOtherField",
+				String: "someExactString",
+			},
+		},
+	},
+}
+
 type serializedTest struct {
 	suite.Suite
 }
@@ -278,9 +298,10 @@ func (t serializedTest) TestSerializedCriteriaNumberExactCriterion() {
 
 func (t serializedTest) TestSerializedCriteriaOrCriterion() {
 	serializedValue := []byte(fmt.Sprintf(
-		"{\"$or\":[%s,%s]}",
+		"{\"$or\":[%s,%s,%s]}",
 		stringSubstring1.serializedCriterion,
 		stringExact1.serializedCriterion,
+		and1.serializedCriterion,
 	))
 
 	testSerializedCriteria := Serialized{}
@@ -295,6 +316,7 @@ func (t serializedTest) TestSerializedCriteriaOrCriterion() {
 				Criteria: []searchCriterion.Criterion{
 					stringSubstring1.criterion,
 					stringExact1.criterion,
+					and1.criterion,
 				},
 			},
 		},
