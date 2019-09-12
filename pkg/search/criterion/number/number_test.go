@@ -7,4 +7,5 @@ import (
 
 func TestExact(t *testing.T) {
 	suite.Run(t, new(exactTest))
+	suite.Run(t, new(rangeTest))
 }
