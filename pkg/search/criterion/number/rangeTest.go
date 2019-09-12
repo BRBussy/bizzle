@@ -108,4 +108,130 @@ func (t *rangeTest) Test() {
 			"someField": map[string]interface{}{},
 		},
 	)
+
+	testCriterion.Start.Ignore = false
+	testCriterion.Start.Inclusive = true
+	testCriterion.End.Ignore = true
+	testCriterion.End.Inclusive = false
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{
+				"$gte": 123.321,
+			},
+		},
+	)
+
+	testCriterion.Start.Ignore = true
+	testCriterion.Start.Inclusive = true
+	testCriterion.End.Ignore = true
+	testCriterion.End.Inclusive = false
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{},
+		},
+	)
+
+	testCriterion.Start.Ignore = false
+	testCriterion.Start.Inclusive = false
+	testCriterion.End.Ignore = false
+	testCriterion.End.Inclusive = true
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{
+				"$gt":  123.321,
+				"$lte": 321.123,
+			},
+		},
+	)
+
+	testCriterion.Start.Ignore = true
+	testCriterion.Start.Inclusive = false
+	testCriterion.End.Ignore = false
+	testCriterion.End.Inclusive = true
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{
+				"$lte": 321.123,
+			},
+		},
+	)
+
+	testCriterion.Start.Ignore = false
+	testCriterion.Start.Inclusive = true
+	testCriterion.End.Ignore = false
+	testCriterion.End.Inclusive = true
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{
+				"$gte": 123.321,
+				"$lte": 321.123,
+			},
+		},
+	)
+
+	testCriterion.Start.Ignore = true
+	testCriterion.Start.Inclusive = true
+	testCriterion.End.Ignore = false
+	testCriterion.End.Inclusive = true
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{
+				"$lte": 321.123,
+			},
+		},
+	)
+
+	testCriterion.Start.Ignore = false
+	testCriterion.Start.Inclusive = false
+	testCriterion.End.Ignore = true
+	testCriterion.End.Inclusive = true
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{
+				"$gt": 123.321,
+			},
+		},
+	)
+
+	testCriterion.Start.Ignore = true
+	testCriterion.Start.Inclusive = false
+	testCriterion.End.Ignore = true
+	testCriterion.End.Inclusive = true
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{},
+		},
+	)
+
+	testCriterion.Start.Ignore = false
+	testCriterion.Start.Inclusive = true
+	testCriterion.End.Ignore = true
+	testCriterion.End.Inclusive = true
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{
+				"$gte": 123.321,
+			},
+		},
+	)
+
+	testCriterion.Start.Ignore = true
+	testCriterion.Start.Inclusive = true
+	testCriterion.End.Ignore = true
+	testCriterion.End.Inclusive = true
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": map[string]interface{}{},
+		},
+	)
 }
