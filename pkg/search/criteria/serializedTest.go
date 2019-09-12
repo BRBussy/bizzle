@@ -37,7 +37,6 @@ var stringExact1 = testCase{
 }
 
 var numberRange1 = testCase{
-	//
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"someField\":{\"type\":\"%s\",\"start\":{\"number\":123.12,\"inclusive\":true,\"ignore\":false},\"end\":{\"number\":245.123,\"inclusive\":false,\"ignore\":false}}}",
 		searchCriterion.NumberRangeCriterionType,
@@ -144,6 +143,20 @@ func (t serializedTest) TestSerializedCriteriaOROperatorFailures() {
 			searchCriterion.ErrInvalid{Reasons: []string{"or operation criterion has an empty criterion array"}}.Error(),
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":[]}")),
+	)
+	// parsing failure in array
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"element in or",
+			ErrUnmarshal{Reasons: []string{
+				"string exact",
+				"json: cannot unmarshal number into Go struct field Exact.string of type string",
+			}}.Error(),
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"$or\":[{\"someField\":{\"type\":\"%s\",\"string\":555}}]}",
+			searchCriterion.StringExactCriterionType,
+		))),
 	)
 }
 
