@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestExact(t *testing.T) {
+func Test(t *testing.T) {
 	suite.Run(t, new(exactTest))
 	suite.Run(t, new(rangeTest))
 }

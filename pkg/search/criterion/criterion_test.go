@@ -1,4 +1,4 @@
-package operation
+package criterion
 
 import (
 	"github.com/stretchr/testify/suite"
@@ -6,6 +6,5 @@ import (
 )
 
 func Test(t *testing.T) {
-	suite.Run(t, new(andTest))
-	suite.Run(t, new(orTest))
+	suite.Run(t, new(criterionTest))
 }
