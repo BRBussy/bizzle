@@ -53,9 +53,7 @@ func (a *store) Find(request *exerciseStore.FindRequest) (*exerciseStore.FindRes
 	findResponse := new(exerciseStoreJsonRpcAdaptor.FindResponse)
 	if err := a.jsonRpcClient.JsonRpcRequest(
 		exerciseStore.FindService,
-		exerciseStoreJsonRpcAdaptor.FindRequest{
-			Criteria: wrappedCriteria,
-		},
+		exerciseStoreJsonRpcAdaptor.FindRequest{},
 		findResponse); err != nil {
 		log.Error().Err(err).Msg("authenticator json rpc SignUp")
 		return nil, err

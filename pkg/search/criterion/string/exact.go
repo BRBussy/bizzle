@@ -3,15 +3,15 @@ package string
 import "github.com/BRBussy/bizzle/pkg/search/criterion"
 
 type Exact struct {
-	Field string `json:"field"`
-	Text  string `json:"text"`
+	Field  string `json:"field"`
+	String string `json:"string"`
 }
 
 func (e Exact) IsValid() error {
 
 	reasonsInvalid := make([]string, 0)
 
-	if e.Text == "" {
+	if e.String == "" {
 		reasonsInvalid = append(reasonsInvalid, "text is blank")
 	}
 
@@ -31,5 +31,5 @@ func (e Exact) Type() criterion.Type {
 }
 
 func (e Exact) ToFilter() map[string]interface{} {
-	return map[string]interface{}{e.Field: e.Text}
+	return map[string]interface{}{e.Field: e.String}
 }

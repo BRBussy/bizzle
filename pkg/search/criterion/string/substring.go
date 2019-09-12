@@ -5,15 +5,15 @@ import (
 )
 
 type Substring struct {
-	Field string `json:"field"`
-	Text  string `json:"text"`
+	Field  string `json:"field"`
+	String string `json:"string"`
 }
 
 func (s Substring) IsValid() error {
 
 	reasonsInvalid := make([]string, 0)
 
-	if s.Text == "" {
+	if s.String == "" {
 		reasonsInvalid = append(reasonsInvalid, "text is blank")
 	}
 
@@ -35,7 +35,7 @@ func (s Substring) Type() criterion.Type {
 func (s Substring) ToFilter() map[string]interface{} {
 	return map[string]interface{}{
 		s.Field: map[string]interface{}{
-			"$regex":   ".*" + s.Text + ".*",
+			"$regex":   ".*" + s.String + ".*",
 			"$options": "i",
 		},
 	}
