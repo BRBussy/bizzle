@@ -1,7 +1,7 @@
 package store
 
 import (
-	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
+	searchCriteria "github.com/BRBussy/bizzle/pkg/search/criteria"
 )
 
 type Store interface {
@@ -12,7 +12,7 @@ const ServiceProvider = "Exercise-Store"
 const FindService = ServiceProvider + ".Find"
 
 type FindRequest struct {
-	Criteria searchCriterion.Criteria
+	Criteria searchCriteria.Criteria
 }
 
 type FindResponse struct {
