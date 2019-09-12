@@ -10,7 +10,7 @@ type Or struct {
 
 func (c Or) IsValid() error {
 	if len(c.Criteria) == 0 {
-		return criterion.ErrInvalid{Reasons: []string{"no criteria to or together"}}
+		return criterion.ErrInvalid{Reasons: []string{"or operation criterion has an empty criterion array"}}
 	}
 	return nil
 }

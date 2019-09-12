@@ -20,7 +20,7 @@ func (t *orTest) Test() {
 	)
 
 	t.Equal(
-		criterion.ErrInvalid{Reasons: []string{"no criteria to or together"}},
+		criterion.ErrInvalid{Reasons: []string{"or operation criterion has an empty criterion array"}},
 		testCriteria.IsValid(),
 	)
 

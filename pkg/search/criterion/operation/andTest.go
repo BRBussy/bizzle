@@ -20,7 +20,7 @@ func (t *andTest) Test() {
 	)
 
 	t.Equal(
-		criterion.ErrInvalid{Reasons: []string{"no criteria to and together"}},
+		criterion.ErrInvalid{Reasons: []string{"and operation criterion has an empty criterion array"}},
 		testCriteria.IsValid(),
 	)
 

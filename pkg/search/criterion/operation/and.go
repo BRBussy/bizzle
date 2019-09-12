@@ -10,7 +10,7 @@ type And struct {
 
 func (c And) IsValid() error {
 	if len(c.Criteria) == 0 {
-		return criterion.ErrInvalid{Reasons: []string{"no criteria to and together"}}
+		return criterion.ErrInvalid{Reasons: []string{"and operation criterion has an empty criterion array"}}
 	}
 	return nil
 }
