@@ -39,14 +39,14 @@ type typeHolder struct {
 	Type searchCriterion.Type `json:"type"`
 }
 
-type orHolder []map[string]json.RawMessage
+type jsonObject []map[string]json.RawMessage
 
 func parse(operationOrField string, value json.RawMessage) (searchCriterion.Criterion, error) {
 	var parsedCriterion searchCriterion.Criterion
 
 	switch operationOrField {
 	case searchCriterion.OROperator:
-		var oh orHolder
+		var oh jsonObject
 		if err := json.Unmarshal(value, &oh); err != nil {
 			log.Error().Err(err).Msg("unmarshalling wrapped criterion")
 			return nil, errors.New("unmarshalling failed: " + err.Error())

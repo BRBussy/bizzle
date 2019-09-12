@@ -29,7 +29,7 @@ func (c Criteria) ToFilter() map[string]interface{} {
 //func serialize(criterion searchCriterion.Criterion) (string, json.RawMessage, error) {
 //	switch typedCriterion := criterion.(type) {
 //	case operationCriterion.Or:
-//		var oh orHolder
+//		var oh jsonObject
 //
 //	}
 //}
