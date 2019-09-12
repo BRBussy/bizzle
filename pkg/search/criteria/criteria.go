@@ -109,6 +109,14 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 			typedCriterion.Field = operationOrField
 			parsedCriterion = typedCriterion
 
+		case searchCriterion.NumberExactCriterionType:
+			var typedCriterion numberCriterion.Exact
+			if err := json.Unmarshal(value, &typedCriterion); err != nil {
+				return nil, errors.New("unmarshalling failed: " + err.Error())
+			}
+			typedCriterion.Field = operationOrField
+			parsedCriterion = typedCriterion
+
 		default:
 			return nil, errors.New("invalid")
 		}
