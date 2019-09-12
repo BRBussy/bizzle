@@ -2,7 +2,8 @@ package operation
 
 import (
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
-	"github.com/BRBussy/bizzle/pkg/search/criterion/number"
+	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
+	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -17,13 +18,29 @@ func (t *orTest) Test() {
 
 	t.Equal(testCriteria.IsValid(), criterion.ErrInvalid{Reasons: []string{"no criteria to or together"}})
 
-	numberCriteria := number.Exact{
+	numberCriteria := numberCriterion.Exact{
 		Field:  "amountDue",
 		Number: 1234,
 	}
 
+	stringCriterion1 := stringCriterion.Exact{
+		Field:  "name",
+		String: "sam",
+	}
+
+	stringCriterion2 := stringCriterion.Substring{
+		Field:  "surname",
+		String: "smith",
+	}
+
 	testCriteria.Criteria = []criterion.Criterion{
 		numberCriteria,
+		Or{
+			Criteria: []criterion.Criterion{
+				stringCriterion1,
+				stringCriterion2,
+			},
+		},
 	}
 
 	t.Equal(testCriteria.IsValid(), nil)
@@ -33,6 +50,12 @@ func (t *orTest) Test() {
 		map[string]interface{}{
 			"$or": []map[string]interface{}{
 				numberCriteria.ToFilter(),
+				{
+					"$or": []map[string]interface{}{
+						stringCriterion1.ToFilter(),
+						stringCriterion2.ToFilter(),
+					},
+				},
 			},
 		},
 	)
