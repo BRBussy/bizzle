@@ -16,10 +16,18 @@ type Serialized struct {
 }
 
 func (s *Serialized) UnmarshalJSON(data []byte) error {
-	// unmarshal into serialized section of Serialized
+	// confirm that given data is not nil
+	if data == nil {
+		err := ErrInvalidSerializedCriteria{Reasons: []string{"json data nil"}}
+		log.Error().Err(err)
+		return err
+	}
+
+	// unmarshal into Serialized section of Serialized
 	if err := json.Unmarshal(data, &s.Serialized); err != nil {
-		log.Error().Err(err).Msg("unmarshalling serialized criterion")
-		return errors.New("unmarshalling failed: " + err.Error())
+		err = ErrUnmarshal{Reasons: []string{"json unmarshal", err.Error()}}
+		log.Error().Err(err)
+		return err
 	}
 
 	s.Criteria = make([]searchCriterion.Criterion, 0)
