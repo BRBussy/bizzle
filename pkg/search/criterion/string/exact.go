@@ -12,7 +12,7 @@ func (e Exact) IsValid() error {
 	reasonsInvalid := make([]string, 0)
 
 	if e.String == "" {
-		reasonsInvalid = append(reasonsInvalid, "text is blank")
+		reasonsInvalid = append(reasonsInvalid, "string is blank")
 	}
 
 	if e.Field == "" {
