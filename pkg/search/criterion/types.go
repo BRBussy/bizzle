@@ -6,6 +6,9 @@ func (t Type) String() string {
 	return string(t)
 }
 
+// criterion operators
+const OROperator string = "$or"
+
 // criterion operation types
 const OperationOrCriterionType Type = "OperationOr"
 

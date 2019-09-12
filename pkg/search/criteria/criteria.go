@@ -45,7 +45,7 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 	var parsedCriterion searchCriterion.Criterion
 
 	switch operationOrField {
-	case "$or":
+	case searchCriterion.OROperator:
 		var oh orHolder
 		if err := json.Unmarshal(value, &oh); err != nil {
 			log.Error().Err(err).Msg("unmarshalling wrapped criterion")
