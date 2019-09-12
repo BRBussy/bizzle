@@ -94,8 +94,12 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 	default:
 		th := new(typeHolder)
 		if err := json.Unmarshal(value, th); err != nil {
-			log.Error().Err(err).Msg("unmarshalling wrapped criterion")
-			return nil, errors.New("unmarshalling failed: " + err.Error())
+			err = ErrUnmarshal{Reasons: []string{
+				"criterion object unmarshal",
+				err.Error(),
+			}}
+			log.Error().Err(err)
+			return nil, err
 		}
 		switch th.Type {
 		case searchCriterion.StringSubstringCriterionType:

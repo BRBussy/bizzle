@@ -63,3 +63,28 @@ func (t serializedTest) TestSerializedCriteriaOROperator() {
 		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":[]}")),
 	)
 }
+
+func (t serializedTest) TestFieldCriterion() {
+	// invalid input for field criterion
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"criterion object unmarshal",
+			"json: cannot unmarshal array into Go value of type criteria.typeHolder",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":[]}")),
+	)
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"criterion object unmarshal",
+			"json: cannot unmarshal number into Go value of type criteria.typeHolder",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":5}")),
+	)
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"criterion object unmarshal",
+			"json: cannot unmarshal string into Go value of type criteria.typeHolder",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":\"string\"}")),
+	)
+}
