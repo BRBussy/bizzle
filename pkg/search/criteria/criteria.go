@@ -27,6 +27,7 @@ func (s *SerializedCriteria) UnmarshalJSON(data []byte) error {
 		parsedCriterion, err := parse(operationOrField, value)
 		if err != nil {
 			log.Error().Err(err).Msg("parsing criterion")
+			return err
 		}
 		s.Criteria = append(s.Criteria, parsedCriterion)
 	}
@@ -51,17 +52,17 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 			return nil, errors.New("unmarshalling failed: " + err.Error())
 		}
 		var orCriterion operationCriterion.Or
-		//orCriterion.Criteria = make([]searchCriterion.Criterion, 0)
-		//for _, serializedCriterion := range oh {
-		//	for operationOrField, value := range serializedCriterion {
-		//		crit, err := parse(operationOrField, value)
-		//		if err != nil {
-		//			log.Error().Err(err).Msg("parsing an or criterion")
-		//			return nil, errors.New("parsing an or criterion: " + err.Error())
-		//		}
-		//		orCriterion.Criteria = append(orCriterion.Criteria, crit)
-		//	}
-		//}
+		orCriterion.Criteria = make([]searchCriterion.Criterion, 0)
+		for _, serializedCriterion := range oh {
+			for operationOrField, value := range serializedCriterion {
+				crit, err := parse(operationOrField, value)
+				if err != nil {
+					log.Error().Err(err).Msg("parsing an or criterion")
+					return nil, errors.New("parsing an or criterion: " + err.Error())
+				}
+				orCriterion.Criteria = append(orCriterion.Criteria, crit)
+			}
+		}
 		parsedCriterion = orCriterion
 
 	default:
@@ -76,6 +77,7 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 			if err := json.Unmarshal(value, &typedCriterion); err != nil {
 				return nil, errors.New("unmarshalling failed: " + err.Error())
 			}
+			typedCriterion.Field = operationOrField
 			parsedCriterion = typedCriterion
 
 		case searchCriterion.StringExactCriterionType:
@@ -83,6 +85,7 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 			if err := json.Unmarshal(value, &typedCriterion); err != nil {
 				return nil, errors.New("unmarshalling failed: " + err.Error())
 			}
+			typedCriterion.Field = operationOrField
 			parsedCriterion = typedCriterion
 
 		case searchCriterion.NumberRangeCriterionType:
@@ -90,6 +93,7 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 			if err := json.Unmarshal(value, &typedCriterion); err != nil {
 				return nil, errors.New("unmarshalling failed: " + err.Error())
 			}
+			typedCriterion.Field = operationOrField
 			parsedCriterion = typedCriterion
 
 		default:

@@ -7,7 +7,6 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/environment"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
-	exerciseStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/store/adaptor/jsonRpc"
 	wrappedCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/wrapped"
 	"github.com/rs/zerolog/log"
 )
@@ -50,14 +49,14 @@ func (a *store) Find(request *exerciseStore.FindRequest) (*exerciseStore.FindRes
 		wrappedCriteria = append(wrappedCriteria, *wrappedCrit)
 	}
 
-	findResponse := new(exerciseStoreJsonRpcAdaptor.FindResponse)
-	if err := a.jsonRpcClient.JsonRpcRequest(
-		exerciseStore.FindService,
-		exerciseStoreJsonRpcAdaptor.FindRequest{},
-		findResponse); err != nil {
-		log.Error().Err(err).Msg("authenticator json rpc SignUp")
-		return nil, err
-	}
+	//findResponse := new(exerciseStoreJsonRpcAdaptor.FindResponse)
+	//if err := a.jsonRpcClient.JsonRpcRequest(
+	//	exerciseStore.FindService,
+	//	exerciseStoreJsonRpcAdaptor.FindRequest{},
+	//	findResponse); err != nil {
+	//	log.Error().Err(err).Msg("authenticator json rpc SignUp")
+	//	return nil, err
+	//}
 
 	return &exerciseStore.FindResponse{}, nil
 }
