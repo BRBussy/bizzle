@@ -2,7 +2,6 @@ package criteria
 
 import (
 	"encoding/json"
-	"errors"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
@@ -165,9 +164,6 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 	}
 
 	// check that parsed criterion is valid
-	if parsedCriterion == nil {
-		return nil, errors.New("criterion still nil")
-	}
 	if err := parsedCriterion.IsValid(); err != nil {
 		return nil, ErrInvalidSerializedCriteria{Reasons: []string{
 			err.Error(),
