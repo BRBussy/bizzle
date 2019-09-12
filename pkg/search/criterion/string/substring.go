@@ -14,7 +14,7 @@ func (s Substring) IsValid() error {
 	reasonsInvalid := make([]string, 0)
 
 	if s.String == "" {
-		reasonsInvalid = append(reasonsInvalid, "text is blank")
+		reasonsInvalid = append(reasonsInvalid, "string is blank")
 	}
 
 	if s.Field == "" {

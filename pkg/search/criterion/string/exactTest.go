@@ -36,4 +36,11 @@ func (t *exactTest) Test() {
 	testCriterion.Field = "someField"
 
 	t.Equal(testCriterion.IsValid(), nil)
+
+	t.Equal(
+		testCriterion.ToFilter(),
+		map[string]interface{}{
+			"someField": "string",
+		},
+	)
 }
