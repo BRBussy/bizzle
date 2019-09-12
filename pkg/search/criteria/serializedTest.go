@@ -351,3 +351,36 @@ func (t serializedTest) TestSerializedCriteriaOrCriterion() {
 		testSerializedCriteria.Criteria,
 	)
 }
+
+func (t *serializedTest) TestSerializedCriteriaCombinedCriterion() {
+	serializedValue := []byte(fmt.Sprintf(
+		"{\"$or\":[%s,%s,%s],\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
+		stringSubstring1.serializedCriterion,
+		stringExact1.serializedCriterion,
+		and1.serializedCriterion,
+		searchCriterion.StringSubstringCriterionType,
+	))
+
+	testSerializedCriteria := Serialized{}
+
+	t.Equal(
+		nil,
+		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
+	)
+	t.Equal(
+		[]searchCriterion.Criterion{
+			operationCriterion.Or{
+				Criteria: []searchCriterion.Criterion{
+					stringSubstring1.criterion,
+					stringExact1.criterion,
+					and1.criterion,
+				},
+			},
+			stringCriterion.Substring{
+				Field:  "someField",
+				String: "someSubstring",
+			},
+		},
+		testSerializedCriteria.Criteria,
+	)
+}
