@@ -158,6 +158,21 @@ func (t serializedTest) TestSerializedCriteriaOROperatorFailures() {
 			searchCriterion.StringExactCriterionType,
 		))),
 	)
+	// parsing failure in array with and
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"element in or",
+			ErrUnmarshal{Reasons: []string{
+				"string exact",
+				"json: cannot unmarshal number into Go struct field Exact.string of type string",
+			}}.Error(),
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"$or\":[{\"someField\":{\"type\":\"%s\",\"string\":555},\"someOtherField\":{\"type\":\"%s\",\"string\":555}}]}",
+			searchCriterion.StringExactCriterionType,
+			searchCriterion.StringSubstringCriterionType,
+		))),
+	)
 }
 
 func (t serializedTest) TestSerializedCriteriaFieldCriterionFailures() {
