@@ -9,9 +9,9 @@ type And struct {
 }
 
 func (c And) IsValid() error {
-	//if len(c.Criteria) == 0 {
-	//	return criterion.ErrInvalid{Reasons: []string{"no criteria to or together"}}
-	//}
+	if len(c.Criteria) == 0 {
+		return criterion.ErrInvalid{Reasons: []string{"no criteria to and together"}}
+	}
 	return nil
 }
 
