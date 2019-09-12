@@ -136,6 +136,19 @@ func (t serializedTest) TestSerializedCriteriaFieldCriterionFailures() {
 }
 
 func (t serializedTest) TestSerializedCriteriaStringSubstringCriterion() {
+	// unmarshalling failure
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"string substring",
+			"json: cannot unmarshal number into Go struct field Substring.string of type string",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"someField\":{\"type\":\"%s\",\"string\":555}}",
+			searchCriterion.StringSubstringCriterionType,
+		))),
+	)
+
+	// unmarshalling success
 	testSubstringCriterion := Serialized{}
 	t.Equal(
 		nil,
@@ -150,6 +163,19 @@ func (t serializedTest) TestSerializedCriteriaStringSubstringCriterion() {
 }
 
 func (t serializedTest) TestSerializedCriteriaStringExactCriterion() {
+	// unmarshalling failure
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"string exact",
+			"json: cannot unmarshal number into Go struct field Exact.string of type string",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"someField\":{\"type\":\"%s\",\"string\":555}}",
+			searchCriterion.StringExactCriterionType,
+		))),
+	)
+
+	// unmarshalling success
 	testSubstringCriterion := Serialized{}
 	t.Equal(
 		nil,

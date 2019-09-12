@@ -105,7 +105,11 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 		case searchCriterion.StringSubstringCriterionType:
 			var typedCriterion stringCriterion.Substring
 			if err := json.Unmarshal(value, &typedCriterion); err != nil {
-				return nil, errors.New("unmarshalling failed: " + err.Error())
+				err = ErrUnmarshal{Reasons: []string{
+					"string substring",
+					err.Error(),
+				}}
+				return nil, err
 			}
 			typedCriterion.Field = operationOrField
 			parsedCriterion = typedCriterion
@@ -113,7 +117,11 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 		case searchCriterion.StringExactCriterionType:
 			var typedCriterion stringCriterion.Exact
 			if err := json.Unmarshal(value, &typedCriterion); err != nil {
-				return nil, errors.New("unmarshalling failed: " + err.Error())
+				err = ErrUnmarshal{Reasons: []string{
+					"string exact",
+					err.Error(),
+				}}
+				return nil, err
 			}
 			typedCriterion.Field = operationOrField
 			parsedCriterion = typedCriterion
