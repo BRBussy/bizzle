@@ -57,6 +57,17 @@ var numberRange1 = testCase{
 	},
 }
 
+var numberExact1 = testCase{
+	serializedCriterion: []byte(fmt.Sprintf(
+		"{\"someField\":{\"type\":\"%s\",\"number\":123.45}}",
+		searchCriterion.NumberExactCriterionType,
+	)),
+	criterion: numberCriterion.Exact{
+		Field:  "someField",
+		Number: 123.45,
+	},
+}
+
 type serializedTest struct {
 	suite.Suite
 }
@@ -171,16 +182,16 @@ func (t serializedTest) TestSerializedCriteriaStringSubstringCriterion() {
 	)
 
 	// unmarshalling success
-	testSubstringCriterion := Serialized{}
+	testSerializedCriteria := Serialized{}
 	t.Equal(
 		nil,
-		(&testSubstringCriterion).UnmarshalJSON(stringSubstring1.serializedCriterion),
+		(&testSerializedCriteria).UnmarshalJSON(stringSubstring1.serializedCriterion),
 	)
 	t.Equal(
 		[]searchCriterion.Criterion{
 			stringSubstring1.criterion,
 		},
-		testSubstringCriterion.Criteria,
+		testSerializedCriteria.Criteria,
 	)
 }
 
@@ -198,16 +209,16 @@ func (t serializedTest) TestSerializedCriteriaStringExactCriterion() {
 	)
 
 	// unmarshalling success
-	testSubstringCriterion := Serialized{}
+	testSerializedCriteria := Serialized{}
 	t.Equal(
 		nil,
-		(&testSubstringCriterion).UnmarshalJSON(stringExact1.serializedCriterion),
+		(&testSerializedCriteria).UnmarshalJSON(stringExact1.serializedCriterion),
 	)
 	t.Equal(
 		[]searchCriterion.Criterion{
 			stringExact1.criterion,
 		},
-		testSubstringCriterion.Criteria,
+		testSerializedCriteria.Criteria,
 	)
 }
 
@@ -225,16 +236,43 @@ func (t serializedTest) TestSerializedCriteriaNumberRangeCriterion() {
 	)
 
 	// unmarshalling success
-	testNumberRangeCriterion := Serialized{}
+	testSerializedCriteria := Serialized{}
 	t.Equal(
 		nil,
-		(&testNumberRangeCriterion).UnmarshalJSON(numberRange1.serializedCriterion),
+		(&testSerializedCriteria).UnmarshalJSON(numberRange1.serializedCriterion),
 	)
 	t.Equal(
 		[]searchCriterion.Criterion{
 			numberRange1.criterion,
 		},
-		testNumberRangeCriterion.Criteria,
+		testSerializedCriteria.Criteria,
+	)
+}
+
+func (t serializedTest) TestSerializedCriteriaNumberExactCriterion() {
+	// unmarshalling failure
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"number exact",
+			"json: cannot unmarshal string into Go struct field Exact.number of type float64",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"someField\":{\"type\":\"%s\",\"number\":\"123.45\"}}",
+			searchCriterion.NumberExactCriterionType,
+		))),
+	)
+
+	// unmarshalling success
+	testSerializedCriteria := Serialized{}
+	t.Equal(
+		nil,
+		(&testSerializedCriteria).UnmarshalJSON(numberExact1.serializedCriterion),
+	)
+	t.Equal(
+		[]searchCriterion.Criterion{
+			numberExact1.criterion,
+		},
+		testSerializedCriteria.Criteria,
 	)
 }
 
@@ -245,11 +283,11 @@ func (t serializedTest) TestSerializedCriteriaOrCriterion() {
 		stringExact1.serializedCriterion,
 	))
 
-	testOrCriterion := Serialized{}
+	testSerializedCriteria := Serialized{}
 
 	t.Equal(
 		nil,
-		(&testOrCriterion).UnmarshalJSON(serializedValue),
+		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
 	)
 	t.Equal(
 		[]searchCriterion.Criterion{
@@ -260,6 +298,6 @@ func (t serializedTest) TestSerializedCriteriaOrCriterion() {
 				},
 			},
 		},
-		testOrCriterion.Criteria,
+		testSerializedCriteria.Criteria,
 	)
 }
