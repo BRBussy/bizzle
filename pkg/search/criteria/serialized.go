@@ -10,13 +10,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type SerializedCriteria struct {
+type Serialized struct {
 	Serialized map[string]json.RawMessage
 	Criteria   []searchCriterion.Criterion
 }
 
-func (s *SerializedCriteria) UnmarshalJSON(data []byte) error {
-	// unmarshal into serialized section of SerializedCriteria
+func (s *Serialized) UnmarshalJSON(data []byte) error {
+	// unmarshal into serialized section of Serialized
 	if err := json.Unmarshal(data, &s.Serialized); err != nil {
 		log.Error().Err(err).Msg("unmarshalling serialized criterion")
 		return errors.New("unmarshalling failed: " + err.Error())

@@ -28,7 +28,7 @@ func (a *adaptor) MethodRequiresAuthorization(method string) bool {
 }
 
 type FindRequest struct {
-	SerializedCriteria criteria.SerializedCriteria `json:"criteria"`
+	SerializedCriteria criteria.Serialized `json:"criteria"`
 }
 
 type FindResponse struct {
