@@ -18,7 +18,7 @@ type Serialized struct {
 func (s *Serialized) UnmarshalJSON(data []byte) error {
 	// confirm that given data is not nil
 	if data == nil {
-		err := ErrInvalidSerializedCriteria{Reasons: []string{"json data nil"}}
+		err := ErrInvalidSerializedCriteria{Reasons: []string{"json criterion data is nil"}}
 		log.Error().Err(err)
 		return err
 	}
@@ -30,6 +30,7 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	// parse each key value pair of the serialized criterion to a valid criterion
 	s.Criteria = make([]searchCriterion.Criterion, 0)
 	for operationOrField, value := range s.Serialized {
 		parsedCriterion, err := parse(operationOrField, value)
