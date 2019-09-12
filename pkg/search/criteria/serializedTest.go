@@ -3,6 +3,7 @@ package criteria
 import (
 	"fmt"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
+	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
 	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
 	"github.com/stretchr/testify/suite"
@@ -32,6 +33,27 @@ var stringExact1 = testCase{
 	criterion: stringCriterion.Exact{
 		Field:  "someField",
 		String: "someExactString",
+	},
+}
+
+var numberRange1 = testCase{
+	//
+	serializedCriterion: []byte(fmt.Sprintf(
+		"{\"someField\":{\"type\":\"%s\",\"start\":{\"number\":123.12,\"inclusive\":true,\"ignore\":false},\"end\":{\"number\":245.123,\"inclusive\":false,\"ignore\":false}}}",
+		searchCriterion.NumberRangeCriterionType,
+	)),
+	criterion: numberCriterion.Range{
+		Field: "someField",
+		Start: numberCriterion.RangeValue{
+			Number:    123.12,
+			Inclusive: true,
+			Ignore:    false,
+		},
+		End: numberCriterion.RangeValue{
+			Number:    245.123,
+			Inclusive: false,
+			Ignore:    false,
+		},
 	},
 }
 
@@ -186,6 +208,33 @@ func (t serializedTest) TestSerializedCriteriaStringExactCriterion() {
 			stringExact1.criterion,
 		},
 		testSubstringCriterion.Criteria,
+	)
+}
+
+func (t serializedTest) TestSerializedCriteriaNumberRangeCriterion() {
+	// unmarshalling failure
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"number range",
+			"json: cannot unmarshal string into Go struct field RangeValue.start.number of type float64",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"someField\":{\"type\":\"%s\",\"start\":{\"number\":\"123.12\",\"inclusive\":true,\"ignore\":false},\"end\":{\"number\":\"245.123\",\"inclusive\":false,\"ignore\":false}}}",
+			searchCriterion.NumberRangeCriterionType,
+		))),
+	)
+
+	// unmarshalling success
+	testNumberRangeCriterion := Serialized{}
+	t.Equal(
+		nil,
+		(&testNumberRangeCriterion).UnmarshalJSON(numberRange1.serializedCriterion),
+	)
+	t.Equal(
+		[]searchCriterion.Criterion{
+			numberRange1.criterion,
+		},
+		testNumberRangeCriterion.Criteria,
 	)
 }
 

@@ -129,7 +129,11 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 		case searchCriterion.NumberRangeCriterionType:
 			var typedCriterion numberCriterion.Range
 			if err := json.Unmarshal(value, &typedCriterion); err != nil {
-				return nil, errors.New("unmarshalling failed: " + err.Error())
+				err = ErrUnmarshal{Reasons: []string{
+					"number range",
+					err.Error(),
+				}}
+				return nil, err
 			}
 			typedCriterion.Field = operationOrField
 			parsedCriterion = typedCriterion
