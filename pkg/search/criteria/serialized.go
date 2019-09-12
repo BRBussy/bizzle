@@ -135,7 +135,10 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 			parsedCriterion = typedCriterion
 
 		default:
-			return nil, errors.New("invalid")
+			return nil, ErrInvalidSerializedCriteria{Reasons: []string{
+				"invalid field criterion type",
+				th.Type.String(),
+			}}
 		}
 	}
 

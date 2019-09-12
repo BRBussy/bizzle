@@ -1,7 +1,9 @@
 package criteria
 
 import (
+	"fmt"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
+	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -32,7 +34,7 @@ func (t serializedTest) TestSerializedCriteriaInvalidInput() {
 	)
 }
 
-func (t serializedTest) TestSerializedCriteriaOROperator() {
+func (t serializedTest) TestSerializedCriteriaOROperatorFailures() {
 	// invalid value provided for $or operator
 	t.Equal(
 		ErrUnmarshal{Reasons: []string{
@@ -64,7 +66,7 @@ func (t serializedTest) TestSerializedCriteriaOROperator() {
 	)
 }
 
-func (t serializedTest) TestFieldCriterion() {
+func (t serializedTest) TestFieldCriterionFailures() {
 	// invalid input for field criterion
 	t.Equal(
 		ErrUnmarshal{Reasons: []string{
@@ -86,5 +88,42 @@ func (t serializedTest) TestFieldCriterion() {
 			"json: cannot unmarshal string into Go value of type criteria.typeHolder",
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":\"string\"}")),
+	)
+	// invalid type for field criterion
+	t.Equal(
+		ErrUnmarshal{Reasons: []string{
+			"criterion object unmarshal",
+			"json: cannot unmarshal number into Go struct field typeHolder.type of type criterion.Type",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":{\"type\":4}}")),
+	)
+	// invalid value for field criterion
+	t.Equal(
+		ErrInvalidSerializedCriteria{Reasons: []string{
+			"invalid field criterion type",
+			"invalidType",
+		}},
+		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":{\"type\":\"invalidType\"}}")),
+	)
+}
+
+func (t serializedTest) TestStringSubstringCriterion() {
+	serializedSubstring := []byte(fmt.Sprintf(
+		"{\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
+		searchCriterion.StringSubstringCriterionType,
+	))
+	testSubstringCriterion := Serialized{}
+	t.Equal(
+		nil,
+		(&testSubstringCriterion).UnmarshalJSON(serializedSubstring),
+	)
+	t.Equal(
+		[]searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "someField",
+				String: "someSubstring",
+			},
+		},
+		testSubstringCriterion.Criteria,
 	)
 }
