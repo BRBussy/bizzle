@@ -17,15 +17,15 @@ type compareTestCase struct {
 	result bool
 }
 
-var compareTestCases = []compareTestCase{
+var fieldOnlyTestCases = []compareTestCase{
 	{
-		id:     "0",
+		id:     "fieldOnlyTestCase 1",
 		a:      make([]searchCriterion.Criterion, 0),
 		b:      make([]searchCriterion.Criterion, 0),
 		result: true,
 	},
 	{
-		id: "2",
+		id: "fieldOnlyTestCase 2",
 		a:  make([]searchCriterion.Criterion, 0),
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{},
@@ -33,7 +33,7 @@ var compareTestCases = []compareTestCase{
 		result: false,
 	},
 	{
-		id: "3",
+		id: "fieldOnlyTestCase 3",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{},
 		},
@@ -41,7 +41,7 @@ var compareTestCases = []compareTestCase{
 		result: false,
 	},
 	{
-		id: "4",
+		id: "fieldOnlyTestCase 4",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
 				Field:  "testField",
@@ -57,7 +57,7 @@ var compareTestCases = []compareTestCase{
 		result: true,
 	},
 	{
-		id: "5",
+		id: "fieldOnlyTestCase 5",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
 				Field:  "testFieldDifferent",
@@ -73,7 +73,7 @@ var compareTestCases = []compareTestCase{
 		result: false,
 	},
 	{
-		id: "6",
+		id: "fieldOnlyTestCase 6",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
 				Field:  "testFieldDifferent",
@@ -93,7 +93,7 @@ var compareTestCases = []compareTestCase{
 		result: false,
 	},
 	{
-		id: "7",
+		id: "fieldOnlyTestCase 7",
 		a: []searchCriterion.Criterion{
 			numberCriterion.Exact{
 				Field:  "testNumberExactField",
@@ -124,8 +124,11 @@ var compareTestCases = []compareTestCase{
 		},
 		result: true,
 	},
+}
+
+var operationORTestCases = []compareTestCase{
 	{
-		id: "8",
+		id: "operationORTestCase 1",
 		a: []searchCriterion.Criterion{
 			operationCriterion.Or{
 				Criteria: Criteria{},
@@ -147,7 +150,7 @@ var compareTestCases = []compareTestCase{
 		result: true,
 	},
 	{
-		id: "9",
+		id: "operationORTestCase 2",
 		a: []searchCriterion.Criterion{
 			operationCriterion.Or{
 				Criteria: Criteria{
@@ -188,7 +191,7 @@ var compareTestCases = []compareTestCase{
 		result: false,
 	},
 	{
-		id: "10",
+		id: "operationORTestCase 3",
 		a: []searchCriterion.Criterion{
 			operationCriterion.Or{
 				Criteria: Criteria{
@@ -246,7 +249,7 @@ var compareTestCases = []compareTestCase{
 		result: true,
 	},
 	{
-		id: "11",
+		id: "operationORTestCase 4",
 		a: []searchCriterion.Criterion{
 			operationCriterion.Or{
 				Criteria: Criteria{
@@ -291,7 +294,7 @@ var compareTestCases = []compareTestCase{
 		result: false,
 	},
 	{
-		id: "12",
+		id: "operationORTestCase 5",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
 				Field:  "testStringSubstringField",
@@ -395,11 +398,18 @@ var compareTestCases = []compareTestCase{
 func TestCriteriaCompare(t *testing.T) {
 	assert := testifyAssert.New(t)
 
-	for i := range compareTestCases {
+	for i := range fieldOnlyTestCases {
 		assert.Equal(
-			compareTestCases[i].result,
-			Compare(compareTestCases[i].a, compareTestCases[i].b),
-			fmt.Sprintf("case %s", compareTestCases[i].id),
+			fieldOnlyTestCases[i].result,
+			Compare(fieldOnlyTestCases[i].a, fieldOnlyTestCases[i].b),
+			fmt.Sprintf("%s", fieldOnlyTestCases[i].id),
+		)
+	}
+	for i := range operationORTestCases {
+		assert.Equal(
+			operationORTestCases[i].result,
+			Compare(operationORTestCases[i].a, operationORTestCases[i].b),
+			fmt.Sprintf("%s", operationORTestCases[i].id),
 		)
 	}
 }
