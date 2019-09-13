@@ -34,6 +34,51 @@ var compareTestCases = []compareTestCase{
 		b:      make([]searchCriterion.Criterion, 0),
 		result: false,
 	},
+	{
+		a: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testField",
+				String: "testString",
+			},
+		},
+		b: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testField",
+				String: "testString",
+			},
+		},
+		result: true,
+	},
+	{
+		a: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testFieldDifferent",
+				String: "testString",
+			},
+		},
+		b: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testField",
+				String: "testString",
+			},
+		},
+		result: false,
+	},
+	{
+		a: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testField",
+				String: "testString",
+			},
+		},
+		b: []searchCriterion.Criterion{
+			stringCriterion.Exact{
+				Field:  "testField",
+				String: "testString",
+			},
+		},
+		result: false,
+	},
 }
 
 func TestCriteriaCompare(t *testing.T) {
