@@ -17,33 +17,33 @@ type testCase struct {
 
 var stringSubstring1 = testCase{
 	serializedCriterion: []byte(fmt.Sprintf(
-		"{\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
+		"{\"stringSubstring1Field\":{\"type\":\"%s\",\"string\":\"stringSubstring1\"}}",
 		searchCriterion.StringSubstringCriterionType,
 	)),
 	criterion: stringCriterion.Substring{
-		Field:  "someField",
-		String: "someSubstring",
+		Field:  "stringSubstring1Field",
+		String: "stringSubstring1",
 	},
 }
 
 var stringExact1 = testCase{
 	serializedCriterion: []byte(fmt.Sprintf(
-		"{\"someField\":{\"type\":\"%s\",\"string\":\"someExactString\"}}",
+		"{\"stringExact1Field\":{\"type\":\"%s\",\"string\":\"stringExact1\"}}",
 		searchCriterion.StringExactCriterionType,
 	)),
 	criterion: stringCriterion.Exact{
-		Field:  "someField",
-		String: "someExactString",
+		Field:  "stringExact1Field",
+		String: "stringExact1",
 	},
 }
 
 var numberRange1 = testCase{
 	serializedCriterion: []byte(fmt.Sprintf(
-		"{\"someField\":{\"type\":\"%s\",\"start\":{\"number\":123.12,\"inclusive\":true,\"ignore\":false},\"end\":{\"number\":245.123,\"inclusive\":false,\"ignore\":false}}}",
+		"{\"numberRange1Field\":{\"type\":\"%s\",\"start\":{\"number\":123.12,\"inclusive\":true,\"ignore\":false},\"end\":{\"number\":245.123,\"inclusive\":false,\"ignore\":false}}}",
 		searchCriterion.NumberRangeCriterionType,
 	)),
 	criterion: numberCriterion.Range{
-		Field: "someField",
+		Field: "numberRange1Field",
 		Start: numberCriterion.RangeValue{
 			Number:    123.12,
 			Inclusive: true,
@@ -59,11 +59,11 @@ var numberRange1 = testCase{
 
 var numberExact1 = testCase{
 	serializedCriterion: []byte(fmt.Sprintf(
-		"{\"someField\":{\"type\":\"%s\",\"number\":123.45}}",
+		"{\"numberExact1Field\":{\"type\":\"%s\",\"number\":123.45}}",
 		searchCriterion.NumberExactCriterionType,
 	)),
 	criterion: numberCriterion.Exact{
-		Field:  "someField",
+		Field:  "numberExact1Field",
 		Number: 123.45,
 	},
 }
@@ -430,9 +430,10 @@ func TestSerializedCriteriaORCriterion(t *testing.T) {
 func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 	assert := testifyAssert.New(t)
 	serializedValue := []byte(fmt.Sprintf(
-		"{\"$or\":[%s,%s],\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
+		"{\"$or\":[%s,%s,%s],\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
 		stringSubstring1.serializedCriterion,
 		stringExact1.serializedCriterion,
+		and1.serializedCriterion,
 		searchCriterion.StringSubstringCriterionType,
 	))
 
@@ -461,6 +462,7 @@ func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 			testSerializedCriteria.Criteria,
 			assert,
 		),
+		"criteria should be equal",
 	)
 }
 
