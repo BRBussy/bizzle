@@ -15,14 +15,14 @@ type testCase struct {
 	criterion           searchCriterion.Criterion
 }
 
-var stringSubstring1 = testCase{
+var stringSubstring1TestCase = testCase{
 	serializedCriterion: []byte(fmt.Sprintf(
-		"{\"stringSubstring1Field\":{\"type\":\"%s\",\"string\":\"stringSubstring1\"}}",
+		"{\"stringSubstring1Field\":{\"type\":\"%s\",\"string\":\"stringSubstring1TestCase\"}}",
 		searchCriterion.StringSubstringCriterionType,
 	)),
 	criterion: stringCriterion.Substring{
 		Field:  "stringSubstring1Field",
-		String: "stringSubstring1",
+		String: "stringSubstring1TestCase",
 	},
 }
 
@@ -68,7 +68,7 @@ var numberExact1 = testCase{
 	},
 }
 
-var and1 = testCase{
+var operationAnd1 = testCase{
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"someField\":{\"type\":\"%s\",\"number\":123.45},\"someOtherField\":{\"type\":\"%s\",\"string\":\"someExactString\"}}",
 		searchCriterion.NumberExactCriterionType,
@@ -86,6 +86,28 @@ var and1 = testCase{
 			},
 		},
 	},
+}
+
+var operationOr1TestCaseCriterion = operationCriterion.Or{
+	Criteria: Criteria{
+		stringSubstring1TestCase.criterion,
+		stringExact1.criterion,
+		numberRange1.criterion,
+		numberExact1.criterion,
+		operationAnd1.criterion,
+	},
+}
+
+var operationOr1TestCase = testCase{
+	serializedCriterion: []byte(fmt.Sprintf(
+		"{\"$or\":[%s,%s,%s,%s,%s]}",
+		stringSubstring1TestCase.serializedCriterion,
+		stringExact1.serializedCriterion,
+		numberRange1.serializedCriterion,
+		numberExact1.serializedCriterion,
+		operationAnd1.serializedCriterion,
+	)),
+	criterion: operationOr1TestCaseCriterion,
 }
 
 func TestSerializedCriteriaInvalidInput(t *testing.T) {
@@ -237,11 +259,11 @@ func TestSerializedCriteriaStringSubstringCriterion(t *testing.T) {
 	testSerializedCriteria := Serialized{}
 	assert.Equal(
 		nil,
-		(&testSerializedCriteria).UnmarshalJSON(stringSubstring1.serializedCriterion),
+		(&testSerializedCriteria).UnmarshalJSON(stringSubstring1TestCase.serializedCriterion),
 	)
 	assert.Equal(
 		[]searchCriterion.Criterion{
-			stringSubstring1.criterion,
+			stringSubstring1TestCase.criterion,
 		},
 		testSerializedCriteria.Criteria,
 	)
@@ -333,134 +355,22 @@ func TestSerializedCriteriaNumberExactCriterion(t *testing.T) {
 
 func TestSerializedCriteriaORCriterion(t *testing.T) {
 	assert := testifyAssert.New(t)
-	serializedValue := []byte(fmt.Sprintf(
-		"{\"$or\":[%s,%s,%s]}",
-		stringSubstring1.serializedCriterion,
-		stringExact1.serializedCriterion,
-		and1.serializedCriterion,
-	))
-
 	testSerializedCriteria := Serialized{}
 
 	assert.Equal(
 		nil,
-		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
+		(&testSerializedCriteria).UnmarshalJSON(operationOr1TestCase.serializedCriterion),
 	)
 
-	expectedCriterion := []searchCriterion.Criterion{
-		operationCriterion.Or{
-			Criteria: []searchCriterion.Criterion{
-				stringSubstring1.criterion,
-				stringExact1.criterion,
-				and1.criterion,
-			},
-		},
-	}
-
-	// NOTE: a direct equal assertion is not possible here since as the
-	// order of keys in a map cannot be guaranteed the order of elements
-	// in the resultant criteria slice may differ to the expected
-
-	assert.Equal(
-		len(expectedCriterion),
-		len(testSerializedCriteria.Criteria),
-		"criteria should have correct no. of entries",
-	)
-	assert.IsType(
-		expectedCriterion[0],
-		testSerializedCriteria.Criteria[0],
-		"both resultant and expected first elements should have the same type",
-	)
-	// infer or type of expected and resultant first elements
-	expectedORCriterion, ok := expectedCriterion[0].(operationCriterion.Or)
 	assert.Equal(
 		true,
-		ok,
-	)
-	resultORCriterion, ok := testSerializedCriteria.Criteria[0].(operationCriterion.Or)
-	assert.Equal(
-		true,
-		ok,
-	)
-
-	assert.Equal(
-		len(expectedORCriterion.Criteria),
-		len(resultORCriterion.Criteria),
-		"the resultant OR criteria should have correct no of elements",
-	)
-
-	// check first and second element equality
-	assert.Equal(
-		expectedORCriterion.Criteria[0],
-		resultORCriterion.Criteria[0],
-	)
-	assert.Equal(
-		expectedORCriterion.Criteria[1],
-		resultORCriterion.Criteria[1],
-	)
-
-	// confirm that 3rd elements have same type
-	assert.IsType(
-		expectedORCriterion.Criteria[2],
-		resultORCriterion.Criteria[2],
-	)
-	// infer or type of expected and resultant 3rd elements
-	expectedANDCriterion, ok := expectedORCriterion.Criteria[2].(operationCriterion.And)
-	assert.Equal(
-		true,
-		ok,
-	)
-	resultANDCriterion, ok := resultORCriterion.Criteria[2].(operationCriterion.And)
-	assert.Equal(
-		true,
-		ok,
-	)
-	assert.Equal(
-		len(expectedANDCriterion.Criteria),
-		len(resultANDCriterion.Criteria),
-		"the resultant AND criteria should have correct no of elements",
-	)
-	// confirm contents of and are the same
-	assert.ElementsMatch(
-		expectedANDCriterion.Criteria,
-		resultANDCriterion.Criteria,
+		CompareCriteria(
+			operationOr1TestCaseCriterion.Criteria,
+			testSerializedCriteria.Criteria,
+		),
 	)
 }
 
 func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
-	assert := testifyAssert.New(t)
-	serializedValue := []byte(fmt.Sprintf(
-		"{\"$or\":[%s,%s,%s],\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
-		stringSubstring1.serializedCriterion,
-		stringExact1.serializedCriterion,
-		and1.serializedCriterion,
-		searchCriterion.StringSubstringCriterionType,
-	))
 
-	testSerializedCriteria := Serialized{}
-
-	assert.Equal(
-		nil,
-		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
-	)
-	assert.Equal(
-		true,
-		CompareCriteria(
-			[]searchCriterion.Criterion{
-				operationCriterion.Or{
-					Criteria: []searchCriterion.Criterion{
-						stringSubstring1.criterion,
-						stringExact1.criterion,
-						and1.criterion,
-					},
-				},
-				stringCriterion.Substring{
-					Field:  "someField",
-					String: "someSubstring",
-				},
-			},
-			testSerializedCriteria.Criteria,
-		),
-		"criteria should be equal",
-	)
 }
