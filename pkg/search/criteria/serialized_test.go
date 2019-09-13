@@ -370,7 +370,3 @@ func TestSerializedCriteriaORCriterion(t *testing.T) {
 		),
 	)
 }
-
-func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
-
-}
