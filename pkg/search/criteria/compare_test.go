@@ -62,6 +62,21 @@ var compareTestCases = []compareTestCase{
 				Field:  "testField",
 				String: "testString",
 			},
+		},
+		result: false,
+	},
+	{
+		a: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testFieldDifferent",
+				String: "testString",
+			},
+		},
+		b: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testField",
+				String: "testString",
+			},
 			stringCriterion.Substring{
 				Field:  "testFieldDifferent",
 				String: "testString",
