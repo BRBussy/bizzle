@@ -4,22 +4,21 @@ import (
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
-	"github.com/stretchr/testify/suite"
+	testifyAssert "github.com/stretchr/testify/assert"
+	"testing"
 )
 
-type andTest struct {
-	suite.Suite
-}
+func TestAnd(t *testing.T) {
+	assert := testifyAssert.New(t)
 
-func (t *andTest) Test() {
 	testCriteria := And{}
 
-	t.Equal(
+	assert.Equal(
 		criterion.OperationAndCriterionType,
 		testCriteria.Type(),
 	)
 
-	t.Equal(
+	assert.Equal(
 		criterion.ErrInvalid{Reasons: []string{"and operation criterion has an empty criterion array"}},
 		testCriteria.IsValid(),
 	)
@@ -49,12 +48,12 @@ func (t *andTest) Test() {
 		},
 	}
 
-	t.Equal(
+	assert.Equal(
 		nil,
 		testCriteria.IsValid(),
 	)
 
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"$and": []map[string]interface{}{
 				numberCriteria.ToFilter(),

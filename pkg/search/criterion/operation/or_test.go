@@ -4,22 +4,21 @@ import (
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
-	"github.com/stretchr/testify/suite"
+	testifyAssert "github.com/stretchr/testify/assert"
+	"testing"
 )
 
-type orTest struct {
-	suite.Suite
-}
+func TestOr(t *testing.T) {
+	assert := testifyAssert.New(t)
 
-func (t *orTest) Test() {
 	testCriteria := Or{}
 
-	t.Equal(
+	assert.Equal(
 		criterion.OperationOrCriterionType,
 		testCriteria.Type(),
 	)
 
-	t.Equal(
+	assert.Equal(
 		criterion.ErrInvalid{Reasons: []string{"or operation criterion has an empty criterion array"}},
 		testCriteria.IsValid(),
 	)
@@ -49,12 +48,12 @@ func (t *orTest) Test() {
 		},
 	}
 
-	t.Equal(
+	assert.Equal(
 		nil,
 		testCriteria.IsValid(),
 	)
 
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"$or": []map[string]interface{}{
 				numberCriteria.ToFilter(),
