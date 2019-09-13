@@ -2,6 +2,7 @@ package criteria
 
 import (
 	"fmt"
+	"github.com/BRBussy/bizzle/pkg/search"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
@@ -445,7 +446,7 @@ func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 	)
 	assert.Equal(
 		true,
-		compareCriteria(
+		search.CompareCriteria(
 			[]searchCriterion.Criterion{
 				operationCriterion.Or{
 					Criteria: []searchCriterion.Criterion{
@@ -463,64 +464,4 @@ func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 		),
 		"criteria should be equal",
 	)
-}
-
-func compareCriteria(a, b []searchCriterion.Criterion) bool {
-	// check lengths
-	if len(a) != len(b) {
-		return false
-	}
-
-	// for every element in a
-nextA:
-	for ia := range a {
-		// look through b for a match
-		for ib := range b {
-			// if a match is found go to next element ia
-			switch typedA := a[ia].(type) {
-			case operationCriterion.And:
-				if compareANDCriterion(typedA, b[ib]) {
-					continue nextA
-				}
-			case operationCriterion.Or:
-				if compareORCriterion(typedA, b[ib]) {
-					continue nextA
-				}
-			default:
-				if a[ia] == b[ib] {
-					continue nextA
-				}
-			}
-		}
-		// if execution reaches here ia was not found in b
-		return false
-	}
-	// if execution reaches here every ia was found in b
-	return true
-}
-
-func compareANDCriterion(a operationCriterion.And, b searchCriterion.Criterion) bool {
-	// check that a and b are both and criterion
-	typedB, ok := b.(operationCriterion.And)
-	if !ok {
-		return false
-	}
-	// check lengths of a and b are the same
-	if len(a.Criteria) != len(typedB.Criteria) {
-		return false
-	}
-	return compareCriteria(a.Criteria, typedB.Criteria)
-}
-
-func compareORCriterion(a operationCriterion.Or, b searchCriterion.Criterion) bool {
-	// check that a and b are both or criterion
-	typedB, ok := b.(operationCriterion.Or)
-	if !ok {
-		return false
-	}
-	// check lengths of a and b are the same
-	if len(a.Criteria) != len(typedB.Criteria) {
-		return false
-	}
-	return compareCriteria(a.Criteria, typedB.Criteria)
 }
