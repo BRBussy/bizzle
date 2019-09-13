@@ -144,10 +144,11 @@ var operationOrTestCase2 = serializedTestCase{
 var combinedTestCase1 = serializedTestCase{
 	id: "combinedTestCase1",
 	serializedCriterion: []byte(fmt.Sprintf(
-		"{\"$or\":[%s,%s,%s]}",
+		"{\"$or\":[%s,%s,%s],\"stringSubstring1Field\":{\"type\":\"%s\",\"string\":\"stringSubstring1TestCase\"}}",
 		operationOrTestCase1.serializedCriterion,
 		numberRange1.serializedCriterion,
 		operationAnd1.serializedCriterion,
+		searchCriterion.StringSubstringCriterionType,
 	)),
 	criteria: []searchCriterion.Criterion{
 		operationCriterion.Or{
@@ -156,6 +157,10 @@ var combinedTestCase1 = serializedTestCase{
 				numberRange1.criteria[0],
 				operationAnd1.criteria[0],
 			},
+		},
+		stringCriterion.Substring{
+			Field:  "stringSubstring1Field",
+			String: "stringSubstring1TestCase",
 		},
 	},
 }
