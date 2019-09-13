@@ -3,6 +3,7 @@ package criteria
 import (
 	"fmt"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
+	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
 	testifyAssert "github.com/stretchr/testify/assert"
 	"testing"
@@ -61,23 +62,43 @@ var compareTestCases = []compareTestCase{
 				Field:  "testField",
 				String: "testString",
 			},
+			stringCriterion.Substring{
+				Field:  "testFieldDifferent",
+				String: "testString",
+			},
 		},
 		result: false,
 	},
 	{
 		a: []searchCriterion.Criterion{
+			numberCriterion.Exact{
+				Field:  "testNumberExactField",
+				Number: 112.123,
+			},
 			stringCriterion.Substring{
-				Field:  "testField",
-				String: "testString",
+				Field:  "testSubstringField",
+				String: "testSubstring",
+			},
+			stringCriterion.Exact{
+				Field:  "testStringExactField",
+				String: "testStringExact",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Exact{
-				Field:  "testField",
-				String: "testString",
+				Field:  "testStringExactField",
+				String: "testStringExact",
+			},
+			numberCriterion.Exact{
+				Field:  "testNumberExactField",
+				Number: 112.123,
+			},
+			stringCriterion.Substring{
+				Field:  "testSubstringField",
+				String: "testSubstring",
 			},
 		},
-		result: false,
+		result: true,
 	},
 }
 
