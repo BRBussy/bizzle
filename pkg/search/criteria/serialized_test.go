@@ -430,10 +430,9 @@ func TestSerializedCriteriaORCriterion(t *testing.T) {
 func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 	assert := testifyAssert.New(t)
 	serializedValue := []byte(fmt.Sprintf(
-		"{\"$or\":[%s,%s,%s],\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
+		"{\"$or\":[%s,%s],\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
 		stringSubstring1.serializedCriterion,
 		stringExact1.serializedCriterion,
-		and1.serializedCriterion,
 		searchCriterion.StringSubstringCriterionType,
 	))
 
@@ -444,19 +443,95 @@ func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
 	)
 	assert.Equal(
-		[]searchCriterion.Criterion{
-			operationCriterion.Or{
-				Criteria: []searchCriterion.Criterion{
-					stringSubstring1.criterion,
-					stringExact1.criterion,
-					and1.criterion,
+		true,
+		compareCriteria(
+			[]searchCriterion.Criterion{
+				operationCriterion.Or{
+					Criteria: []searchCriterion.Criterion{
+						stringSubstring1.criterion,
+						stringExact1.criterion,
+						and1.criterion,
+					},
+				},
+				stringCriterion.Substring{
+					Field:  "someField",
+					String: "someSubstring",
 				},
 			},
-			stringCriterion.Substring{
-				Field:  "someField",
-				String: "someSubstring",
-			},
-		},
-		testSerializedCriteria.Criteria,
+			testSerializedCriteria.Criteria,
+			assert,
+		),
 	)
+}
+
+func compareCriteria(a, b []searchCriterion.Criterion, assert *testifyAssert.Assertions) bool {
+	// check lengths
+	if !assert.Equal(
+		len(a),
+		len(b),
+		"lengths of given criteria differ",
+	) {
+		return false
+	}
+
+	// for every element in a
+nextA:
+	for ia := range a {
+		// look through b for a match
+		for ib := range b {
+			// if a match is found go to next element ia
+			switch typedA := a[ia].(type) {
+			case operationCriterion.And:
+				if compareANDCriterion(typedA, b[ib], assert) {
+					continue nextA
+				}
+			case operationCriterion.Or:
+				if compareORCriterion(typedA, b[ib], assert) {
+					continue nextA
+				}
+			default:
+				if assert.Equal(a[ia], b[ib]) {
+					continue nextA
+				}
+			}
+		}
+		// if execution reaches here ia was not found in b
+		return false
+	}
+	// if execution reaches here every ia was found in b
+	return true
+}
+
+func compareANDCriterion(a operationCriterion.And, b searchCriterion.Criterion, assert *testifyAssert.Assertions) bool {
+	// check that a and b are both and criterion
+	typedB, ok := b.(operationCriterion.And)
+	if !ok {
+		return false
+	}
+	// check lengths of a and b are the same
+	if !assert.Equal(
+		len(a.Criteria),
+		len(typedB.Criteria),
+		"no of elements is not the same in a and b AND criteria",
+	) {
+		return false
+	}
+	return compareCriteria(a.Criteria, typedB.Criteria, assert)
+}
+
+func compareORCriterion(a operationCriterion.Or, b searchCriterion.Criterion, assert *testifyAssert.Assertions) bool {
+	// check that a and b are both or criterion
+	typedB, ok := b.(operationCriterion.Or)
+	if !ok {
+		return false
+	}
+	// check lengths of a and b are the same
+	if !assert.Equal(
+		len(a.Criteria),
+		len(typedB.Criteria),
+		"no of elements is not the same in a and b OR criteria",
+	) {
+		return false
+	}
+	return compareCriteria(a.Criteria, typedB.Criteria, assert)
 }
