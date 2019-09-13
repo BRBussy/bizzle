@@ -2,12 +2,12 @@ package number
 
 import (
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
-	"github.com/stretchr/testify/assert"
+	testifyAssert "github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestExact(t *testing.T) {
-	assert := assert.New(t)
+	assert := testifyAssert.New(t)
 
 	// create a blank criterion
 	testCriterion := Exact{}
