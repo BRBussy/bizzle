@@ -5,13 +5,13 @@ import (
 	"testing"
 )
 
-func TestCriterion(t *testing.T) {
+func TestErrors(t *testing.T) {
 	assert := testifyAssert.New(t)
 
-	var testType Type = "testType"
-
 	assert.Equal(
-		"testType",
-		testType.String(),
+		"criterion is invalid: r1, r2",
+		ErrInvalid{
+			Reasons: []string{"r1", "r2"},
+		}.Error(),
 	)
 }
