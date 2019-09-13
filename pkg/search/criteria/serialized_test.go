@@ -443,23 +443,6 @@ func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 		nil,
 		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
 	)
-	t.Logf("tthis test: %t", compareCriteria(
-		[]searchCriterion.Criterion{
-			operationCriterion.Or{
-				Criteria: []searchCriterion.Criterion{
-					stringSubstring1.criterion,
-					stringExact1.criterion,
-					and1.criterion,
-				},
-			},
-			stringCriterion.Substring{
-				Field:  "someField",
-				String: "someSubstring",
-			},
-		},
-		testSerializedCriteria.Criteria,
-		assert,
-	))
 	assert.Equal(
 		true,
 		compareCriteria(
@@ -477,19 +460,14 @@ func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 				},
 			},
 			testSerializedCriteria.Criteria,
-			assert,
 		),
 		"criteria should be equal",
 	)
 }
 
-func compareCriteria(a, b []searchCriterion.Criterion, assert *testifyAssert.Assertions) bool {
+func compareCriteria(a, b []searchCriterion.Criterion) bool {
 	// check lengths
-	if !assert.Equal(
-		len(a),
-		len(b),
-		"lengths of given criteria differ",
-	) {
+	if len(a) != len(b) {
 		return false
 	}
 
@@ -501,15 +479,15 @@ nextA:
 			// if a match is found go to next element ia
 			switch typedA := a[ia].(type) {
 			case operationCriterion.And:
-				if compareANDCriterion(typedA, b[ib], assert) {
+				if compareANDCriterion(typedA, b[ib]) {
 					continue nextA
 				}
 			case operationCriterion.Or:
-				if compareORCriterion(typedA, b[ib], assert) {
+				if compareORCriterion(typedA, b[ib]) {
 					continue nextA
 				}
 			default:
-				if assert.Equal(a[ia], b[ib]) {
+				if a[ia] == b[ib] {
 					continue nextA
 				}
 			}
@@ -521,36 +499,28 @@ nextA:
 	return true
 }
 
-func compareANDCriterion(a operationCriterion.And, b searchCriterion.Criterion, assert *testifyAssert.Assertions) bool {
+func compareANDCriterion(a operationCriterion.And, b searchCriterion.Criterion) bool {
 	// check that a and b are both and criterion
 	typedB, ok := b.(operationCriterion.And)
 	if !ok {
 		return false
 	}
 	// check lengths of a and b are the same
-	if !assert.Equal(
-		len(a.Criteria),
-		len(typedB.Criteria),
-		"no of elements is not the same in a and b AND criteria",
-	) {
+	if len(a.Criteria) != len(typedB.Criteria) {
 		return false
 	}
-	return compareCriteria(a.Criteria, typedB.Criteria, assert)
+	return compareCriteria(a.Criteria, typedB.Criteria)
 }
 
-func compareORCriterion(a operationCriterion.Or, b searchCriterion.Criterion, assert *testifyAssert.Assertions) bool {
+func compareORCriterion(a operationCriterion.Or, b searchCriterion.Criterion) bool {
 	// check that a and b are both or criterion
 	typedB, ok := b.(operationCriterion.Or)
 	if !ok {
 		return false
 	}
 	// check lengths of a and b are the same
-	if !assert.Equal(
-		len(a.Criteria),
-		len(typedB.Criteria),
-		"no of elements is not the same in a and b OR criteria",
-	) {
+	if len(a.Criteria) != len(typedB.Criteria) {
 		return false
 	}
-	return compareCriteria(a.Criteria, typedB.Criteria, assert)
+	return compareCriteria(a.Criteria, typedB.Criteria)
 }
