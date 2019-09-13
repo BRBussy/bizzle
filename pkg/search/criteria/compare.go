@@ -5,8 +5,8 @@ import (
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
 )
 
-// CompareCriteria can be used to compare to criteria arrays of criterion
-func CompareCriteria(a, b []searchCriterion.Criterion) bool {
+// Compare can be used to compare to criteria arrays of criterion
+func Compare(a, b []searchCriterion.Criterion) bool {
 	// check lengths
 	if len(a) != len(b) {
 		return false
@@ -50,7 +50,7 @@ func CompareANDCriterion(a operationCriterion.And, b searchCriterion.Criterion) 
 	if len(a.Criteria) != len(typedB.Criteria) {
 		return false
 	}
-	return CompareCriteria(a.Criteria, typedB.Criteria)
+	return Compare(a.Criteria, typedB.Criteria)
 }
 
 func CompareORCriterion(a operationCriterion.Or, b searchCriterion.Criterion) bool {
@@ -63,5 +63,5 @@ func CompareORCriterion(a operationCriterion.Or, b searchCriterion.Criterion) bo
 	if len(a.Criteria) != len(typedB.Criteria) {
 		return false
 	}
-	return CompareCriteria(a.Criteria, typedB.Criteria)
+	return Compare(a.Criteria, typedB.Criteria)
 }

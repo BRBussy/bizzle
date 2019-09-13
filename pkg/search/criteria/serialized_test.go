@@ -364,7 +364,7 @@ func TestSerializedCriteriaORCriterion(t *testing.T) {
 
 	assert.Equal(
 		true,
-		CompareCriteria(
+		Compare(
 			operationOr1TestCaseCriterion.Criteria,
 			testSerializedCriteria.Criteria,
 		),
