@@ -443,6 +443,23 @@ func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 		nil,
 		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
 	)
+	t.Logf("tthis test: %t", compareCriteria(
+		[]searchCriterion.Criterion{
+			operationCriterion.Or{
+				Criteria: []searchCriterion.Criterion{
+					stringSubstring1.criterion,
+					stringExact1.criterion,
+					and1.criterion,
+				},
+			},
+			stringCriterion.Substring{
+				Field:  "someField",
+				String: "someSubstring",
+			},
+		},
+		testSerializedCriteria.Criteria,
+		assert,
+	))
 	assert.Equal(
 		true,
 		compareCriteria(
