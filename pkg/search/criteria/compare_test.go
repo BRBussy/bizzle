@@ -17,6 +17,15 @@ type compareTestCase struct {
 	result bool
 }
 
+var fringeTestCases = []compareTestCase{
+	{
+		id:     "fringeTestCases 1",
+		a:      nil,
+		b:      nil,
+		result: true,
+	},
+}
+
 var fieldOnlyTestCases = []compareTestCase{
 	{
 		id:     "fieldOnlyTestCase 1",
@@ -664,28 +673,33 @@ var operationANDTestCases = []compareTestCase{
 	},
 }
 
+var combinedTestCases = []compareTestCase{
+	{
+		id:     "combinedTestCase 1",
+		a:      nil,
+		b:      nil,
+		result: false,
+	},
+}
+
+var allTestCases = [][]compareTestCase{
+	fringeTestCases,
+	fieldOnlyTestCases,
+	operationORTestCases,
+	operationANDTestCases,
+	combinedTestCases,
+}
+
 func TestCriteriaCompare(t *testing.T) {
 	assert := testifyAssert.New(t)
 
-	for i := range fieldOnlyTestCases {
-		assert.Equal(
-			fieldOnlyTestCases[i].result,
-			Compare(fieldOnlyTestCases[i].a, fieldOnlyTestCases[i].b),
-			fmt.Sprintf("%s", fieldOnlyTestCases[i].id),
-		)
-	}
-	for i := range operationORTestCases {
-		assert.Equal(
-			operationORTestCases[i].result,
-			Compare(operationORTestCases[i].a, operationORTestCases[i].b),
-			fmt.Sprintf("%s", operationORTestCases[i].id),
-		)
-	}
-	for i := range operationANDTestCases {
-		assert.Equal(
-			operationANDTestCases[i].result,
-			Compare(operationANDTestCases[i].a, operationANDTestCases[i].b),
-			fmt.Sprintf("%s", operationANDTestCases[i].id),
-		)
+	for i := range allTestCases {
+		for j := range allTestCases[i] {
+			assert.Equal(
+				allTestCases[i][j].result,
+				Compare(allTestCases[i][j].a, allTestCases[i][j].b),
+				fmt.Sprintf("%s", allTestCases[i][j].id),
+			)
+		}
 	}
 }
