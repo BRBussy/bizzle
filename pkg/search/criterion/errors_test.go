@@ -8,10 +8,10 @@ import (
 func TestErrors(t *testing.T) {
 	assert := testifyAssert.New(t)
 
-	assert.Equal(
-		"criterion is invalid: r1, r2",
+	assert.EqualError(
 		ErrInvalid{
 			Reasons: []string{"r1", "r2"},
-		}.Error(),
+		},
+		"criterion is invalid: r1, r2",
 	)
 }

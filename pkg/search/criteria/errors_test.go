@@ -7,12 +7,12 @@ import (
 
 func TestErrors(t *testing.T) {
 	assert := testifyAssert.New(t)
-	assert.Equal(
-		ErrInvalidSerializedCriteria{Reasons: []string{"r1", "r2"}}.Error(),
+	assert.EqualError(
+		ErrInvalidSerializedCriteria{Reasons: []string{"r1", "r2"}},
 		"serialized criteria is invalid: r1, r2",
 	)
-	assert.Equal(
-		ErrUnmarshal{Reasons: []string{"r1", "r2"}}.Error(),
+	assert.EqualError(
+		ErrUnmarshal{Reasons: []string{"r1", "r2"}},
 		"unmarshalling error: r1, r2",
 	)
 }
