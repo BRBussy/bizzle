@@ -2,25 +2,24 @@ package number
 
 import (
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
-	"github.com/stretchr/testify/suite"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-type rangeTest struct {
-	suite.Suite
-}
+func TestRange(t *testing.T) {
+	assert := assert.New(t)
 
-func (t *rangeTest) Test() {
 	// create a blank criterion
 	testCriterion := Range{}
 
 	// confirm is valid fails with field is blank
-	t.Equal(
+	assert.Equal(
 		testCriterion.IsValid(),
 		criterion.ErrInvalid{Reasons: []string{"field is blank"}},
 	)
 
 	// confirm that type returns correct type
-	t.Equal(
+	assert.Equal(
 		criterion.NumberRangeCriterionType,
 		testCriterion.Type(),
 	)
@@ -29,7 +28,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Field = "someField"
 
 	// confirm is valid does not fail
-	t.Equal(
+	assert.Equal(
 		nil,
 		testCriterion.IsValid(),
 	)
@@ -44,7 +43,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = false
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = false
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gt": 123.321,
@@ -58,7 +57,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = false
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = false
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$lt": 321.123,
@@ -71,7 +70,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = true
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = false
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gte": 123.321,
@@ -85,7 +84,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = true
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = false
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$lt": 321.123,
@@ -98,7 +97,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = false
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = false
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gt": 123.321,
@@ -111,7 +110,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = false
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = false
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{},
 		},
@@ -122,7 +121,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = true
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = false
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gte": 123.321,
@@ -135,7 +134,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = true
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = false
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{},
 		},
@@ -146,7 +145,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = false
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = true
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gt":  123.321,
@@ -160,7 +159,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = false
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = true
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$lte": 321.123,
@@ -173,7 +172,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = true
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = true
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gte": 123.321,
@@ -187,7 +186,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = true
 	testCriterion.End.Ignore = false
 	testCriterion.End.Inclusive = true
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$lte": 321.123,
@@ -200,7 +199,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = false
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = true
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gt": 123.321,
@@ -213,7 +212,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = false
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = true
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{},
 		},
@@ -224,7 +223,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = true
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = true
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{
 				"$gte": 123.321,
@@ -237,7 +236,7 @@ func (t *rangeTest) Test() {
 	testCriterion.Start.Inclusive = true
 	testCriterion.End.Ignore = true
 	testCriterion.End.Inclusive = true
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
 			"someField": map[string]interface{}{},
 		},
