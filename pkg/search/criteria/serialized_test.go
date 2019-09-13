@@ -13,7 +13,7 @@ import (
 type serializedTestCase struct {
 	id                  string
 	serializedCriterion []byte
-	criterion           searchCriterion.Criterion
+	criteria            []searchCriterion.Criterion
 }
 
 var stringSubstring1TestCase = serializedTestCase{
@@ -21,9 +21,11 @@ var stringSubstring1TestCase = serializedTestCase{
 		"{\"stringSubstring1Field\":{\"type\":\"%s\",\"string\":\"stringSubstring1TestCase\"}}",
 		searchCriterion.StringSubstringCriterionType,
 	)),
-	criterion: stringCriterion.Substring{
-		Field:  "stringSubstring1Field",
-		String: "stringSubstring1TestCase",
+	criteria: []searchCriterion.Criterion{
+		stringCriterion.Substring{
+			Field:  "stringSubstring1Field",
+			String: "stringSubstring1TestCase",
+		},
 	},
 }
 
@@ -32,9 +34,11 @@ var stringExact1 = serializedTestCase{
 		"{\"stringExact1Field\":{\"type\":\"%s\",\"string\":\"stringExact1\"}}",
 		searchCriterion.StringExactCriterionType,
 	)),
-	criterion: stringCriterion.Exact{
-		Field:  "stringExact1Field",
-		String: "stringExact1",
+	criteria: []searchCriterion.Criterion{
+		stringCriterion.Exact{
+			Field:  "stringExact1Field",
+			String: "stringExact1",
+		},
 	},
 }
 
@@ -43,17 +47,19 @@ var numberRange1 = serializedTestCase{
 		"{\"numberRange1Field\":{\"type\":\"%s\",\"start\":{\"number\":123.12,\"inclusive\":true,\"ignore\":false},\"end\":{\"number\":245.123,\"inclusive\":false,\"ignore\":false}}}",
 		searchCriterion.NumberRangeCriterionType,
 	)),
-	criterion: numberCriterion.Range{
-		Field: "numberRange1Field",
-		Start: numberCriterion.RangeValue{
-			Number:    123.12,
-			Inclusive: true,
-			Ignore:    false,
-		},
-		End: numberCriterion.RangeValue{
-			Number:    245.123,
-			Inclusive: false,
-			Ignore:    false,
+	criteria: []searchCriterion.Criterion{
+		numberCriterion.Range{
+			Field: "numberRange1Field",
+			Start: numberCriterion.RangeValue{
+				Number:    123.12,
+				Inclusive: true,
+				Ignore:    false,
+			},
+			End: numberCriterion.RangeValue{
+				Number:    245.123,
+				Inclusive: false,
+				Ignore:    false,
+			},
 		},
 	},
 }
@@ -63,9 +69,11 @@ var numberExact1 = serializedTestCase{
 		"{\"numberExact1Field\":{\"type\":\"%s\",\"number\":123.45}}",
 		searchCriterion.NumberExactCriterionType,
 	)),
-	criterion: numberCriterion.Exact{
-		Field:  "numberExact1Field",
-		Number: 123.45,
+	criteria: []searchCriterion.Criterion{
+		numberCriterion.Exact{
+			Field:  "numberExact1Field",
+			Number: 123.45,
+		},
 	},
 }
 
@@ -75,15 +83,17 @@ var operationAnd1 = serializedTestCase{
 		searchCriterion.NumberExactCriterionType,
 		searchCriterion.StringExactCriterionType,
 	)),
-	criterion: operationCriterion.And{
-		Criteria: []searchCriterion.Criterion{
-			numberCriterion.Exact{
-				Field:  "someField",
-				Number: 123.45,
-			},
-			stringCriterion.Exact{
-				Field:  "someOtherField",
-				String: "someExactString",
+	criteria: []searchCriterion.Criterion{
+		operationCriterion.And{
+			Criteria: []searchCriterion.Criterion{
+				numberCriterion.Exact{
+					Field:  "someField",
+					Number: 123.45,
+				},
+				stringCriterion.Exact{
+					Field:  "someOtherField",
+					String: "someExactString",
+				},
 			},
 		},
 	},
@@ -99,13 +109,15 @@ var operationOrTestCase1 = serializedTestCase{
 		numberExact1.serializedCriterion,
 		operationAnd1.serializedCriterion,
 	)),
-	criterion: operationCriterion.Or{
-		Criteria: Criteria{
-			stringSubstring1TestCase.criterion,
-			stringExact1.criterion,
-			numberRange1.criterion,
-			numberExact1.criterion,
-			operationAnd1.criterion,
+	criteria: []searchCriterion.Criterion{
+		operationCriterion.Or{
+			Criteria: Criteria{
+				stringSubstring1TestCase.criteria[0],
+				stringExact1.criteria[0],
+				numberRange1.criteria[0],
+				numberExact1.criteria[0],
+				operationAnd1.criteria[0],
+			},
 		},
 	},
 }
@@ -118,11 +130,13 @@ var operationOrTestCase2 = serializedTestCase{
 		numberRange1.serializedCriterion,
 		operationAnd1.serializedCriterion,
 	)),
-	criterion: operationCriterion.Or{
-		Criteria: []searchCriterion.Criterion{
-			operationOrTestCase1.criterion,
-			numberRange1.criterion,
-			operationAnd1.criterion,
+	criteria: []searchCriterion.Criterion{
+		operationCriterion.Or{
+			Criteria: []searchCriterion.Criterion{
+				operationOrTestCase1.criteria[0],
+				numberRange1.criteria[0],
+				operationAnd1.criteria[0],
+			},
 		},
 	},
 }
@@ -135,11 +149,13 @@ var combinedTestCase1 = serializedTestCase{
 		numberRange1.serializedCriterion,
 		operationAnd1.serializedCriterion,
 	)),
-	criterion: operationCriterion.Or{
-		Criteria: []searchCriterion.Criterion{
-			operationOrTestCase1.criterion,
-			numberRange1.criterion,
-			operationAnd1.criterion,
+	criteria: []searchCriterion.Criterion{
+		operationCriterion.Or{
+			Criteria: []searchCriterion.Criterion{
+				operationOrTestCase1.criteria[0],
+				numberRange1.criteria[0],
+				operationAnd1.criteria[0],
+			},
 		},
 	},
 }
@@ -296,9 +312,7 @@ func TestSerializedCriteriaStringSubstringCriterion(t *testing.T) {
 		(&testSerializedCriteria).UnmarshalJSON(stringSubstring1TestCase.serializedCriterion),
 	)
 	assert.Equal(
-		[]searchCriterion.Criterion{
-			stringSubstring1TestCase.criterion,
-		},
+		stringSubstring1TestCase.criteria,
 		testSerializedCriteria.Criteria,
 	)
 }
@@ -324,9 +338,7 @@ func TestSerializedCriteriaStringExactCriterion(t *testing.T) {
 		(&testSerializedCriteria).UnmarshalJSON(stringExact1.serializedCriterion),
 	)
 	assert.Equal(
-		[]searchCriterion.Criterion{
-			stringExact1.criterion,
-		},
+		stringExact1.criteria,
 		testSerializedCriteria.Criteria,
 	)
 }
@@ -352,9 +364,7 @@ func TestSerializedCriteriaNumberRangeCriterion(t *testing.T) {
 		(&testSerializedCriteria).UnmarshalJSON(numberRange1.serializedCriterion),
 	)
 	assert.Equal(
-		[]searchCriterion.Criterion{
-			numberRange1.criterion,
-		},
+		numberRange1.criteria,
 		testSerializedCriteria.Criteria,
 	)
 }
@@ -380,9 +390,7 @@ func TestSerializedCriteriaNumberExactCriterion(t *testing.T) {
 		(&testSerializedCriteria).UnmarshalJSON(numberExact1.serializedCriterion),
 	)
 	assert.Equal(
-		[]searchCriterion.Criterion{
-			numberExact1.criterion,
-		},
+		numberExact1.criteria,
 		testSerializedCriteria.Criteria,
 	)
 }
@@ -404,9 +412,7 @@ func TestSerializedCriteriaORCriterion(t *testing.T) {
 		assert.Equal(
 			true,
 			Compare(
-				[]searchCriterion.Criterion{
-					operationOrTestCases[i].criterion,
-				},
+				operationOrTestCases[i].criteria,
 				testSerializedCriteria.Criteria,
 			),
 			operationOrTestCases[i].id,
@@ -430,9 +436,7 @@ func TestSerializedCriteriaCombined(t *testing.T) {
 		assert.Equal(
 			true,
 			Compare(
-				[]searchCriterion.Criterion{
-					combinedTestCases[i].criterion,
-				},
+				combinedTestCases[i].criteria,
 				testSerializedCriteria.Criteria,
 			),
 			combinedTestCases[i].id,
