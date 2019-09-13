@@ -168,7 +168,7 @@ func TestSerializedCriteriaOROperatorFailures(t *testing.T) {
 			}}.Error(),
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
-			"{\"$or\":[{\"someField\":{\"type\":\"%s\",\"string\":555},\"someOtherField\":{\"type\":\"%s\",\"string\":555}}]}",
+			"{\"$or\":[{\"someField\":{\"type\":\"%s\",\"string\":555},\"someOtherField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}]}",
 			searchCriterion.StringExactCriterionType,
 			searchCriterion.StringSubstringCriterionType,
 		))),
@@ -331,7 +331,7 @@ func TestSerializedCriteriaNumberExactCriterion(t *testing.T) {
 	)
 }
 
-func TestSerializedCriteriaOrCriterion(t *testing.T) {
+func TestSerializedCriteriaORCriterion(t *testing.T) {
 	assert := testifyAssert.New(t)
 	serializedValue := []byte(fmt.Sprintf(
 		"{\"$or\":[%s,%s,%s]}",
@@ -346,17 +346,84 @@ func TestSerializedCriteriaOrCriterion(t *testing.T) {
 		nil,
 		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
 	)
-	assert.Equal(
-		[]searchCriterion.Criterion{
-			operationCriterion.Or{
-				Criteria: []searchCriterion.Criterion{
-					stringSubstring1.criterion,
-					stringExact1.criterion,
-					and1.criterion,
-				},
+
+	expectedCriterion := []searchCriterion.Criterion{
+		operationCriterion.Or{
+			Criteria: []searchCriterion.Criterion{
+				stringSubstring1.criterion,
+				stringExact1.criterion,
+				and1.criterion,
 			},
 		},
-		testSerializedCriteria.Criteria,
+	}
+
+	// NOTE: a direct equal assertion is not possible here since as the
+	// order of keys in a map cannot be guaranteed the order of elements
+	// in the resultant criteria slice may differ to the expected
+
+	assert.Equal(
+		len(expectedCriterion),
+		len(testSerializedCriteria.Criteria),
+		"criteria should have correct no. of entries",
+	)
+	assert.IsType(
+		expectedCriterion[0],
+		testSerializedCriteria.Criteria[0],
+		"both resultant and expected first elements should have the same type",
+	)
+	// infer or type of expected and resultant first elements
+	expectedORCriterion, ok := expectedCriterion[0].(operationCriterion.Or)
+	assert.Equal(
+		true,
+		ok,
+	)
+	resultORCriterion, ok := testSerializedCriteria.Criteria[0].(operationCriterion.Or)
+	assert.Equal(
+		true,
+		ok,
+	)
+
+	assert.Equal(
+		len(expectedORCriterion.Criteria),
+		len(resultORCriterion.Criteria),
+		"the resultant OR criteria should have correct no of elements",
+	)
+
+	// check first and second element equality
+	assert.Equal(
+		expectedORCriterion.Criteria[0],
+		resultORCriterion.Criteria[0],
+	)
+	assert.Equal(
+		expectedORCriterion.Criteria[1],
+		resultORCriterion.Criteria[1],
+	)
+
+	// confirm that 3rd elements have same type
+	assert.IsType(
+		expectedORCriterion.Criteria[2],
+		resultORCriterion.Criteria[2],
+	)
+	// infer or type of expected and resultant 3rd elements
+	expectedANDCriterion, ok := expectedORCriterion.Criteria[2].(operationCriterion.And)
+	assert.Equal(
+		true,
+		ok,
+	)
+	resultANDCriterion, ok := resultORCriterion.Criteria[2].(operationCriterion.And)
+	assert.Equal(
+		true,
+		ok,
+	)
+	assert.Equal(
+		len(expectedANDCriterion.Criteria),
+		len(resultANDCriterion.Criteria),
+		"the resultant AND criteria should have correct no of elements",
+	)
+	// confirm contents of and are the same
+	assert.ElementsMatch(
+		expectedANDCriterion.Criteria,
+		resultANDCriterion.Criteria,
 	)
 }
 
