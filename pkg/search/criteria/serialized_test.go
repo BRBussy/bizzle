@@ -11,6 +11,7 @@ import (
 )
 
 type serializedTestCase struct {
+	id                  string
 	serializedCriterion []byte
 	criterion           searchCriterion.Criterion
 }
@@ -88,7 +89,8 @@ var operationAnd1 = serializedTestCase{
 	},
 }
 
-var operationOr1TestCase = serializedTestCase{
+var operationOrTestCase1 = serializedTestCase{
+	id: "operationORTestCase 1",
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"$or\":[%s,%s,%s,%s,%s]}",
 		stringSubstring1TestCase.serializedCriterion,
@@ -108,16 +110,34 @@ var operationOr1TestCase = serializedTestCase{
 	},
 }
 
-var operationOr2TestCase = serializedTestCase{
+var operationOrTestCase2 = serializedTestCase{
+	id: "operationORTestCase 2",
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"$or\":[%s,%s,%s]}",
-		operationOr1TestCase.serializedCriterion,
+		operationOrTestCase1.serializedCriterion,
 		numberRange1.serializedCriterion,
 		operationAnd1.serializedCriterion,
 	)),
 	criterion: operationCriterion.Or{
 		Criteria: []searchCriterion.Criterion{
-			operationOr1TestCase.criterion,
+			operationOrTestCase1.criterion,
+			numberRange1.criterion,
+			operationAnd1.criterion,
+		},
+	},
+}
+
+var combinedTestCase1 = serializedTestCase{
+	id: "combinedTestCase1",
+	serializedCriterion: []byte(fmt.Sprintf(
+		"{\"$or\":[%s,%s,%s]}",
+		operationOrTestCase1.serializedCriterion,
+		numberRange1.serializedCriterion,
+		operationAnd1.serializedCriterion,
+	)),
+	criterion: operationCriterion.Or{
+		Criteria: []searchCriterion.Criterion{
+			operationOrTestCase1.criterion,
 			numberRange1.criterion,
 			operationAnd1.criterion,
 		},
@@ -371,8 +391,8 @@ func TestSerializedCriteriaORCriterion(t *testing.T) {
 	assert := testifyAssert.New(t)
 
 	operationOrTestCases := []serializedTestCase{
-		operationOr1TestCase,
-		operationOr2TestCase,
+		operationOrTestCase1,
+		operationOrTestCase2,
 	}
 
 	for i := range operationOrTestCases {
@@ -389,6 +409,33 @@ func TestSerializedCriteriaORCriterion(t *testing.T) {
 				},
 				testSerializedCriteria.Criteria,
 			),
+			operationOrTestCases[i].id,
+		)
+	}
+}
+
+func TestSerializedCriteriaCombined(t *testing.T) {
+	assert := testifyAssert.New(t)
+
+	combinedTestCases := []serializedTestCase{
+		combinedTestCase1,
+	}
+
+	for i := range combinedTestCases {
+		testSerializedCriteria := Serialized{}
+		assert.Equal(
+			nil,
+			(&testSerializedCriteria).UnmarshalJSON(combinedTestCases[i].serializedCriterion),
+		)
+		assert.Equal(
+			true,
+			Compare(
+				[]searchCriterion.Criterion{
+					combinedTestCases[i].criterion,
+				},
+				testSerializedCriteria.Criteria,
+			),
+			combinedTestCases[i].id,
 		)
 	}
 }
