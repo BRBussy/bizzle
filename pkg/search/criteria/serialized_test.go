@@ -10,12 +10,12 @@ import (
 	"testing"
 )
 
-type testCase struct {
+type serializedTestCase struct {
 	serializedCriterion []byte
 	criterion           searchCriterion.Criterion
 }
 
-var stringSubstring1TestCase = testCase{
+var stringSubstring1TestCase = serializedTestCase{
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"stringSubstring1Field\":{\"type\":\"%s\",\"string\":\"stringSubstring1TestCase\"}}",
 		searchCriterion.StringSubstringCriterionType,
@@ -26,7 +26,7 @@ var stringSubstring1TestCase = testCase{
 	},
 }
 
-var stringExact1 = testCase{
+var stringExact1 = serializedTestCase{
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"stringExact1Field\":{\"type\":\"%s\",\"string\":\"stringExact1\"}}",
 		searchCriterion.StringExactCriterionType,
@@ -37,7 +37,7 @@ var stringExact1 = testCase{
 	},
 }
 
-var numberRange1 = testCase{
+var numberRange1 = serializedTestCase{
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"numberRange1Field\":{\"type\":\"%s\",\"start\":{\"number\":123.12,\"inclusive\":true,\"ignore\":false},\"end\":{\"number\":245.123,\"inclusive\":false,\"ignore\":false}}}",
 		searchCriterion.NumberRangeCriterionType,
@@ -57,7 +57,7 @@ var numberRange1 = testCase{
 	},
 }
 
-var numberExact1 = testCase{
+var numberExact1 = serializedTestCase{
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"numberExact1Field\":{\"type\":\"%s\",\"number\":123.45}}",
 		searchCriterion.NumberExactCriterionType,
@@ -68,7 +68,7 @@ var numberExact1 = testCase{
 	},
 }
 
-var operationAnd1 = testCase{
+var operationAnd1 = serializedTestCase{
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"someField\":{\"type\":\"%s\",\"number\":123.45},\"someOtherField\":{\"type\":\"%s\",\"string\":\"someExactString\"}}",
 		searchCriterion.NumberExactCriterionType,
@@ -88,17 +88,7 @@ var operationAnd1 = testCase{
 	},
 }
 
-var operationOr1TestCaseCriterion = operationCriterion.Or{
-	Criteria: Criteria{
-		stringSubstring1TestCase.criterion,
-		stringExact1.criterion,
-		numberRange1.criterion,
-		numberExact1.criterion,
-		operationAnd1.criterion,
-	},
-}
-
-var operationOr1TestCase = testCase{
+var operationOr1TestCase = serializedTestCase{
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"$or\":[%s,%s,%s,%s,%s]}",
 		stringSubstring1TestCase.serializedCriterion,
@@ -107,7 +97,27 @@ var operationOr1TestCase = testCase{
 		numberExact1.serializedCriterion,
 		operationAnd1.serializedCriterion,
 	)),
-	criterion: operationOr1TestCaseCriterion,
+	criterion: operationCriterion.Or{
+		Criteria: Criteria{
+			stringSubstring1TestCase.criterion,
+			stringExact1.criterion,
+			numberRange1.criterion,
+			numberExact1.criterion,
+			operationAnd1.criterion,
+		},
+	},
+}
+
+var operationOr2TestCase = serializedTestCase{
+	serializedCriterion: []byte(fmt.Sprintf(
+		"{\"$or\":[%s]}",
+		operationOr1TestCase.serializedCriterion,
+	)),
+	criterion: operationCriterion.Or{
+		Criteria: []searchCriterion.Criterion{
+			operationOr1TestCase.criterion,
+		},
+	},
 }
 
 func TestSerializedCriteriaInvalidInput(t *testing.T) {
@@ -355,20 +365,26 @@ func TestSerializedCriteriaNumberExactCriterion(t *testing.T) {
 
 func TestSerializedCriteriaORCriterion(t *testing.T) {
 	assert := testifyAssert.New(t)
-	testSerializedCriteria := Serialized{}
 
-	assert.Equal(
-		nil,
-		(&testSerializedCriteria).UnmarshalJSON(operationOr1TestCase.serializedCriterion),
-	)
+	operationOrTestCases := []serializedTestCase{
+		operationOr1TestCase,
+		operationOr2TestCase,
+	}
 
-	assert.Equal(
-		true,
-		Compare(
-			[]searchCriterion.Criterion{
-				operationOr1TestCaseCriterion,
-			},
-			testSerializedCriteria.Criteria,
-		),
-	)
+	for i := range operationOrTestCases {
+		testSerializedCriteria := Serialized{}
+		assert.Equal(
+			nil,
+			(&testSerializedCriteria).UnmarshalJSON(operationOrTestCases[i].serializedCriterion),
+		)
+		assert.Equal(
+			true,
+			Compare(
+				[]searchCriterion.Criterion{
+					operationOrTestCases[i].criterion,
+				},
+				testSerializedCriteria.Criteria,
+			),
+		)
+	}
 }
