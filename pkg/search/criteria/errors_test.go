@@ -1,17 +1,17 @@
 package criteria
 
-import "github.com/stretchr/testify/suite"
+import (
+	testifyAssert "github.com/stretchr/testify/assert"
+	"testing"
+)
 
-type errorTest struct {
-	suite.Suite
-}
-
-func (t errorTest) Test() {
-	t.Equal(
+func TestErrors(t *testing.T) {
+	assert := testifyAssert.New(t)
+	assert.Equal(
 		ErrInvalidSerializedCriteria{Reasons: []string{"r1", "r2"}}.Error(),
 		"serialized criteria is invalid: r1, r2",
 	)
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{"r1", "r2"}}.Error(),
 		"unmarshalling error: r1, r2",
 	)

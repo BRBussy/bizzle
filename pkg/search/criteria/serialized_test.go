@@ -6,7 +6,8 @@ import (
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
 	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
-	"github.com/stretchr/testify/suite"
+	testifyAssert "github.com/stretchr/testify/assert"
+	"testing"
 )
 
 type testCase struct {
@@ -87,50 +88,49 @@ var and1 = testCase{
 	},
 }
 
-type serializedTest struct {
-	suite.Suite
-}
+func TestSerializedCriteriaInvalidInput(t *testing.T) {
+	assert := testifyAssert.New(t)
 
-func (t serializedTest) TestSerializedCriteriaInvalidInput() {
 	// test fringe invalid json inputs
-	t.Equal(
+	assert.Equal(
 		ErrInvalidSerializedCriteria{Reasons: []string{"json criterion data is nil"}},
 		(&Serialized{}).UnmarshalJSON(nil),
 	)
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{"json unmarshal", "invalid character 'o' in literal null (expecting 'u')"}},
 		(&Serialized{}).UnmarshalJSON([]byte("notValidJSON")),
 	)
 
 	// test empty
 	testEmpty := Serialized{}
-	t.Equal(
+	assert.Equal(
 		nil,
 		(&testEmpty).UnmarshalJSON([]byte("{}")),
 	)
-	t.Equal(
+	assert.Equal(
 		make([]searchCriterion.Criterion, 0),
 		testEmpty.Criteria,
 	)
 }
 
-func (t serializedTest) TestSerializedCriteriaOROperatorFailures() {
+func TestSerializedCriteriaOROperatorFailures(t *testing.T) {
+	assert := testifyAssert.New(t)
 	// invalid value provided for $or operator
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"or array unmarshal",
 			"json: cannot unmarshal object into Go value of type criteria.jsonObjectArray",
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":{}}")),
 	)
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"or array unmarshal",
 			"json: cannot unmarshal number into Go value of type criteria.jsonObjectArray",
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":6}")),
 	)
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"or array unmarshal",
 			"json: cannot unmarshal string into Go value of type criteria.jsonObjectArray",
@@ -138,14 +138,14 @@ func (t serializedTest) TestSerializedCriteriaOROperatorFailures() {
 		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":\"string\"}")),
 	)
 	// empty array
-	t.Equal(
+	assert.Equal(
 		ErrInvalidSerializedCriteria{Reasons: []string{
 			searchCriterion.ErrInvalid{Reasons: []string{"or operation criterion has an empty criterion array"}}.Error(),
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte("{\"$or\":[]}")),
 	)
 	// parsing failure in array
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"element in or",
 			ErrUnmarshal{Reasons: []string{
@@ -159,7 +159,7 @@ func (t serializedTest) TestSerializedCriteriaOROperatorFailures() {
 		))),
 	)
 	// parsing failure in array with and
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"element in or",
 			ErrUnmarshal{Reasons: []string{
@@ -175,23 +175,25 @@ func (t serializedTest) TestSerializedCriteriaOROperatorFailures() {
 	)
 }
 
-func (t serializedTest) TestSerializedCriteriaFieldCriterionFailures() {
+func TestSerializedCriteriaFieldCriterionFailures(t *testing.T) {
+	assert := testifyAssert.New(t)
+
 	// invalid input for field criterion
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"criterion object unmarshal",
 			"json: cannot unmarshal array into Go value of type criteria.typeHolder",
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":[]}")),
 	)
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"criterion object unmarshal",
 			"json: cannot unmarshal number into Go value of type criteria.typeHolder",
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":5}")),
 	)
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"criterion object unmarshal",
 			"json: cannot unmarshal string into Go value of type criteria.typeHolder",
@@ -199,7 +201,7 @@ func (t serializedTest) TestSerializedCriteriaFieldCriterionFailures() {
 		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":\"string\"}")),
 	)
 	// invalid type for field criterion
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"criterion object unmarshal",
 			"json: cannot unmarshal number into Go struct field typeHolder.type of type criterion.Type",
@@ -207,7 +209,7 @@ func (t serializedTest) TestSerializedCriteriaFieldCriterionFailures() {
 		(&Serialized{}).UnmarshalJSON([]byte("{\"someField\":{\"type\":4}}")),
 	)
 	// invalid value for field criterion
-	t.Equal(
+	assert.Equal(
 		ErrInvalidSerializedCriteria{Reasons: []string{
 			"invalid field criterion type",
 			"invalidType",
@@ -216,9 +218,11 @@ func (t serializedTest) TestSerializedCriteriaFieldCriterionFailures() {
 	)
 }
 
-func (t serializedTest) TestSerializedCriteriaStringSubstringCriterion() {
+func TestSerializedCriteriaStringSubstringCriterion(t *testing.T) {
+	assert := testifyAssert.New(t)
+
 	// unmarshalling failure
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"string substring",
 			"json: cannot unmarshal number into Go struct field Substring.string of type string",
@@ -231,11 +235,11 @@ func (t serializedTest) TestSerializedCriteriaStringSubstringCriterion() {
 
 	// unmarshalling success
 	testSerializedCriteria := Serialized{}
-	t.Equal(
+	assert.Equal(
 		nil,
 		(&testSerializedCriteria).UnmarshalJSON(stringSubstring1.serializedCriterion),
 	)
-	t.Equal(
+	assert.Equal(
 		[]searchCriterion.Criterion{
 			stringSubstring1.criterion,
 		},
@@ -243,9 +247,10 @@ func (t serializedTest) TestSerializedCriteriaStringSubstringCriterion() {
 	)
 }
 
-func (t serializedTest) TestSerializedCriteriaStringExactCriterion() {
+func TestSerializedCriteriaStringExactCriterion(t *testing.T) {
+	assert := testifyAssert.New(t)
 	// unmarshalling failure
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"string exact",
 			"json: cannot unmarshal number into Go struct field Exact.string of type string",
@@ -258,11 +263,11 @@ func (t serializedTest) TestSerializedCriteriaStringExactCriterion() {
 
 	// unmarshalling success
 	testSerializedCriteria := Serialized{}
-	t.Equal(
+	assert.Equal(
 		nil,
 		(&testSerializedCriteria).UnmarshalJSON(stringExact1.serializedCriterion),
 	)
-	t.Equal(
+	assert.Equal(
 		[]searchCriterion.Criterion{
 			stringExact1.criterion,
 		},
@@ -270,9 +275,10 @@ func (t serializedTest) TestSerializedCriteriaStringExactCriterion() {
 	)
 }
 
-func (t serializedTest) TestSerializedCriteriaNumberRangeCriterion() {
+func TestSerializedCriteriaNumberRangeCriterion(t *testing.T) {
+	assert := testifyAssert.New(t)
 	// unmarshalling failure
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"number range",
 			"json: cannot unmarshal string into Go struct field RangeValue.start.number of type float64",
@@ -285,11 +291,11 @@ func (t serializedTest) TestSerializedCriteriaNumberRangeCriterion() {
 
 	// unmarshalling success
 	testSerializedCriteria := Serialized{}
-	t.Equal(
+	assert.Equal(
 		nil,
 		(&testSerializedCriteria).UnmarshalJSON(numberRange1.serializedCriterion),
 	)
-	t.Equal(
+	assert.Equal(
 		[]searchCriterion.Criterion{
 			numberRange1.criterion,
 		},
@@ -297,9 +303,10 @@ func (t serializedTest) TestSerializedCriteriaNumberRangeCriterion() {
 	)
 }
 
-func (t serializedTest) TestSerializedCriteriaNumberExactCriterion() {
+func TestSerializedCriteriaNumberExactCriterion(t *testing.T) {
+	assert := testifyAssert.New(t)
 	// unmarshalling failure
-	t.Equal(
+	assert.Equal(
 		ErrUnmarshal{Reasons: []string{
 			"number exact",
 			"json: cannot unmarshal string into Go struct field Exact.number of type float64",
@@ -312,11 +319,11 @@ func (t serializedTest) TestSerializedCriteriaNumberExactCriterion() {
 
 	// unmarshalling success
 	testSerializedCriteria := Serialized{}
-	t.Equal(
+	assert.Equal(
 		nil,
 		(&testSerializedCriteria).UnmarshalJSON(numberExact1.serializedCriterion),
 	)
-	t.Equal(
+	assert.Equal(
 		[]searchCriterion.Criterion{
 			numberExact1.criterion,
 		},
@@ -324,7 +331,8 @@ func (t serializedTest) TestSerializedCriteriaNumberExactCriterion() {
 	)
 }
 
-func (t serializedTest) TestSerializedCriteriaOrCriterion() {
+func TestSerializedCriteriaOrCriterion(t *testing.T) {
+	assert := testifyAssert.New(t)
 	serializedValue := []byte(fmt.Sprintf(
 		"{\"$or\":[%s,%s,%s]}",
 		stringSubstring1.serializedCriterion,
@@ -334,11 +342,11 @@ func (t serializedTest) TestSerializedCriteriaOrCriterion() {
 
 	testSerializedCriteria := Serialized{}
 
-	t.Equal(
+	assert.Equal(
 		nil,
 		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
 	)
-	t.Equal(
+	assert.Equal(
 		[]searchCriterion.Criterion{
 			operationCriterion.Or{
 				Criteria: []searchCriterion.Criterion{
@@ -352,7 +360,8 @@ func (t serializedTest) TestSerializedCriteriaOrCriterion() {
 	)
 }
 
-func (t *serializedTest) TestSerializedCriteriaCombinedCriterion() {
+func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
+	assert := testifyAssert.New(t)
 	serializedValue := []byte(fmt.Sprintf(
 		"{\"$or\":[%s,%s,%s],\"someField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}",
 		stringSubstring1.serializedCriterion,
@@ -363,11 +372,11 @@ func (t *serializedTest) TestSerializedCriteriaCombinedCriterion() {
 
 	testSerializedCriteria := Serialized{}
 
-	t.Equal(
+	assert.Equal(
 		nil,
 		(&testSerializedCriteria).UnmarshalJSON(serializedValue),
 	)
-	t.Equal(
+	assert.Equal(
 		[]searchCriterion.Criterion{
 			operationCriterion.Or{
 				Criteria: []searchCriterion.Criterion{
