@@ -2,7 +2,6 @@ package criteria
 
 import (
 	"fmt"
-	"github.com/BRBussy/bizzle/pkg/search"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
@@ -446,7 +445,7 @@ func TestSerializedCriteriaCombinedCriterion(t *testing.T) {
 	)
 	assert.Equal(
 		true,
-		search.CompareCriteria(
+		CompareCriteria(
 			[]searchCriterion.Criterion{
 				operationCriterion.Or{
 					Criteria: []searchCriterion.Criterion{
