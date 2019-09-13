@@ -2,22 +2,21 @@ package string
 
 import (
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
-	"github.com/stretchr/testify/suite"
+	testifyAssert "github.com/stretchr/testify/assert"
+	"testing"
 )
 
-type substringTest struct {
-	suite.Suite
-}
+func TestExact(t *testing.T) {
+	assert := testifyAssert.New(t)
 
-func (t *substringTest) Test() {
-	testCriterion := Substring{}
+	testCriterion := Exact{}
 
-	t.Equal(
-		criterion.StringSubstringCriterionType,
+	assert.Equal(
+		criterion.StringExactCriterionType,
 		testCriterion.Type(),
 	)
 
-	t.Equal(
+	assert.Equal(
 		criterion.ErrInvalid{Reasons: []string{
 			"string is blank",
 			"field is blank",
@@ -27,7 +26,7 @@ func (t *substringTest) Test() {
 
 	testCriterion.String = "string"
 
-	t.Equal(
+	assert.Equal(
 		criterion.ErrInvalid{Reasons: []string{
 			"field is blank",
 		}},
@@ -37,7 +36,7 @@ func (t *substringTest) Test() {
 	testCriterion.String = ""
 	testCriterion.Field = "someField"
 
-	t.Equal(
+	assert.Equal(
 		criterion.ErrInvalid{Reasons: []string{
 			"string is blank",
 		}},
@@ -47,17 +46,14 @@ func (t *substringTest) Test() {
 	testCriterion.String = "string"
 	testCriterion.Field = "someField"
 
-	t.Equal(
+	assert.Equal(
 		nil,
 		testCriterion.IsValid(),
 	)
 
-	t.Equal(
+	assert.Equal(
 		map[string]interface{}{
-			"someField": map[string]interface{}{
-				"$regex":   ".*string.*",
-				"$options": "i",
-			},
+			"someField": "string",
 		},
 		testCriterion.ToFilter(),
 	)
