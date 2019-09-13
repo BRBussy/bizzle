@@ -288,7 +288,7 @@ var compareTestCases = []compareTestCase{
 				},
 			},
 		},
-		result: true,
+		result: false,
 	},
 	{
 		id: "12",
