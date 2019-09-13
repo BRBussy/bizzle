@@ -395,6 +395,275 @@ var operationORTestCases = []compareTestCase{
 	},
 }
 
+var operationANDTestCases = []compareTestCase{
+	{
+		id: "operationANDTestCase 1",
+		a: []searchCriterion.Criterion{
+			operationCriterion.And{
+				Criteria: Criteria{},
+			},
+			stringCriterion.Exact{
+				Field:  "testStringExactField",
+				String: "testStringExact",
+			},
+		},
+		b: []searchCriterion.Criterion{
+			stringCriterion.Exact{
+				Field:  "testStringExactField",
+				String: "testStringExact",
+			},
+			operationCriterion.And{
+				Criteria: Criteria{},
+			},
+		},
+		result: true,
+	},
+	{
+		id: "operationANDTestCase 2",
+		a: []searchCriterion.Criterion{
+			operationCriterion.And{
+				Criteria: Criteria{
+					numberCriterion.Range{
+						Field: "testNumberRange",
+						Start: numberCriterion.RangeValue{
+							Number:    123,
+							Inclusive: true,
+							Ignore:    false,
+						},
+						End: numberCriterion.RangeValue{
+							Number:    100,
+							Inclusive: false,
+							Ignore:    true,
+						},
+					},
+				},
+			},
+			stringCriterion.Substring{
+				Field:  "testStringExactField",
+				String: "testStringExact",
+			},
+		},
+		b: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testStringExactField",
+				String: "testStringExact",
+			},
+			operationCriterion.And{
+				Criteria: Criteria{
+					stringCriterion.Substring{
+						Field:  "testStringExactField",
+						String: "testStringExact",
+					},
+				},
+			},
+		},
+		result: false,
+	},
+	{
+		id: "operationANDTestCase 3",
+		a: []searchCriterion.Criterion{
+			operationCriterion.And{
+				Criteria: Criteria{
+					numberCriterion.Range{
+						Field: "testNumberRange",
+						Start: numberCriterion.RangeValue{
+							Number:    123,
+							Inclusive: true,
+							Ignore:    false,
+						},
+						End: numberCriterion.RangeValue{
+							Number:    100,
+							Inclusive: false,
+							Ignore:    true,
+						},
+					},
+					stringCriterion.Exact{
+						Field:  "testStringExactField",
+						String: "testStringExact",
+					},
+				},
+			},
+			stringCriterion.Substring{
+				Field:  "testStringSubstringField",
+				String: "testStringSubstring",
+			},
+		},
+		b: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testStringSubstringField",
+				String: "testStringSubstring",
+			},
+			operationCriterion.And{
+				Criteria: Criteria{
+					stringCriterion.Exact{
+						Field:  "testStringExactField",
+						String: "testStringExact",
+					},
+					numberCriterion.Range{
+						Field: "testNumberRange",
+						Start: numberCriterion.RangeValue{
+							Number:    123,
+							Inclusive: true,
+							Ignore:    false,
+						},
+						End: numberCriterion.RangeValue{
+							Number:    100,
+							Inclusive: false,
+							Ignore:    true,
+						},
+					},
+				},
+			},
+		},
+		result: true,
+	},
+	{
+		id: "operationANDTestCase 4",
+		a: []searchCriterion.Criterion{
+			operationCriterion.And{
+				Criteria: Criteria{
+					stringCriterion.Exact{
+						Field:  "testStringExactField",
+						String: "testStringExact",
+					},
+				},
+			},
+			stringCriterion.Substring{
+				Field:  "testStringSubstringField",
+				String: "testStringSubstring",
+			},
+		},
+		b: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testStringSubstringField",
+				String: "testStringSubstring",
+			},
+			operationCriterion.And{
+				Criteria: Criteria{
+					stringCriterion.Exact{
+						Field:  "testStringExactField",
+						String: "testStringExact",
+					},
+					numberCriterion.Range{
+						Field: "testNumberRange",
+						Start: numberCriterion.RangeValue{
+							Number:    123,
+							Inclusive: true,
+							Ignore:    false,
+						},
+						End: numberCriterion.RangeValue{
+							Number:    100,
+							Inclusive: false,
+							Ignore:    true,
+						},
+					},
+				},
+			},
+		},
+		result: false,
+	},
+	{
+		id: "operationANDTestCase 5",
+		a: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testStringSubstringField",
+				String: "testStringSubstring",
+			},
+			operationCriterion.And{
+				Criteria: Criteria{
+					stringCriterion.Exact{
+						Field:  "testStringExactField",
+						String: "testStringExact",
+					},
+					operationCriterion.And{
+						Criteria: Criteria{
+							numberCriterion.Range{
+								Field: "testNumberRange",
+								Start: numberCriterion.RangeValue{
+									Number:    123,
+									Inclusive: true,
+									Ignore:    false,
+								},
+								End: numberCriterion.RangeValue{
+									Number:    100,
+									Inclusive: false,
+									Ignore:    true,
+								},
+							},
+							stringCriterion.Exact{
+								Field:  "testStringExactField",
+								String: "testStringExact",
+							},
+						},
+					},
+					numberCriterion.Range{
+						Field: "testNumberRange",
+						Start: numberCriterion.RangeValue{
+							Number:    123,
+							Inclusive: true,
+							Ignore:    false,
+						},
+						End: numberCriterion.RangeValue{
+							Number:    100,
+							Inclusive: false,
+							Ignore:    true,
+						},
+					},
+				},
+			},
+		},
+		b: []searchCriterion.Criterion{
+			stringCriterion.Substring{
+				Field:  "testStringSubstringField",
+				String: "testStringSubstring",
+			},
+			operationCriterion.And{
+				Criteria: Criteria{
+					operationCriterion.And{
+						Criteria: Criteria{
+							stringCriterion.Exact{
+								Field:  "testStringExactField",
+								String: "testStringExact",
+							},
+							numberCriterion.Range{
+								Field: "testNumberRange",
+								Start: numberCriterion.RangeValue{
+									Number:    123,
+									Inclusive: true,
+									Ignore:    false,
+								},
+								End: numberCriterion.RangeValue{
+									Number:    100,
+									Inclusive: false,
+									Ignore:    true,
+								},
+							},
+						},
+					},
+					stringCriterion.Exact{
+						Field:  "testStringExactField",
+						String: "testStringExact",
+					},
+					numberCriterion.Range{
+						Field: "testNumberRange",
+						Start: numberCriterion.RangeValue{
+							Number:    123,
+							Inclusive: true,
+							Ignore:    false,
+						},
+						End: numberCriterion.RangeValue{
+							Number:    100,
+							Inclusive: false,
+							Ignore:    true,
+						},
+					},
+				},
+			},
+		},
+		result: true,
+	},
+}
+
 func TestCriteriaCompare(t *testing.T) {
 	assert := testifyAssert.New(t)
 
@@ -410,6 +679,13 @@ func TestCriteriaCompare(t *testing.T) {
 			operationORTestCases[i].result,
 			Compare(operationORTestCases[i].a, operationORTestCases[i].b),
 			fmt.Sprintf("%s", operationORTestCases[i].id),
+		)
+	}
+	for i := range operationANDTestCases {
+		assert.Equal(
+			operationANDTestCases[i].result,
+			Compare(operationANDTestCases[i].a, operationANDTestCases[i].b),
+			fmt.Sprintf("%s", operationANDTestCases[i].id),
 		)
 	}
 }
