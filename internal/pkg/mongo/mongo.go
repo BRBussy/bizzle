@@ -106,8 +106,8 @@ func (d *database) CloseConnection() error {
 	return nil
 }
 
-func (d *database) CreateOne(document interface{}, collection string) error {
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	_, err := d.database.Collection(collection).InsertOne(ctx, document)
-	return err
+func (d *database) Collection(collectionName string) *Collection {
+	return &Collection{
+		Collection: d.database.Collection(collectionName),
+	}
 }
