@@ -35,7 +35,7 @@ type CreateResponse struct {
 	Role role.Role `json:"role"`
 }
 
-func (a *adaptor) Find(r *http.Request, request *CreateRequest, response *CreateResponse) error {
+func (a *adaptor) Create(r *http.Request, request *CreateRequest, response *CreateResponse) error {
 	_, err := a.store.Create(
 		&roleStore.CreateRequest{
 			Role: request.Role,

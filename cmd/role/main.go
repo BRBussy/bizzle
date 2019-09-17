@@ -36,7 +36,7 @@ func main() {
 	}()
 
 	// create service providers
-	MongoExerciseStore := mongoRoleStore.New()
+	MongoRoleStore := mongoRoleStore.New()
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
@@ -47,7 +47,7 @@ func main() {
 
 	// register service providers
 	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
-		roleStoreJsonRpcAdaptor.New(MongoExerciseStore),
+		roleStoreJsonRpcAdaptor.New(MongoRoleStore),
 	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}

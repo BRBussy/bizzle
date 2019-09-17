@@ -1,35 +1,44 @@
-package mongoDb
+package mongo
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/rs/zerolog/log"
-	"go.mongodb.org/mongo-driver/mongo"
+	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"strings"
 	"time"
 )
 
-type MongoDB struct {
-	mongoClient *mongo.Client
+type database struct {
+	mongoClient *mongoDriver.Client
+	database    *mongoDriver.Database
 }
 
 func New(
 	hosts []string,
 	connectionString string,
-) (*MongoDB, error) {
+	databaseName string,
+) (*database, error) {
+
+	var db *database
+	var err error
 
 	if connectionString != "" {
-		return NewFromConnectionString(connectionString)
+		db, err = NewFromConnectionString(connectionString)
 	}
 	if len(hosts) != 0 {
-		return NewFromHosts(hosts)
+		db, err = NewFromHosts(hosts)
 	}
-	return nil, errors.New("invalid configuration")
+	if err != nil {
+		return nil, err
+	}
+
+	db.database = db.mongoClient.Database(databaseName)
+	return db, nil
 }
 
-func NewFromHosts(hosts []string) (*MongoDB, error) {
+func NewFromHosts(hosts []string) (*database, error) {
 	log.Info().Msg(fmt.Sprintf(
 		"Connecting to mongo cluster on nodes: [%s]",
 		strings.Join(hosts, ","),
@@ -37,7 +46,7 @@ func NewFromHosts(hosts []string) (*MongoDB, error) {
 
 	ctx, cancelFn := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelFn()
-	mongoClient, err := mongo.Connect(
+	mongoClient, err := mongoDriver.Connect(
 		ctx,
 		&options.ClientOptions{
 			Hosts: hosts,
@@ -57,18 +66,18 @@ func NewFromHosts(hosts []string) (*MongoDB, error) {
 		log.Info().Msg("connected to mongo")
 	}
 
-	return &MongoDB{
+	return &database{
 		mongoClient: mongoClient,
 	}, nil
 }
 
-func NewFromConnectionString(connectionString string) (*MongoDB, error) {
+func NewFromConnectionString(connectionString string) (*database, error) {
 	log.Info().Msg("Connecting to mongo with connection string")
 
 	// create a new mongo client
 	ctx, cancelFn := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelFn()
-	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(connectionString))
+	mongoClient, err := mongoDriver.Connect(ctx, options.Client().ApplyURI(connectionString))
 	if err != nil {
 		log.Error().Err(err).Msg("connecting to mongo")
 		return nil, err
@@ -84,15 +93,21 @@ func NewFromConnectionString(connectionString string) (*MongoDB, error) {
 		log.Info().Msg("connected to mongo")
 	}
 
-	return &MongoDB{
+	return &database{
 		mongoClient: mongoClient,
 	}, nil
 }
 
-func (m *MongoDB) CloseConnection() error {
-	if err := m.mongoClient.Disconnect(context.Background()); err != nil {
+func (d *database) CloseConnection() error {
+	if err := d.mongoClient.Disconnect(context.Background()); err != nil {
 		log.Error().Err(err).Msg("disconnecting from mongo database")
 		return err
 	}
 	return nil
+}
+
+func (d *database) CreateOne(document interface{}, collection string) error {
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	_, err := d.database.Collection(collection).InsertOne(ctx, document)
+	return err
 }
