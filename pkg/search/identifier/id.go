@@ -1,13 +1,13 @@
 package identifier
 
 type ID struct {
-	ID string `json:"id"`
+	ID string `json:"id" bson:"id"`
 }
 
-// Returns IdentifierType of this Identifier
+// Type returns the Type of this Identifier
 func (i ID) Type() Type { return IDIdentifierType }
 
-// Determines and returns the validity of this Identifier
+// IsValid Determines and returns the validity of this Identifier
 func (i ID) IsValid() error {
 	reasonsInvalid := make([]string, 0)
 	if i.ID == "" {
@@ -19,6 +19,7 @@ func (i ID) IsValid() error {
 	return nil
 }
 
+// ToFilter returns a query document for this identifier
 func (i ID) ToFilter() map[string]interface{} {
 	return map[string]interface{}{"id": i.ID}
 }
