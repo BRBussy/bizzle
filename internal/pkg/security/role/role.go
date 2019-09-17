@@ -1,5 +1,9 @@
 package role
 
+import "github.com/BRBussy/bizzle/internal/pkg/security/permission/api"
+
 type Role struct {
-	Name string `json:"string" bson:"string"`
+	ID             string           `json:"id" bson:"id"`
+	Name           string           `json:"name" bson:"name"`
+	APIPermissions []api.Permission `json:"apiPermissions"`
 }
