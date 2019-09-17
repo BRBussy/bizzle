@@ -2,12 +2,12 @@ package main
 
 import (
 	"flag"
-	exerciseConfig "github.com/BRBussy/bizzle/configs/exercise"
+	roleConfig "github.com/BRBussy/bizzle/configs/role"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
-	exerciseStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/store/adaptor/jsonRpc"
-	mongoExerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/mongoDb"
+	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
+	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -19,7 +19,7 @@ func main() {
 	flag.Parse()
 
 	// get exercise/store config
-	config, err := exerciseConfig.GetConfig(configFileName)
+	config, err := roleConfig.GetConfig(configFileName)
 	if err != nil {
 		log.Fatal().Err(err).Msg("getting config from file")
 	}
@@ -36,7 +36,7 @@ func main() {
 	}()
 
 	// create service providers
-	MongoExerciseStore := mongoExerciseStore.New()
+	MongoExerciseStore := mongoRoleStore.New()
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
@@ -47,7 +47,7 @@ func main() {
 
 	// register service providers
 	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
-		exerciseStoreJsonRpcAdaptor.New(MongoExerciseStore),
+		roleStoreJsonRpcAdaptor.New(MongoExerciseStore),
 	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}
