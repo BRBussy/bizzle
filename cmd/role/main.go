@@ -5,7 +5,7 @@ import (
 	roleConfig "github.com/BRBussy/bizzle/configs/role"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
-	"github.com/BRBussy/bizzle/internal/pkg/mongoDb"
+	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
 	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
 	"github.com/rs/zerolog/log"
@@ -25,7 +25,7 @@ func main() {
 	}
 
 	// create new mongo db connection
-	mongoDbClient, err := mongoDb.New(config.MongoDbHosts, config.MongoDBConnectionString)
+	mongoDbClient, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, "role")
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating new mongo db client")
 	}
