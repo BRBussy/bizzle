@@ -12,7 +12,7 @@ import (
 
 type Database struct {
 	mongoClient *mongoDriver.Client
-	Database    *mongoDriver.Database
+	database    *mongoDriver.Database
 }
 
 func New(
@@ -34,7 +34,7 @@ func New(
 		return nil, err
 	}
 
-	db.Database = db.mongoClient.Database(databaseName)
+	db.database = db.mongoClient.Database(databaseName)
 	return db, nil
 }
 
@@ -108,6 +108,6 @@ func (d *Database) CloseConnection() error {
 
 func (d *Database) Collection(collectionName string) *Collection {
 	return &Collection{
-		Collection: d.Database.Collection(collectionName),
+		driverCollection: d.database.Collection(collectionName),
 	}
 }

@@ -1,3 +1,3 @@
-package api
+package permission
 
 type Permission string

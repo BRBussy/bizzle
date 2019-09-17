@@ -3,11 +3,11 @@ package exception
 import (
 	"fmt"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
-	apiPermission "github.com/BRBussy/bizzle/internal/pkg/security/permission/api"
+	"github.com/BRBussy/bizzle/internal/pkg/security/permission"
 )
 
 type NotAuthorised struct {
-	Permission apiPermission.Permission
+	Permission permission.Permission
 }
 
 func (e NotAuthorised) Error() string {

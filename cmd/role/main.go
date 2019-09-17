@@ -25,18 +25,18 @@ func main() {
 	}
 
 	// create new mongo db connection
-	mongoDbClient, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, "role")
+	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, "bizzle")
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating new mongo db client")
 	}
 	defer func() {
-		if err := mongoDbClient.CloseConnection(); err != nil {
+		if err := mongoDb.CloseConnection(); err != nil {
 			log.Error().Err(err).Msg("closing mongo db client connection")
 		}
 	}()
 
 	// create service providers
-	MongoRoleStore := mongoRoleStore.New()
+	MongoRoleStore := mongoRoleStore.New(mongoDb)
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(

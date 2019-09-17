@@ -7,11 +7,11 @@ import (
 )
 
 type Collection struct {
-	*mongoDriver.Collection
+	driverCollection *mongoDriver.Collection
 }
 
-func (c *Collection) CreateOne(document interface{}, collection string) error {
+func (c *Collection) CreateOne(document interface{}) error {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	_, err := c.InsertOne(ctx, document)
+	_, err := c.driverCollection.InsertOne(ctx, document)
 	return err
 }
