@@ -10,18 +10,18 @@ import (
 	"time"
 )
 
-type database struct {
+type Database struct {
 	mongoClient *mongoDriver.Client
-	database    *mongoDriver.Database
+	Database    *mongoDriver.Database
 }
 
 func New(
 	hosts []string,
 	connectionString string,
 	databaseName string,
-) (*database, error) {
+) (*Database, error) {
 
-	var db *database
+	var db *Database
 	var err error
 
 	if connectionString != "" {
@@ -34,11 +34,11 @@ func New(
 		return nil, err
 	}
 
-	db.database = db.mongoClient.Database(databaseName)
+	db.Database = db.mongoClient.Database(databaseName)
 	return db, nil
 }
 
-func NewFromHosts(hosts []string) (*database, error) {
+func NewFromHosts(hosts []string) (*Database, error) {
 	log.Info().Msg(fmt.Sprintf(
 		"Connecting to mongo cluster on nodes: [%s]",
 		strings.Join(hosts, ","),
@@ -66,12 +66,12 @@ func NewFromHosts(hosts []string) (*database, error) {
 		log.Info().Msg("connected to mongo")
 	}
 
-	return &database{
+	return &Database{
 		mongoClient: mongoClient,
 	}, nil
 }
 
-func NewFromConnectionString(connectionString string) (*database, error) {
+func NewFromConnectionString(connectionString string) (*Database, error) {
 	log.Info().Msg("Connecting to mongo with connection string")
 
 	// create a new mongo client
@@ -93,21 +93,21 @@ func NewFromConnectionString(connectionString string) (*database, error) {
 		log.Info().Msg("connected to mongo")
 	}
 
-	return &database{
+	return &Database{
 		mongoClient: mongoClient,
 	}, nil
 }
 
-func (d *database) CloseConnection() error {
+func (d *Database) CloseConnection() error {
 	if err := d.mongoClient.Disconnect(context.Background()); err != nil {
-		log.Error().Err(err).Msg("disconnecting from mongo database")
+		log.Error().Err(err).Msg("disconnecting from mongo Database")
 		return err
 	}
 	return nil
 }
 
-func (d *database) Collection(collectionName string) *Collection {
+func (d *Database) Collection(collectionName string) *Collection {
 	return &Collection{
-		Collection: d.database.Collection(collectionName),
+		Collection: d.Database.Collection(collectionName),
 	}
 }
