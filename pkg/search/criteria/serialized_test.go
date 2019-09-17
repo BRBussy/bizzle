@@ -13,7 +13,7 @@ import (
 type serializedTestCase struct {
 	id                  string
 	serializedCriterion []byte
-	criteria            []searchCriterion.Criterion
+	criteria            Criteria
 }
 
 var stringSubstring1TestCase = serializedTestCase{

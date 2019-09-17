@@ -1,6 +1,7 @@
 package criteria
 
 import (
+	"encoding/json"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 )
 
@@ -16,20 +17,13 @@ func (c Criteria) ToFilter() map[string]interface{} {
 	return map[string]interface{}{"$and": filters}
 }
 
-//
-//func (c *Criteria) MarshalJSON() ([]byte, error) {
-//	serializedCriteria := make(map[string]json.RawMessage)
-//	for _, criterion := range *c {
-//		switch typedCriterion := criterion.(type) {
-//		case operationCriterion.Or:
-//		}
-//	}
-//}
-//
-//func serialize(criterion searchCriterion.Criterion) (string, json.RawMessage, error) {
-//	switch typedCriterion := criterion.(type) {
-//	case operationCriterion.Or:
-//		var oh jsonObject
-//
-//	}
-//}
+func (s *Serialized) MarshalJSON() ([]byte, error) {
+	serializedCriteria := make(map[string]json.RawMessage)
+	for _, criterion := range s.Criteria {
+
+	}
+}
+
+func serialize(criterion searchCriterion.Criterion) (string, json.RawMessage, error) {
+	return "", []byte{}, nil
+}
