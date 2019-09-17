@@ -6,6 +6,8 @@ type Store interface {
 	Create(*CreateRequest) (*CreateResponse, error)
 }
 
+const ServiceProvider = "Role-Store"
+
 type CreateRequest struct {
 	Role role.Role
 }
