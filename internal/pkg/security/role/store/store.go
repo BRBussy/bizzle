@@ -8,6 +8,8 @@ type Store interface {
 
 const ServiceProvider = "Role-Store"
 
+const CreateService = ServiceProvider + ".Create"
+
 type CreateRequest struct {
 	Role role.Role
 }
