@@ -79,7 +79,7 @@ func TestUnmarshalSerializedIdentifier_IDIdentifierErrors(t *testing.T) {
 		"error should be correct for invalid value types",
 	)
 
-	// invalid id identifier value
+	// invalid id identifier value type
 	assert.EqualError(
 		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
 			"{\"type\":\"%s\",\"id\":1234}",
@@ -91,5 +91,19 @@ func TestUnmarshalSerializedIdentifier_IDIdentifierErrors(t *testing.T) {
 			},
 		}.Error(),
 		"error should be correct for invalid value types",
+	)
+
+	// invalid id identifier value
+	assert.EqualError(
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"type\":\"%s\",\"id\":\"\"}",
+			IDIdentifierType,
+		))),
+		ErrInvalidIdentifier{
+			Reasons: []string{
+				"ID identifier is blank",
+			},
+		}.Error(),
+		"error should be correct for invalid identifier",
 	)
 }
