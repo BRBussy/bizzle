@@ -4,6 +4,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/security/role"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -47,4 +48,12 @@ func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneRe
 		return nil, err
 	}
 	return &roleStore.FindOneResponse{Role: result}, nil
+}
+
+func (s *store) UpdateOne(request *roleStore.UpdateOneRequest) (*roleStore.UpdateOneResponse, error) {
+	if err := s.collection.UpdateOne(request.Role, identifier.ID(request.Role.ID)); err != nil {
+		log.Error().Err(err).Msg("updating role")
+		return nil, err
+	}
+	return &roleStore.UpdateOneResponse{}, nil
 }

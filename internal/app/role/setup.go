@@ -1,7 +1,6 @@
 package role
 
 import (
-	"fmt"
 	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	securityPermission "github.com/BRBussy/bizzle/internal/pkg/security/permission"
@@ -45,11 +44,16 @@ func Setup(
 				return err
 			}
 		}
-		// set id on initial permission
+		// set id on initial permission to prevent incorrect compare result
 		initialRoles[i].ID = findOneResponse.Role.ID
+
 		// compare them to see if an update is required
 		if !securityRole.CompareRoles(initialRoles[i], findOneResponse.Role) {
-			fmt.Println("update required!!")
+			// update as required
+			if _, err := admin.UpdateOne(&roleAdmin.UpdateOneRequest{Role: initialRoles[i]}); err != nil {
+				log.Error().Err(err).Msg("updating role")
+				return err
+			}
 		}
 	}
 	return nil

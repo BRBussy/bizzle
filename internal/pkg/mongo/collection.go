@@ -55,3 +55,19 @@ func (c *Collection) FindOne(document interface{}, identifier identifier.Identif
 	}
 	return nil
 }
+
+func (c *Collection) UpdateOne(document interface{}, identifier identifier.Identifier) error {
+	if identifier == nil {
+		return ErrInvalidIdentifier{Reasons: []string{"nil identifier"}}
+	} else if err := identifier.IsValid(); err != nil {
+		return ErrInvalidIdentifier{Reasons: []string{err.Error()}}
+	}
+
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	if _, err := c.driverCollection.UpdateOne(ctx, identifier.ToFilter(), document); err != nil {
+		log.Error().Err(err).Msg("update one")
+		return err
+	}
+
+	return nil
+}
