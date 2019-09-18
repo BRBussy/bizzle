@@ -39,11 +39,11 @@ func New(
 	}, nil
 }
 
-func (a *store) Create(request *roleStore.CreateRequest) (*roleStore.CreateResponse, error) {
-	createResponse := new(roleStoreJsonRpcAdaptor.CreateResponse)
+func (a *store) CreateOne(request *roleStore.CreateOneRequest) (*roleStore.CreateOneResponse, error) {
+	createResponse := new(roleStoreJsonRpcAdaptor.CreateOneResponse)
 	if err := a.jsonRpcClient.JsonRpcRequest(
-		roleStore.CreateService,
-		roleStoreJsonRpcAdaptor.CreateRequest{
+		roleStore.CreateOneService,
+		roleStoreJsonRpcAdaptor.CreateOneRequest{
 			Role: request.Role,
 		},
 		createResponse); err != nil {
@@ -51,7 +51,7 @@ func (a *store) Create(request *roleStore.CreateRequest) (*roleStore.CreateRespo
 		return nil, err
 	}
 
-	return &roleStore.CreateResponse{Role: createResponse.Role}, nil
+	return &roleStore.CreateOneResponse{}, nil
 }
 
 func (a *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {

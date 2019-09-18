@@ -5,17 +5,17 @@ import (
 )
 
 type Admin interface {
-	Create(*CreateRequest) (*CreateResponse, error)
+	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
 }
 
 const ServiceProvider = "Role-Admin"
 
-const CreateService = ServiceProvider + ".Create"
+const CreateOneService = ServiceProvider + ".CreateOne"
 
-type CreateRequest struct {
+type CreateOneRequest struct {
 	Role role.Role
 }
 
-type CreateResponse struct {
+type CreateOneResponse struct {
 	Role role.Role
 }

@@ -28,17 +28,17 @@ func (a *adaptor) MethodRequiresAuthorization(method string) bool {
 	return false
 }
 
-type CreateRequest struct {
+type CreateOneRequest struct {
 	Role role.Role `json:"role"`
 }
 
-type CreateResponse struct {
+type CreateOneResponse struct {
 	Role role.Role `json:"role"`
 }
 
-func (a *adaptor) Create(r *http.Request, request *CreateRequest, response *CreateResponse) error {
-	_, err := a.store.Create(
-		&roleStore.CreateRequest{
+func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
+	_, err := a.store.CreateOne(
+		&roleStore.CreateOneRequest{
 			Role: request.Role,
 		},
 	)

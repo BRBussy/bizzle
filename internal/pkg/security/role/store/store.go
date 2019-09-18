@@ -6,21 +6,20 @@ import (
 )
 
 type Store interface {
-	Create(*CreateRequest) (*CreateResponse, error)
+	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
 	FindOne(*FindOneRequest) (*FindOneResponse, error)
 }
 
 const ServiceProvider = "Role-Store"
 
-const CreateService = ServiceProvider + ".Create"
+const CreateOneService = ServiceProvider + ".CreateOne"
 const FindOneService = ServiceProvider + ".FindOne"
 
-type CreateRequest struct {
+type CreateOneRequest struct {
 	Role role.Role
 }
 
-type CreateResponse struct {
-	Role role.Role
+type CreateOneResponse struct {
 }
 
 type FindOneRequest struct {
