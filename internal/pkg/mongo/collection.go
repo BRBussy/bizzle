@@ -64,7 +64,7 @@ func (c *Collection) UpdateOne(document interface{}, identifier identifier.Ident
 	}
 
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	if _, err := c.driverCollection.UpdateOne(ctx, identifier.ToFilter(), document); err != nil {
+	if _, err := c.driverCollection.ReplaceOne(ctx, identifier.ToFilter(), document); err != nil {
 		log.Error().Err(err).Msg("update one")
 		return err
 	}
