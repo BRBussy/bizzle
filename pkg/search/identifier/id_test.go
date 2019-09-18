@@ -1,6 +1,7 @@
 package identifier
 
 import (
+	"encoding/json"
 	testtifyAssert "github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -38,5 +39,24 @@ func TestIDIdentifier(t *testing.T) {
 		},
 		testIdentifier.ToFilter(),
 		"to filter should return correct value",
+	)
+
+	// test toJSON
+	marshalledID, err := testIdentifier.ToJSON()
+	assert.Equal(
+		nil,
+		err,
+		"error should be nil calling to JSON on identifier",
+	)
+	typeValue, found := marshalledID["type"]
+	assert.Equal(
+		found,
+		true,
+		"type key should be in marshalled identifier",
+	)
+	assert.Equal(
+		json.RawMessage(IDIdentifierType),
+		typeValue,
+		"type value should be ID",
 	)
 }

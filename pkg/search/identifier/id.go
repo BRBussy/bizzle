@@ -1,5 +1,7 @@
 package identifier
 
+import "encoding/json"
+
 type ID string
 
 func (I ID) String() string {
@@ -19,4 +21,11 @@ func (I ID) Type() Type {
 
 func (I ID) ToFilter() map[string]interface{} {
 	return map[string]interface{}{"id": I.String()}
+}
+
+func (I ID) ToJSON() (map[string]json.RawMessage, error) {
+	return map[string]json.RawMessage{
+		"type": json.RawMessage(I.Type()),
+		"id":   json.RawMessage(I),
+	}, nil
 }
