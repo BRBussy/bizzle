@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	roleConfig "github.com/BRBussy/bizzle/configs/role"
+	"github.com/BRBussy/bizzle/internal/app/role"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
@@ -39,6 +40,13 @@ func main() {
 	MongoRoleStore, err := mongoRoleStore.New(mongoDb)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo role store")
+	}
+
+	// run setup
+	if err := role.Setup(
+		MongoRoleStore,
+	); err != nil {
+		log.Fatal().Err(err).Msg("role setup")
 	}
 
 	// create rpc http server

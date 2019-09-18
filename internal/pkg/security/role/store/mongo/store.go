@@ -37,3 +37,7 @@ func (s *store) Create(request *roleStore.CreateRequest) (*roleStore.CreateRespo
 	}
 	return &roleStore.CreateResponse{}, nil
 }
+
+func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {
+
+}
