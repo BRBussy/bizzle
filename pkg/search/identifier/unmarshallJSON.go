@@ -40,8 +40,16 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 	var unmarshalledIdentifier Identifier
 	switch idType {
 	case IDIdentifierType:
+		// try and get id field
+		marshalledID, found := s.Serialized["id"]
+		if !found {
+			err := ErrInvalidSerializedIdentifier{Reasons: []string{"no id field"}}
+			log.Error().Err(err)
+			return err
+		}
+		// unmarshal ID identifier
 		var idIdentifier ID
-		if err := json.Unmarshal(data, &idIdentifier); err != nil {
+		if err := json.Unmarshal(marshalledID, &idIdentifier); err != nil {
 			err = ErrUnmarshal{Reasons: []string{err.Error()}}
 			log.Error().Err(err)
 			return err

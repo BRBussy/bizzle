@@ -65,6 +65,20 @@ func TestUnmarshalSerializedIdentifier_InvalidType(t *testing.T) {
 func TestUnmarshalSerializedIdentifier_IDIdentifierErrors(t *testing.T) {
 	assert := testifyAssert.New(t)
 
+	// missing value
+	assert.EqualError(
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"type\":\"%s\"}",
+			IDIdentifierType,
+		))),
+		ErrInvalidSerializedIdentifier{
+			Reasons: []string{
+				"no id field",
+			},
+		}.Error(),
+		"error should be correct for invalid value types",
+	)
+
 	// invalid id identifier value
 	assert.EqualError(
 		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
@@ -73,7 +87,7 @@ func TestUnmarshalSerializedIdentifier_IDIdentifierErrors(t *testing.T) {
 		))),
 		ErrUnmarshal{
 			Reasons: []string{
-				"json: cannot unmarshal object into Go value of type identifier.ID",
+				"json: cannot unmarshal number into Go value of type identifier.ID",
 			},
 		}.Error(),
 		"error should be correct for invalid value types",
