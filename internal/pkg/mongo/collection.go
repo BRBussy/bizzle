@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
@@ -35,9 +36,15 @@ func (c *Collection) CreateOne(document interface{}) error {
 	return err
 }
 
-func (c *Collection) FindOne(document interface{}, filter map[string]interface{}) error {
+func (c *Collection) FindOne(document interface{}, identifier identifier.Identifier) error {
+	if identifier == nil {
+		return ErrInvalidIdentifier{Reasons: []string{"nil identifier"}}
+	} else if err := identifier.IsValid(); err != nil {
+		return ErrInvalidIdentifier{Reasons: []string{err.Error()}}
+	}
+
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	if err := c.driverCollection.FindOne(ctx, filter).Decode(document); err != nil {
+	if err := c.driverCollection.FindOne(ctx, identifier.ToFilter()).Decode(document); err != nil {
 		switch err {
 		case mongoDriver.ErrNoDocuments:
 			return ErrNotFound{}
