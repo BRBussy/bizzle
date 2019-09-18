@@ -36,7 +36,10 @@ func main() {
 	}()
 
 	// create service providers
-	MongoRoleStore := mongoRoleStore.New(mongoDb)
+	MongoRoleStore, err := mongoRoleStore.New(mongoDb)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating mongo role store")
+	}
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
