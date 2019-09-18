@@ -7,3 +7,4 @@ func (t Type) String() string {
 }
 
 const IDIdentifierType Type = "ID"
+const NameIdentifierType Type = "Name"
