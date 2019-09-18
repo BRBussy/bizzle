@@ -42,7 +42,7 @@ func (s *store) CreateOne(request *roleStore.CreateOneRequest) (*roleStore.Creat
 
 func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {
 	var result role.Role
-	if err := s.collection.FindOne(&result, request.Identifier.ToFilter()); err != nil {
+	if err := s.collection.FindOne(&result, request.Identifier); err != nil {
 		log.Error().Err(err).Msg("finding one role")
 		return nil, err
 	}
