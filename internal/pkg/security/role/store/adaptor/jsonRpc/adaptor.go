@@ -4,6 +4,7 @@ import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/security/role"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"net/http"
 )
 
@@ -44,6 +45,29 @@ func (a *adaptor) Create(r *http.Request, request *CreateRequest, response *Crea
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+type FindOneRequest struct {
+	Identifier identifier.Serialized `json:"identifier"`
+}
+
+type FindOneResponse struct {
+	Role role.Role `json:"role"`
+}
+
+func (a *adaptor) FindOne(r *http.Request, request *FindOneRequest, response *FindOneResponse) error {
+	findOneResponse, err := a.store.FindOne(
+		&roleStore.FindOneRequest{
+			Identifier: request.Identifier.Identifier,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	response.Role = findOneResponse.Role
 
 	return nil
 }

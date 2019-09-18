@@ -13,6 +13,7 @@ type Store interface {
 const ServiceProvider = "Role-Store"
 
 const CreateService = ServiceProvider + ".Create"
+const FindOneService = ServiceProvider + ".FindOne"
 
 type CreateRequest struct {
 	Role role.Role

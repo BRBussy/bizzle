@@ -8,6 +8,7 @@ import (
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 )
 
@@ -51,4 +52,23 @@ func (a *store) Create(request *roleStore.CreateRequest) (*roleStore.CreateRespo
 	}
 
 	return &roleStore.CreateResponse{Role: createResponse.Role}, nil
+}
+
+func (a *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {
+	findOneResponse := new(roleStoreJsonRpcAdaptor.FindOneResponse)
+	if err := a.jsonRpcClient.JsonRpcRequest(
+		roleStore.FindOneService,
+		roleStoreJsonRpcAdaptor.FindOneRequest{
+			Identifier: identifier.Serialized{
+				Identifier: request.Identifier,
+			},
+		},
+		findOneResponse); err != nil {
+		log.Error().Err(err).Msg("role jsonrpc store find one")
+		return nil, err
+	}
+
+	return &roleStore.FindOneResponse{
+		Role: findOneResponse.Role,
+	}, nil
 }
