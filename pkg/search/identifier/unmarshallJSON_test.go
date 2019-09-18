@@ -71,12 +71,11 @@ func TestUnmarshalSerializedIdentifier_IDIdentifierErrors(t *testing.T) {
 			"{\"type\":\"%s\",\"id\":1234}",
 			IDIdentifierType,
 		))),
-		ErrInvalidSerializedIdentifier{
+		ErrUnmarshal{
 			Reasons: []string{
-				"invalid type",
-				"\"notAValidType\"",
+				"json: cannot unmarshal object into Go value of type identifier.ID",
 			},
 		}.Error(),
-		"error should be correct for nil input",
+		"error should be correct for invalid value types",
 	)
 }
