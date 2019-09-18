@@ -40,6 +40,7 @@ func (c *Collection) FindOne(document interface{}, filter map[string]interface{}
 	if err := c.driverCollection.FindOne(ctx, filter).Decode(document); err != nil {
 		switch err {
 		case mongoDriver.ErrNoDocuments:
+			return ErrNotFound{}
 		default:
 			log.Error().Err(err).Msg("find one")
 			return err

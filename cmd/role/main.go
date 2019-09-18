@@ -47,6 +47,7 @@ func main() {
 	// run setup
 	if err := role.Setup(
 		BasicRoleAdmin,
+		MongoRoleStore,
 	); err != nil {
 		log.Fatal().Err(err).Msg("role setup")
 	}
