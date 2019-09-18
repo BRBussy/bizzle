@@ -72,5 +72,7 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	// set identifier
+	s.Identifier = unmarshalledIdentifier
 	return nil
 }

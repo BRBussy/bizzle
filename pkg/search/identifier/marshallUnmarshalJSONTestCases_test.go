@@ -16,3 +16,7 @@ var idIdentifierTestCase0 = TestCase{
 	)),
 	Identifier: ID("1234"),
 }
+
+var allTestCases = []TestCase{
+	idIdentifierTestCase0,
+}

@@ -107,3 +107,23 @@ func TestUnmarshalSerializedIdentifier_IDIdentifierErrors(t *testing.T) {
 		"error should be correct for invalid identifier",
 	)
 }
+
+func TestUnmarshalSerializedIdentifier_UnmarshalSuccesses(t *testing.T) {
+	assert := testifyAssert.New(t)
+
+	for _, tc := range allTestCases {
+		testSerialized := Serialized{}
+
+		assert.Equal(
+			nil,
+			(&testSerialized).UnmarshalJSON(tc.SerializedIdentifier),
+			fmt.Sprintf("%s: error should be nil when unmarshalling", tc.id),
+		)
+
+		assert.Equal(
+			tc.Identifier,
+			testSerialized.Identifier,
+			fmt.Sprintf("%s: identifier should equal expected", tc.id),
+		)
+	}
+}
