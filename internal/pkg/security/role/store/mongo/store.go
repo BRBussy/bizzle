@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	"github.com/BRBussy/bizzle/internal/pkg/security/role"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	"github.com/rs/zerolog/log"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
@@ -34,10 +35,16 @@ func New(
 func (s *store) Create(request *roleStore.CreateRequest) (*roleStore.CreateResponse, error) {
 	if err := s.collection.CreateOne(request.Role); err != nil {
 		log.Error().Err(err).Msg("creating role")
+		return nil, err
 	}
 	return &roleStore.CreateResponse{}, nil
 }
 
 func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {
-
+	var result role.Role
+	if err := s.collection.FindOne(&result, request.Identifier.ToFilter()); err != nil {
+		log.Error().Err(err).Msg("finding one role")
+		return nil, err
+	}
+	return &roleStore.FindOneResponse{Role: result}, nil
 }
