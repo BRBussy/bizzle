@@ -32,12 +32,12 @@ func New(
 	}, nil
 }
 
-func (s *store) Create(request *roleStore.CreateRequest) (*roleStore.CreateResponse, error) {
+func (s *store) CreateOne(request *roleStore.CreateOneRequest) (*roleStore.CreateOneResponse, error) {
 	if err := s.collection.CreateOne(request.Role); err != nil {
 		log.Error().Err(err).Msg("creating role")
 		return nil, err
 	}
-	return &roleStore.CreateResponse{}, nil
+	return &roleStore.CreateOneResponse{}, nil
 }
 
 func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {

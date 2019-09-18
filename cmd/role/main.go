@@ -7,6 +7,7 @@ import (
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	basicRoleAdmin "github.com/BRBussy/bizzle/internal/pkg/security/role/admin/basic"
 	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
 	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
 	"github.com/rs/zerolog/log"
@@ -41,10 +42,11 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo role store")
 	}
+	BasicRoleAdmin := basicRoleAdmin.New(MongoRoleStore)
 
 	// run setup
 	if err := role.Setup(
-		MongoRoleStore,
+		BasicRoleAdmin,
 	); err != nil {
 		log.Fatal().Err(err).Msg("role setup")
 	}
