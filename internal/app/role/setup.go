@@ -2,6 +2,7 @@ package role
 
 import (
 	"fmt"
+	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	securityPermission "github.com/BRBussy/bizzle/internal/pkg/security/permission"
 	securityRole "github.com/BRBussy/bizzle/internal/pkg/security/role"
@@ -13,8 +14,10 @@ import (
 
 var initialRoles = []securityRole.Role{
 	{
-		Name:        "user",
-		Permissions: []securityPermission.Permission{},
+		Name: "user",
+		Permissions: []securityPermission.Permission{
+			exerciseStore.FindService,
+		},
 	},
 }
 
@@ -25,7 +28,7 @@ func Setup(
 	// for every initial role to create
 	for i := range initialRoles {
 		// try and retrieve the role
-		fineOneResponse, err := store.FindOne(&roleStore.FindOneRequest{Identifier: identifier.Name(initialRoles[i].Name)})
+		findOneResponse, err := store.FindOne(&roleStore.FindOneRequest{Identifier: identifier.Name(initialRoles[i].Name)})
 		if err != nil {
 			switch err.(type) {
 			case mongo.ErrNotFound:
@@ -42,7 +45,12 @@ func Setup(
 				return err
 			}
 		}
-		fmt.Println("role found!", fineOneResponse)
+		// set id on initial permission
+		initialRoles[i].ID = findOneResponse.Role.ID
+		// compare them to see if an update is required
+		if !securityRole.CompareRoles(initialRoles[i], findOneResponse.Role) {
+			fmt.Println("update required!!")
+		}
 	}
 	return nil
 }
