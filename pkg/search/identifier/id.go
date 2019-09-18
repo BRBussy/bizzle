@@ -2,6 +2,10 @@ package identifier
 
 type ID string
 
+func (I ID) String() string {
+	return string(I)
+}
+
 func (I ID) IsValid() error {
 	if I == "" {
 		return ErrInvalidIdentifier{Reasons: []string{"ID identifier is blank"}}
@@ -14,5 +18,5 @@ func (I ID) Type() Type {
 }
 
 func (I ID) ToFilter() map[string]interface{} {
-	return map[string]interface{}{"id": I}
+	return map[string]interface{}{"id": I.String()}
 }
