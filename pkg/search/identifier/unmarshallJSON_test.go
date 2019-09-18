@@ -1,6 +1,7 @@
 package identifier
 
 import (
+	"fmt"
 	testifyAssert "github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -18,7 +19,7 @@ func TestUnmarshalSerializedIdentifier_InvalidInput(t *testing.T) {
 		(&Serialized{}).UnmarshalJSON([]byte("notValidJSON")),
 		ErrUnmarshal{
 			Reasons: []string{
-				"json unmarshal",
+				"json unmarshal id object",
 				"invalid character 'o' in literal null (expecting 'u')",
 			},
 		}.Error(),
@@ -28,14 +29,48 @@ func TestUnmarshalSerializedIdentifier_InvalidInput(t *testing.T) {
 
 func TestUnmarshalSerializedIdentifier_InvalidType(t *testing.T) {
 	assert := testifyAssert.New(t)
+
+	// missing type field
 	assert.EqualError(
 		(&Serialized{}).UnmarshalJSON([]byte("{\"id\":\"1234\"}")),
-		ErrInvalidSerializedIdentifier{Reasons: []string{"no type field"}}.Error(),
+		ErrInvalidSerializedIdentifier{
+			Reasons: []string{"no type field"},
+		}.Error(),
 		"error should be correct for input without type field",
 	)
 
+	// invalid type field
+	assert.EqualError(
+		(&Serialized{}).UnmarshalJSON([]byte("{\"type\":1234,\"id\":\"1234\"}")),
+		ErrUnmarshal{
+			Reasons: []string{
+				"json unmarshal id type",
+				"json: cannot unmarshal number into Go value of type identifier.Type",
+			},
+		}.Error(),
+		"error should be correct invalid type field",
+	)
 	assert.EqualError(
 		(&Serialized{}).UnmarshalJSON([]byte("{\"type\":\"notAValidType\",\"id\":\"1234\"}")),
+		ErrInvalidSerializedIdentifier{
+			Reasons: []string{
+				"invalid type",
+				"notAValidType",
+			},
+		}.Error(),
+		"error should be correct invalid type field",
+	)
+}
+
+func TestUnmarshalSerializedIdentifier_IDIdentifierErrors(t *testing.T) {
+	assert := testifyAssert.New(t)
+
+	// invalid id identifier value
+	assert.EqualError(
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"type\":\"%s\",\"id\":1234}",
+			IDIdentifierType,
+		))),
 		ErrInvalidSerializedIdentifier{
 			Reasons: []string{
 				"invalid type",

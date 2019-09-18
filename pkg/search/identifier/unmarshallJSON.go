@@ -15,21 +15,29 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 
 	// unmarshal into serialized section of Serialized
 	if err := json.Unmarshal(data, &s.Serialized); err != nil {
-		err = ErrUnmarshal{Reasons: []string{"json unmarshal", err.Error()}}
+		err = ErrUnmarshal{Reasons: []string{"json unmarshal id object", err.Error()}}
 		log.Error().Err(err)
 		return err
 	}
 
 	// try and get type field
-	idType, found := s.Serialized["type"]
+	marshalledIdType, found := s.Serialized["type"]
 	if !found {
 		err := ErrInvalidSerializedIdentifier{Reasons: []string{"no type field"}}
 		log.Error().Err(err)
 		return err
 	}
 
+	// unmarshal id type
+	var idType Type
+	if err := json.Unmarshal(marshalledIdType, &idType); err != nil {
+		err = ErrUnmarshal{Reasons: []string{"json unmarshal id type", err.Error()}}
+		log.Error().Err(err)
+		return err
+	}
+
 	// unmarshal based on identifier type
-	switch Type(idType) {
+	switch idType {
 	case IDIdentifierType:
 		return nil
 	default:
