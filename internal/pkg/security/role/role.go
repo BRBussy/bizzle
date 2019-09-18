@@ -10,6 +10,17 @@ type Role struct {
 	Permissions []permission.Permission `json:"permissions" bson:"permissions"`
 }
 
+func (r *Role) AddUniquePermission(p permission.Permission) {
+	for pI := range r.Permissions {
+		// if role already has permission, return
+		if r.Permissions[pI] == p {
+			return
+		}
+	}
+	// if execution reaches here then add permission
+	r.Permissions = append(r.Permissions, p)
+}
+
 func CompareRoles(r1, r2 Role) bool {
 	if r1.ID != r2.ID {
 		return false

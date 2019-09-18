@@ -24,8 +24,46 @@ func Setup(
 	admin roleAdmin.Admin,
 	store roleStore.Store,
 ) error {
+	// retrieve root role
+	var rootRole securityRole.Role
+	var rootRoleCopy securityRole.Role
+	findOneResponse, err := store.FindOne(&roleStore.FindOneRequest{Identifier: identifier.Name("root")})
+	switch err.(type) {
+	case mongo.ErrNotFound:
+		// root role not found, it should be created
+		createOneResponse, err := admin.CreateOne(&roleAdmin.CreateOneRequest{
+			Role: securityRole.Role{
+				Name: "root",
+			},
+		})
+		if err != nil {
+			log.Error().Err(err).Msg("creating root role")
+			return err
+		}
+		// set root role
+		rootRole = createOneResponse.Role
+		rootRoleCopy = rootRole
+
+	default:
+		// there was some error retrieving the role
+		log.Error().Err(err).Msg("finding root role")
+		return err
+
+	case nil:
+		// root role found, set it
+		rootRole = findOneResponse.Role
+		rootRoleCopy = rootRole
+	}
+	// clear root role permissions
+	rootRole.Permissions = make([]securityPermission.Permission, 0)
+
 	// for every initial role to create
 	for i := range initialRoles {
+		// add all permissions associated with role to root role
+		for pI := range initialRoles[i].Permissions {
+			rootRole.AddUniquePermission(initialRoles[i].Permissions[pI])
+		}
+
 		// try and retrieve the role
 		findOneResponse, err := store.FindOne(&roleStore.FindOneRequest{Identifier: identifier.Name(initialRoles[i].Name)})
 		if err != nil {
@@ -56,5 +94,14 @@ func Setup(
 			}
 		}
 	}
+
+	// check if root role should be updated
+	if !securityRole.CompareRoles(rootRole, rootRoleCopy) {
+		if _, err := admin.UpdateOne(&roleAdmin.UpdateOneRequest{Role: rootRole}); err != nil {
+			log.Error().Err(err).Msg("updating root role")
+			return err
+		}
+	}
+
 	return nil
 }
