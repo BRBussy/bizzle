@@ -1,6 +1,9 @@
 package identifier
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type ID string
 
@@ -25,7 +28,13 @@ func (I ID) ToFilter() map[string]interface{} {
 
 func (I ID) ToJSON() (map[string]json.RawMessage, error) {
 	return map[string]json.RawMessage{
-		"type": json.RawMessage(I.Type()),
-		"id":   json.RawMessage(I),
+		"type": json.RawMessage(fmt.Sprintf(
+			"\"%s\"",
+			I.Type(),
+		)),
+		"id": json.RawMessage(fmt.Sprintf(
+			"\"%s\"",
+			I,
+		)),
 	}, nil
 }

@@ -55,8 +55,19 @@ func TestIDIdentifier(t *testing.T) {
 		"type key should be in marshalled identifier",
 	)
 	assert.Equal(
-		json.RawMessage(IDIdentifierType),
+		json.RawMessage("\"ID\""),
 		typeValue,
 		"type value should be ID",
+	)
+	idValue, found := marshalledID["id"]
+	assert.Equal(
+		found,
+		true,
+		"id key should be in marshalled identifier",
+	)
+	assert.Equal(
+		json.RawMessage("\"1234\""),
+		idValue,
+		"value should be 1234",
 	)
 }
