@@ -1,6 +1,7 @@
 package string
 
 import (
+	"fmt"
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 	testifyAssert "github.com/stretchr/testify/assert"
 	"testing"
@@ -59,5 +60,17 @@ func TestSubstring(t *testing.T) {
 			},
 		},
 		testCriterion.ToFilter(),
+	)
+
+	// confirm return value of ToJSON
+	fieldName, jsonMessage, err := testCriterion.ToJSON()
+	assert.Equal(nil, err)
+	assert.Equal("someField", fieldName)
+	assert.JSONEq(
+		fmt.Sprintf(
+			"{\"type\":\"%s\",\"string\":\"string\"}",
+			criterion.StringSubstringCriterionType.String(),
+		),
+		string(jsonMessage),
 	)
 }

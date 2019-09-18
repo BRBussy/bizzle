@@ -1,6 +1,7 @@
 package number
 
 import (
+	"fmt"
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 	testifyAssert "github.com/stretchr/testify/assert"
 	"testing"
@@ -40,5 +41,17 @@ func TestExact(t *testing.T) {
 			"someField": 123.123,
 		},
 		testCriterion.ToFilter(),
+	)
+
+	// confirm return value of ToJSON
+	fieldName, jsonMessage, err := testCriterion.ToJSON()
+	assert.Equal(nil, err)
+	assert.Equal("someField", fieldName)
+	assert.JSONEq(
+		fmt.Sprintf(
+			"{\"type\":\"%s\",\"number\":123.123}",
+			criterion.NumberExactCriterionType.String(),
+		),
+		string(jsonMessage),
 	)
 }

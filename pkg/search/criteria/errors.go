@@ -17,3 +17,11 @@ type ErrUnmarshal struct {
 func (e ErrUnmarshal) Error() string {
 	return "unmarshalling error: " + strings.Join(e.Reasons, ", ")
 }
+
+type ErrMarshal struct {
+	Reasons []string
+}
+
+func (e ErrMarshal) Error() string {
+	return "marshalling error: " + strings.Join(e.Reasons, ", ")
+}

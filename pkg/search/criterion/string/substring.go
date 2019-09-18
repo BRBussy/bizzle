@@ -1,6 +1,7 @@
 package string
 
 import (
+	"encoding/json"
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 )
 
@@ -39,4 +40,15 @@ func (s Substring) ToFilter() map[string]interface{} {
 			"$options": "i",
 		},
 	}
+}
+
+func (s Substring) ToJSON() (string, json.RawMessage, error) {
+	data, err := json.Marshal(struct {
+		Type   string `json:"type"`
+		String string `json:"string"`
+	}{
+		Type:   s.Type().String(),
+		String: s.String,
+	})
+	return s.Field, data, err
 }

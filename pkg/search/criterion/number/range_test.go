@@ -1,6 +1,7 @@
 package number
 
 import (
+	"fmt"
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 	testifyAssert "github.com/stretchr/testify/assert"
 	"testing"
@@ -241,5 +242,19 @@ func TestRange(t *testing.T) {
 			"someField": map[string]interface{}{},
 		},
 		testCriterion.ToFilter(),
+	)
+
+	// confirm return value of ToJSON
+	fieldName, jsonMessage, err := testCriterion.ToJSON()
+	assert.Equal(nil, err)
+	assert.Equal("someField", fieldName)
+	assert.JSONEq(
+		fmt.Sprintf(
+			"{\"type\":\"%s\",\"start\":%s,\"end\":%s}",
+			criterion.NumberRangeCriterionType.String(),
+			"{\"number\":123.321,\"inclusive\":true,\"ignore\":true}",
+			"{\"number\":321.123,\"inclusive\":true,\"ignore\":true}",
+		),
+		string(jsonMessage),
 	)
 }

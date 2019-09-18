@@ -1,6 +1,7 @@
 package operation
 
 import (
+	"encoding/json"
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
@@ -67,4 +68,10 @@ func TestAnd(t *testing.T) {
 		},
 		testCriteria.ToFilter(),
 	)
+
+	// test to JSON
+	field, jsonMessageData, err := testCriteria.ToJSON()
+	assert.Equal("", field)
+	assert.Equal(json.RawMessage(nil), jsonMessageData)
+	assert.EqualError(err, criterion.ErrUnexpected{Reasons: []string{"and criterion to be marshalled during serialization"}}.Error())
 }

@@ -1,6 +1,9 @@
 package string
 
-import "github.com/BRBussy/bizzle/pkg/search/criterion"
+import (
+	"encoding/json"
+	"github.com/BRBussy/bizzle/pkg/search/criterion"
+)
 
 type Exact struct {
 	Field  string `json:"field"`
@@ -32,4 +35,15 @@ func (e Exact) Type() criterion.Type {
 
 func (e Exact) ToFilter() map[string]interface{} {
 	return map[string]interface{}{e.Field: e.String}
+}
+
+func (e Exact) ToJSON() (string, json.RawMessage, error) {
+	data, err := json.Marshal(struct {
+		Type   string `json:"type"`
+		String string `json:"string"`
+	}{
+		Type:   e.Type().String(),
+		String: e.String,
+	})
+	return e.Field, data, err
 }

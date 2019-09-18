@@ -14,4 +14,11 @@ func TestErrors(t *testing.T) {
 		},
 		"criterion is invalid: r1, r2",
 	)
+
+	assert.EqualError(
+		ErrUnexpected{
+			Reasons: []string{"r1", "r2"},
+		},
+		"unexpected error: r1, r2",
+	)
 }

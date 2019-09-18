@@ -852,7 +852,7 @@ var combinedTestCases = []compareTestCase{
 	},
 }
 
-var allTestCases = [][]compareTestCase{
+var allCompareTestCases = [][]compareTestCase{
 	fringeTestCases,
 	fieldOnlyTestCases,
 	operationORTestCases,
@@ -863,12 +863,12 @@ var allTestCases = [][]compareTestCase{
 func TestCriteriaCompare(t *testing.T) {
 	assert := testifyAssert.New(t)
 
-	for i := range allTestCases {
-		for j := range allTestCases[i] {
+	for i := range allCompareTestCases {
+		for j := range allCompareTestCases[i] {
 			assert.Equal(
-				allTestCases[i][j].result,
-				Compare(allTestCases[i][j].a, allTestCases[i][j].b),
-				fmt.Sprintf("%s", allTestCases[i][j].id),
+				allCompareTestCases[i][j].result,
+				Compare(allCompareTestCases[i][j].a, allCompareTestCases[i][j].b),
+				fmt.Sprintf("%s", allCompareTestCases[i][j].id),
 			)
 		}
 	}
