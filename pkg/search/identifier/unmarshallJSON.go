@@ -20,5 +20,26 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	return nil
+	// try and get type field
+	idType, found := s.Serialized["type"]
+	if !found {
+		err := ErrInvalidSerializedIdentifier{Reasons: []string{"no type field"}}
+		log.Error().Err(err)
+		return err
+	}
+
+	// unmarshal based on identifier type
+	switch Type(idType) {
+	case IDIdentifierType:
+		return nil
+	default:
+		err := ErrInvalidSerializedIdentifier{
+			Reasons: []string{
+				"invalid type",
+				string(idType),
+			},
+		}
+		log.Error().Err(err)
+		return err
+	}
 }
