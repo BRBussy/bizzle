@@ -2,7 +2,6 @@ package identifier
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type ID string
@@ -26,15 +25,12 @@ func (I ID) ToFilter() map[string]interface{} {
 	return map[string]interface{}{"id": I.String()}
 }
 
-func (I ID) ToJSON() (map[string]json.RawMessage, error) {
-	return map[string]json.RawMessage{
-		"type": json.RawMessage(fmt.Sprintf(
-			"\"%s\"",
-			I.Type(),
-		)),
-		"id": json.RawMessage(fmt.Sprintf(
-			"\"%s\"",
-			I,
-		)),
-	}, nil
+func (I ID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Type Type   `json:"type"`
+		ID   string `json:"id"`
+	}{
+		Type: I.Type(),
+		ID:   I.String(),
+	})
 }
