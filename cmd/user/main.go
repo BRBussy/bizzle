@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	userConfig "github.com/BRBussy/bizzle/configs/user"
+	"github.com/BRBussy/bizzle/internal/app/user"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
@@ -50,6 +51,14 @@ func main() {
 		log.Fatal().Err(err).Msg("creating role jsonrpc store")
 	}
 	BasicUserAdmin := basicUserAdmin.New(JSONRPCRoleStore)
+
+	// perform setup
+	if err := user.Setup(
+		BasicUserAdmin,
+		MongoUserStore,
+	); err != nil {
+		log.Fatal().Err(err).Msg("user setup")
+	}
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
