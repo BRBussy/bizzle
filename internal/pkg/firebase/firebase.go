@@ -2,6 +2,7 @@ package firebase
 
 import (
 	"golang.org/x/net/context"
+	"time"
 
 	goFirebase "firebase.google.com/go"
 	goFirebaseAuth "firebase.google.com/go/auth"
@@ -16,7 +17,8 @@ type Firebase struct {
 
 func New(firebaseCredentialsPath string) (*Firebase, error) {
 	opt := option.WithCredentialsFile(firebaseCredentialsPath)
-	app, err := goFirebase.NewApp(context.Background(), nil, opt)
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	app, err := goFirebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		log.Error().Err(err).Msg("initialising firebase app")
 		return nil, ErrUnexpected{}
@@ -32,4 +34,24 @@ func New(firebaseCredentialsPath string) (*Firebase, error) {
 		app:    app,
 		client: client,
 	}, nil
+}
+
+func (f *Firebase) GetUserByEmail(email string) (*goFirebaseAuth.UserRecord, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	user, err := f.client.GetUserByEmail(ctx, email)
+	if err != nil {
+		log.Error().Err(err).Msg("getting user by email")
+		return nil, ErrUnexpected{}
+	}
+	return user, nil
+}
+
+func (f *Firebase) CreateUser(firebaseUserDetails *goFirebaseAuth.UserToCreate) (*goFirebaseAuth.UserRecord, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	user, err := f.client.CreateUser(ctx, firebaseUserDetails)
+	if err != nil {
+		log.Error().Err(err).Msg("creating user")
+		return nil, ErrUnexpected{}
+	}
+	return user, nil
 }
