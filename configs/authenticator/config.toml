@@ -1,3 +1,0 @@
-Environment = "Development"
-ServerPort = "8081"
-MongoDbHosts = ["localhost:27017"]
