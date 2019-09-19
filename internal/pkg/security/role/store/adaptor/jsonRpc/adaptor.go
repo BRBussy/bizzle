@@ -71,3 +71,21 @@ func (a *adaptor) FindOne(r *http.Request, request *FindOneRequest, response *Fi
 
 	return nil
 }
+
+type UpdateOneRequest struct {
+	Role role.Role `json:"role"`
+}
+
+type UpdateOneResponse struct {
+}
+
+func (a *adaptor) UpdateOne(r *http.Request, request *UpdateOneRequest, response *UpdateOneResponse) error {
+	if _, err := a.store.UpdateOne(
+		&roleStore.UpdateOneRequest{
+			Role: request.Role,
+		},
+	); err != nil {
+		return err
+	}
+	return nil
+}

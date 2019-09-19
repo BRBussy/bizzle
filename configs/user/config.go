@@ -17,6 +17,7 @@ func init() {
 	viper.SetDefault("ServerPort", "8081")
 	viper.SetDefault("MongoDbHosts", []string{"localhost:27017"})
 	viper.SetDefault("MongoDbName", "bizzle")
+	viper.SetDefault("RoleURL", "http://localhost:8080")
 }
 
 type Config struct {
@@ -25,6 +26,7 @@ type Config struct {
 	MongoDBConnectionString string
 	MongoDbHosts            []string
 	MongoDbName             string
+	RoleURL                 string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {

@@ -15,6 +15,7 @@ const ServiceProvider = "Role-Store"
 
 const CreateOneService = ServiceProvider + ".CreateOne"
 const FindOneService = ServiceProvider + ".FindOne"
+const UpdateOneService = ServiceProvider + ".UpdateOne"
 
 type CreateOneRequest struct {
 	Role role.Role

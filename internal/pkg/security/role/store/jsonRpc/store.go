@@ -18,15 +18,15 @@ type store struct {
 
 func New(
 	env environment.Environment,
-	authenticatorURL string,
+	url string,
 ) (roleStore.Store, error) {
 	var client jsonRpcClient.Client
 	var err error
 	switch env {
 	case environment.Development:
-		client = basicJsonRpcClient.New(authenticatorURL)
+		client = basicJsonRpcClient.New(url)
 	case environment.Production:
-		client, err = authenticatedJsonRpcClient.New(authenticatorURL)
+		client, err = authenticatedJsonRpcClient.New(url)
 		if err != nil {
 			log.Error().Err(err).Msg("creating new authenticated json rpc client")
 			return nil, err
@@ -71,4 +71,19 @@ func (a *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneRe
 	return &roleStore.FindOneResponse{
 		Role: findOneResponse.Role,
 	}, nil
+}
+
+func (a *store) UpdateOne(request *roleStore.UpdateOneRequest) (*roleStore.UpdateOneResponse, error) {
+	updateOneResponse := new(roleStoreJsonRpcAdaptor.UpdateOneResponse)
+	if err := a.jsonRpcClient.JsonRpcRequest(
+		roleStore.UpdateOneService,
+		roleStoreJsonRpcAdaptor.UpdateOneRequest{
+			Role: request.Role,
+		},
+		updateOneResponse); err != nil {
+		log.Error().Err(err).Msg("role jsonrpc store update one")
+		return nil, err
+	}
+
+	return &roleStore.UpdateOneResponse{}, nil
 }
