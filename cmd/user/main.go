@@ -66,6 +66,7 @@ func main() {
 	if err := user.Setup(
 		BasicUserAdmin,
 		MongoUserStore,
+		Firebase,
 	); err != nil {
 		log.Fatal().Err(err).Msg("user setup")
 	}
