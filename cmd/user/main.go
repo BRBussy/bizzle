@@ -6,6 +6,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/app/user"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	"github.com/BRBussy/bizzle/internal/pkg/firebase"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	jsonRpcRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/jsonRpc"
 	basicUserAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin/basic"
@@ -38,6 +39,12 @@ func main() {
 		}
 	}()
 
+	// create firebase
+	Firebase, err := firebase.New(config.FirebaseCredentialsPath)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating firebase")
+	}
+
 	// create service providers
 	MongoUserStore, err := mongoUserStore.New(mongoDb)
 	if err != nil {
@@ -50,7 +57,10 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating role jsonrpc store")
 	}
-	BasicUserAdmin := basicUserAdmin.New(JSONRPCRoleStore)
+	BasicUserAdmin := basicUserAdmin.New(
+		JSONRPCRoleStore,
+		Firebase,
+	)
 
 	// perform setup
 	if err := user.Setup(
