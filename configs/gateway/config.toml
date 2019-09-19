@@ -1,3 +1,0 @@
-Environment = "Development"
-ServerPort = "8080"
-AuthenticatorURL = "http://localhost:8081"
