@@ -6,6 +6,8 @@ import (
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	userStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/store/adaptor/jsonRpc"
+	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -33,6 +35,12 @@ func main() {
 		}
 	}()
 
+	// create service providers
+	MongoUserStore, err := mongoUserStore.New(mongoDb)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating mongo user role store")
+	}
+
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
 		"/",
@@ -41,7 +49,9 @@ func main() {
 	)
 
 	// register service providers
-	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{}); err != nil {
+	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
+		userStoreJsonRpcAdaptor.New(MongoUserStore),
+	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}
 
