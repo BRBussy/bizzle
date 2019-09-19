@@ -17,6 +17,16 @@ var idIdentifierTestCase0 = TestCase{
 	Identifier: ID("1234"),
 }
 
+var nameIdentifierTestCase0 = TestCase{
+	id: "nameIdentifierTestCase0",
+	SerializedIdentifier: []byte(fmt.Sprintf(
+		"{\"type\":\"%s\",\"name\":\"bob\"}",
+		NameIdentifierType,
+	)),
+	Identifier: Name("bob"),
+}
+
 var allTestCases = []TestCase{
 	idIdentifierTestCase0,
+	nameIdentifierTestCase0,
 }

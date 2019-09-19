@@ -18,7 +18,7 @@ func (n Name) IsValid() error {
 }
 
 func (n Name) Type() Type {
-	return IDIdentifierType
+	return NameIdentifierType
 }
 
 func (n Name) ToFilter() map[string]interface{} {

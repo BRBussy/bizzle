@@ -108,6 +108,52 @@ func TestUnmarshalSerializedIdentifier_IDIdentifierErrors(t *testing.T) {
 	)
 }
 
+func TestUnmarshalSerializedIdentifier_NameIdentifierErrors(t *testing.T) {
+	assert := testifyAssert.New(t)
+
+	// missing value
+	assert.EqualError(
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"type\":\"%s\"}",
+			NameIdentifierType,
+		))),
+		ErrInvalidSerializedIdentifier{
+			Reasons: []string{
+				"no name field",
+			},
+		}.Error(),
+		"error should be correct for invalid value types",
+	)
+
+	// invalid id identifier value type
+	assert.EqualError(
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"type\":\"%s\",\"name\":1234}",
+			NameIdentifierType,
+		))),
+		ErrUnmarshal{
+			Reasons: []string{
+				"json: cannot unmarshal number into Go value of type identifier.Name",
+			},
+		}.Error(),
+		"error should be correct for invalid value types",
+	)
+
+	// invalid name identifier value
+	assert.EqualError(
+		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
+			"{\"type\":\"%s\",\"name\":\"\"}",
+			NameIdentifierType,
+		))),
+		ErrInvalidIdentifier{
+			Reasons: []string{
+				"Name identifier is blank",
+			},
+		}.Error(),
+		"error should be correct for invalid identifier",
+	)
+}
+
 func TestUnmarshalSerializedIdentifier_UnmarshalSuccesses(t *testing.T) {
 	assert := testifyAssert.New(t)
 

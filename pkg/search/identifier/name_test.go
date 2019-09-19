@@ -13,7 +13,7 @@ func TestNameIdentifier(t *testing.T) {
 
 	// test type
 	assert.Equal(
-		IDIdentifierType,
+		NameIdentifierType,
 		testIdentifier.Type(),
 		"type should be correct",
 	)
@@ -51,7 +51,7 @@ func TestNameIdentifier(t *testing.T) {
 	assert.JSONEq(
 		fmt.Sprintf(
 			"{\"type\":\"%s\",\"name\":\"Bob\"}",
-			IDIdentifierType,
+			NameIdentifierType,
 		),
 		string(marshalledID),
 		"json data from marshalled name should be correct",
