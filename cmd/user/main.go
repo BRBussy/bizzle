@@ -3,13 +3,9 @@ package main
 import (
 	"flag"
 	roleConfig "github.com/BRBussy/bizzle/configs/role"
-	"github.com/BRBussy/bizzle/internal/app/role"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
-	basicRoleAdmin "github.com/BRBussy/bizzle/internal/pkg/security/role/admin/basic"
-	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
-	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -37,21 +33,6 @@ func main() {
 		}
 	}()
 
-	// create service providers
-	MongoRoleStore, err := mongoRoleStore.New(mongoDb)
-	if err != nil {
-		log.Fatal().Err(err).Msg("creating mongo role store")
-	}
-	BasicRoleAdmin := basicRoleAdmin.New(MongoRoleStore)
-
-	// run setup
-	if err := role.Setup(
-		BasicRoleAdmin,
-		MongoRoleStore,
-	); err != nil {
-		log.Fatal().Err(err).Msg("role setup")
-	}
-
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
 		"/",
@@ -60,14 +41,12 @@ func main() {
 	)
 
 	// register service providers
-	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
-		roleStoreJsonRpcAdaptor.New(MongoRoleStore),
-	}); err != nil {
+	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}
 
 	// start server
-	log.Info().Msgf("starting role json rpc http api server started on port %s", config.ServerPort)
+	log.Info().Msgf("starting user json rpc http api server started on port %s", config.ServerPort)
 	go func() {
 		if err := server.Start(); err != nil {
 			log.Error().Err(err).Msg("json rpc http api server has stopped")

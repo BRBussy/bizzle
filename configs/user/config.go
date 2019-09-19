@@ -1,4 +1,4 @@
-package role
+package user
 
 import (
 	"github.com/BRBussy/bizzle/internal/pkg/environment"
@@ -14,7 +14,7 @@ func init() {
 
 	// set default configuration
 	viper.SetDefault("Environment", environment.Development)
-	viper.SetDefault("ServerPort", "8080")
+	viper.SetDefault("ServerPort", "8081")
 	viper.SetDefault("MongoDbHosts", []string{"localhost:27017"})
 	viper.SetDefault("MongoDbName", "bizzle")
 }
@@ -29,7 +29,7 @@ type Config struct {
 
 func GetConfig(configFileName *string) (*Config, error) {
 	// set places to look for config file
-	viper.AddConfigPath("configs/role")
+	viper.AddConfigPath("configs/user")
 	viper.AddConfigPath("config")
 	viper.AddConfigPath(".")
 
