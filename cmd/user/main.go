@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	roleConfig "github.com/BRBussy/bizzle/configs/role"
+	userConfig "github.com/BRBussy/bizzle/configs/user"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
@@ -17,7 +17,7 @@ func main() {
 	flag.Parse()
 
 	// get exercise/store config
-	config, err := roleConfig.GetConfig(configFileName)
+	config, err := userConfig.GetConfig(configFileName)
 	if err != nil {
 		log.Fatal().Err(err).Msg("getting config from file")
 	}
