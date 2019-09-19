@@ -23,7 +23,7 @@ func main() {
 	}
 
 	// create new mongo db connection
-	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, "bizzle")
+	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, config.MongoDbName)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating new mongo db client")
 	}
