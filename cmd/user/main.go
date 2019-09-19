@@ -16,7 +16,7 @@ var configFileName = flag.String("config-file-name", "config", "specify config f
 func main() {
 	flag.Parse()
 
-	// get exercise/store config
+	// get config
 	config, err := userConfig.GetConfig(configFileName)
 	if err != nil {
 		log.Fatal().Err(err).Msg("getting config from file")
