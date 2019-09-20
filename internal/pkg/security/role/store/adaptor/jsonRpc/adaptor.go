@@ -7,7 +7,6 @@ import (
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
-	"github.com/BRBussy/bizzle/pkg/search/query"
 	"net/http"
 )
 
