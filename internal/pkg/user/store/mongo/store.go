@@ -44,8 +44,13 @@ func (s *store) CreateOne(request *userStore.CreateOneRequest) (*userStore.Creat
 func (s *store) FindOne(request *userStore.FindOneRequest) (*userStore.FindOneResponse, error) {
 	var result user.User
 	if err := s.collection.FindOne(&result, request.Identifier); err != nil {
-		log.Error().Err(err).Msg("finding one user")
-		return nil, err
+		switch err.(type) {
+		case mongo.ErrNotFound:
+			return nil, err
+		default:
+			log.Error().Err(err).Msg("finding one user")
+			return nil, err
+		}
 	}
 	return &userStore.FindOneResponse{User: result}, nil
 }

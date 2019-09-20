@@ -6,7 +6,7 @@ import (
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
 )
 
-func (s *Serialized) MarshalJSON() ([]byte, error) {
+func (s Serialized) MarshalJSON() ([]byte, error) {
 	serializedCriteria := make(map[string]json.RawMessage)
 	for _, criterion := range s.Criteria {
 		field, jsonMessage, err := serialize(criterion)
