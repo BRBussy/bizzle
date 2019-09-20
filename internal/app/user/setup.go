@@ -2,6 +2,7 @@ package user
 
 import (
 	goFirebaseAuth "firebase.google.com/go/auth"
+	"fmt"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/firebase"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
@@ -74,7 +75,11 @@ func Setup(
 		case mongo.ErrNotFound:
 			// root user in bizzle not found, create it
 			// first retrieve the roles for root user
-			roleFindResponse, err := roleStoreImp.FindOne()
+			roleFindResponse, err := roleStoreImp.FindMany(&roleStore.FindManyRequest{
+				Criteria: nil,
+				Query:    mongo.Query{},
+			})
+			fmt.Println("find all roles!", roleFindResponse)
 
 			createResponse, err := userAdminImp.CreateOne(&userAdmin.CreateOneRequest{User: rootUserToCreate})
 			if err != nil {
@@ -89,6 +94,6 @@ func Setup(
 	}
 
 	// root user has been found or created
-
+	fmt.Println(findRootUserResponse)
 	return nil
 }

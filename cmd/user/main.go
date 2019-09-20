@@ -50,13 +50,9 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
 	}
-	JSONRPCRoleStore, err := jsonRpcRoleStore.New(
-		config.Environment,
+	JSONRPCRoleStore := jsonRpcRoleStore.New(
 		config.RoleURL,
 	)
-	if err != nil {
-		log.Fatal().Err(err).Msg("creating role jsonrpc store")
-	}
 	BasicUserAdmin := basicUserAdmin.New(
 		JSONRPCRoleStore,
 		Firebase,
@@ -66,6 +62,7 @@ func main() {
 	if err := user.Setup(
 		BasicUserAdmin,
 		MongoUserStore,
+		JSONRPCRoleStore,
 		Firebase,
 		config.RootPassword,
 	); err != nil {
