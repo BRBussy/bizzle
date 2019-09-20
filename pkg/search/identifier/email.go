@@ -25,7 +25,7 @@ func (n Email) ToFilter() map[string]interface{} {
 	return map[string]interface{}{"email": n.String()}
 }
 
-func (n Email) MarshalJSON() ([]byte, error) {
+func (n Email) ToJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Type  Type   `json:"type"`
 		Email string `json:"email"`

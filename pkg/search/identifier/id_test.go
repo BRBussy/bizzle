@@ -42,7 +42,7 @@ func TestIDIdentifier(t *testing.T) {
 	)
 
 	// test MarshalJSON
-	marshalledID, err := testIdentifier.MarshalJSON()
+	marshalledID, err := testIdentifier.ToJSON()
 	assert.Equal(
 		nil,
 		err,

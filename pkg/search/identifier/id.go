@@ -25,7 +25,7 @@ func (I ID) ToFilter() map[string]interface{} {
 	return map[string]interface{}{"id": I.String()}
 }
 
-func (I ID) MarshalJSON() ([]byte, error) {
+func (I ID) ToJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Type Type   `json:"type"`
 		ID   string `json:"id"`
