@@ -12,6 +12,7 @@ import (
 	basicUserAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin/basic"
 	userStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/store/adaptor/jsonRpc"
 	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
+	basicUserValidator "github.com/BRBussy/bizzle/internal/pkg/user/validator/basic"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -50,10 +51,11 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
 	}
-	JSONRPCRoleStore := jsonRpcRoleStore.New(
-		config.RoleURL,
-	)
+	JSONRPCRoleStore := jsonRpcRoleStore.New(config.RoleURL)
+	BasicUserValidator := basicUserValidator.New(JSONRPCRoleStore)
 	BasicUserAdmin := basicUserAdmin.New(
+		BasicUserValidator,
+		MongoUserStore,
 		JSONRPCRoleStore,
 		Firebase,
 	)

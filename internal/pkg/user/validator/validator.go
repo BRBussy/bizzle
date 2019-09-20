@@ -17,5 +17,5 @@ type ValidateForCreateRequest struct {
 }
 
 type ValidateForCreateResponse struct {
-	ReasonsInvalid []reasonInvalid.ReasonInvalid
+	ReasonsInvalid reasonInvalid.ReasonsInvalid
 }
