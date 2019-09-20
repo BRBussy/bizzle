@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/security/role"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
@@ -52,7 +53,16 @@ func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneRe
 
 func (s *store) FindMany(request *roleStore.FindManyRequest) (*roleStore.FindManyResponse, error) {
 	var records []role.Role
-	return nil, nil
+	count, err := s.collection.FindMany(&records, request.Criteria, request.Query)
+	if err != nil {
+		log.Error().Err(err).Msg("finding roles")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	return &roleStore.FindManyResponse{
+		Records: records,
+		Total:   count,
+	}, nil
 }
 
 func (s *store) UpdateOne(request *roleStore.UpdateOneRequest) (*roleStore.UpdateOneResponse, error) {

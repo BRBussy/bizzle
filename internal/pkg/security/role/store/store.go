@@ -1,10 +1,10 @@
 package store
 
 import (
+	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/security/role"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
-	"github.com/BRBussy/bizzle/pkg/search/query"
 )
 
 type Store interface {
@@ -38,12 +38,12 @@ type FindOneResponse struct {
 
 type FindManyRequest struct {
 	Criteria criteria.Criteria
-	Query    query.Query
+	Query    mongo.Query
 }
 
 type FindManyResponse struct {
 	Records []role.Role
-	Total   int
+	Total   int64
 }
 
 type UpdateOneRequest struct {
