@@ -7,4 +7,5 @@ type User struct {
 	Name         string          `json:"name" bson:"name"`
 	EmailAddress string          `json:"emailAddress" bson:"emailAddress"`
 	RoleIDs      []identifier.ID `json:"roleIDs" bson:"roleIDs"`
+	FirebaseUID  string          `json:"firebaseUID" bson:"firebaseUID"`
 }
