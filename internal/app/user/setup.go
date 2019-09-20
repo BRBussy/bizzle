@@ -2,7 +2,6 @@ package user
 
 import (
 	goFirebaseAuth "firebase.google.com/go/auth"
-	"fmt"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/firebase"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
@@ -67,6 +66,31 @@ func Setup(
 	// update firebase ID on root user to create
 	rootUserToCreate.FirebaseUID = rootUser.UID
 
+	// if root user to be created has any roles, find the role ids now
+	if len(rootUserToCreate.RoleIDs) > 0 {
+		roleFindCriteria := make([]criterion.Criterion, 0)
+		for i := range rootUserToCreate.RoleIDs {
+			roleFindCriteria = append(
+				roleFindCriteria,
+				stringCriterion.Exact{
+					Field:  "name",
+					String: rootUserToCreate.RoleIDs[i].String(),
+				},
+			)
+		}
+		roleFindResponse, err := roleStoreImp.FindMany(&roleStore.FindManyRequest{
+			Criteria: roleFindCriteria,
+		})
+		if err != nil {
+			log.Error().Err(err).Msg("finding root user roles")
+			return bizzleException.ErrUnexpected{}
+		}
+		rootUserToCreate.RoleIDs = make([]identifier.ID, 0)
+		for i := range roleFindResponse.Records {
+			rootUserToCreate.RoleIDs = append(rootUserToCreate.RoleIDs, roleFindResponse.Records[i].ID)
+		}
+	}
+
 	// root user's firebase user retrieved or created
 	// try and retrieve root user's bizzle user
 	findRootUserResponse, err := userStoreImp.FindOne(&userStore.FindOneRequest{
@@ -76,32 +100,6 @@ func Setup(
 		switch err.(type) {
 		case mongo.ErrNotFound:
 			// root user in bizzle not found, create it
-
-			// if root user is to have any roles, find their ids now
-			if len(rootUserToCreate.RoleIDs) > 0 {
-				roleFindCriteria := make([]criterion.Criterion, 0)
-				for i := range rootUserToCreate.RoleIDs {
-					roleFindCriteria = append(
-						roleFindCriteria,
-						stringCriterion.Exact{
-							Field:  "name",
-							String: rootUserToCreate.RoleIDs[i].String(),
-						},
-					)
-				}
-				roleFindResponse, err := roleStoreImp.FindMany(&roleStore.FindManyRequest{
-					Criteria: roleFindCriteria,
-				})
-				if err != nil {
-					log.Error().Err(err).Msg("finding root user roles")
-					return bizzleException.ErrUnexpected{}
-				}
-				rootUserToCreate.RoleIDs = make([]identifier.ID, 0)
-				for i := range roleFindResponse.Records {
-					rootUserToCreate.RoleIDs = append(rootUserToCreate.RoleIDs, roleFindResponse.Records[i].ID)
-				}
-			}
-
 			createResponse, err := userAdminImp.CreateOne(&userAdmin.CreateOneRequest{User: rootUserToCreate})
 			if err != nil {
 				log.Error().Err(err).Msg("creating bizzle root user")
@@ -114,7 +112,13 @@ func Setup(
 		}
 	}
 
-	// root user has been found or created
-	fmt.Println(findRootUserResponse)
+	// root user has been found or created, populate id before comparison
+	rootUserToCreate.ID = findRootUserResponse.User.ID
+
+	// check if found user is different from that which should be created
+	if !user.CompareUsers(rootUserToCreate, findRootUserResponse.User) {
+		return bizzleException.ErrUnexpected{Reasons: []string{"root user not in sync"}}
+	}
+
 	return nil
 }
