@@ -4,6 +4,7 @@ import (
 	goFirebaseAuth "firebase.google.com/go/auth"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/firebase"
+	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
@@ -64,6 +65,12 @@ func Setup(
 	bizzleRootUser, err := userStoreImp.FindOne(&userStore.FindOneRequest{
 		Identifier: identifier.Email(rootUserTemplate.Email),
 	})
+	if err != nil {
+		switch err.(type) {
+		case mongo.ErrNotFound:
+
+		}
+	}
 
 	return nil
 }
