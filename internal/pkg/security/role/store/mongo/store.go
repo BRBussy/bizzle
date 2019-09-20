@@ -45,8 +45,13 @@ func (s *store) CreateOne(request *roleStore.CreateOneRequest) (*roleStore.Creat
 func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {
 	var result role.Role
 	if err := s.collection.FindOne(&result, request.Identifier); err != nil {
-		log.Error().Err(err).Msg("finding one role")
-		return nil, err
+		switch err.(type) {
+		case mongo.ErrNotFound:
+			return nil, err
+		default:
+			log.Error().Err(err).Msg("finding one role")
+			return nil, err
+		}
 	}
 	return &roleStore.FindOneResponse{Role: result}, nil
 }
