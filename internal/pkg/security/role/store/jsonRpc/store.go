@@ -17,7 +17,7 @@ type store struct {
 func New(url string) roleStore.Store {
 	return &store{
 		jsonRpcClient: basicJsonRpcClient.New(url),
-	}, nil
+	}
 }
 
 func (a *store) CreateOne(request *roleStore.CreateOneRequest) (*roleStore.CreateOneResponse, error) {

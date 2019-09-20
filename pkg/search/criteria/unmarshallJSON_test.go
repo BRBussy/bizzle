@@ -11,13 +11,29 @@ func TestUnmarshalSerializedCriteria_InvalidInput(t *testing.T) {
 	assert := testifyAssert.New(t)
 
 	// test fringe invalid json inputs
-	assert.Equal(
-		ErrInvalidSerializedCriteria{Reasons: []string{"json criterion data is nil"}},
+	assert.Error(
 		(&Serialized{}).UnmarshalJSON(nil),
+		ErrInvalidSerializedCriteria{Reasons: []string{"json criterion data is nil"}}.Error(),
 	)
-	assert.Equal(
-		ErrUnmarshal{Reasons: []string{"json unmarshal", "invalid character 'o' in literal null (expecting 'u')"}},
+	assert.Error(
 		(&Serialized{}).UnmarshalJSON([]byte("notValidJSON")),
+		ErrUnmarshal{Reasons: []string{"json unmarshal", "invalid character 'o' in literal null (expecting 'u')"}}.Error(),
+	)
+}
+
+func TestBlankInput(t *testing.T) {
+	assert := testifyAssert.New(t)
+
+	testSerializedCriteria := Serialized{}
+
+	assert.Equal(
+		nil,
+		(&testSerializedCriteria).UnmarshalJSON([]byte("{\"serialized\":null,\"criteria\":null}")),
+	)
+
+	assert.Equal(
+		make([]searchCriterion.Criterion, 0),
+		testSerializedCriteria.Criteria,
 	)
 }
 

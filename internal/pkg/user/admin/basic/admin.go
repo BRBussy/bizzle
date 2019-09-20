@@ -1,6 +1,7 @@
 package basic
 
 import (
+	"errors"
 	"github.com/BRBussy/bizzle/internal/pkg/firebase"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
@@ -22,9 +23,9 @@ func New(
 }
 
 func (a *admin) CreateOne(*userAdmin.CreateOneRequest) (*userAdmin.CreateOneResponse, error) {
-	panic("implement me")
+	return nil, errors.New("implement create one")
 }
 
 func (a *admin) UpdateOne(*userAdmin.UpdateOneRequest) (*userAdmin.UpdateOneResponse, error) {
-	panic("implement me")
+	return nil, errors.New("implement update one")
 }

@@ -75,16 +75,17 @@ func Setup(
 		case mongo.ErrNotFound:
 			// root user in bizzle not found, create it
 			// first retrieve the roles for root user
-			roleFindResponse, err := roleStoreImp.FindMany(&roleStore.FindManyRequest{
-				Criteria: nil,
-				Query:    mongo.Query{},
-			})
+			roleFindResponse, err := roleStoreImp.FindMany(&roleStore.FindManyRequest{})
+			if err != nil {
+				log.Error().Err(err).Msg("finding root user roles")
+				return bizzleException.ErrUnexpected{}
+			}
 			fmt.Println("find all roles!", roleFindResponse)
 
 			createResponse, err := userAdminImp.CreateOne(&userAdmin.CreateOneRequest{User: rootUserToCreate})
 			if err != nil {
 				log.Error().Err(err).Msg("creating bizzle root user")
-				return err
+				return bizzleException.ErrUnexpected{}
 			}
 			findRootUserResponse = &userStore.FindOneResponse{User: createResponse.User}
 		default:

@@ -6,6 +6,6 @@ import (
 )
 
 type Serialized struct {
-	Serialized map[string]json.RawMessage
-	Criteria   []searchCriterion.Criterion
+	Serialized map[string]json.RawMessage  `json:"serialized"`
+	Criteria   []searchCriterion.Criterion `json:"criteria"`
 }
