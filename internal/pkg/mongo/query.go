@@ -2,11 +2,12 @@ package mongo
 
 import (
 	mongoBSON "go.mongodb.org/mongo-driver/bson"
+	mongoDriverOptions "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Query struct {
-	Limit   int       `json:"limit"`
-	Offset  int       `json:"offset"`
+	Limit   int64     `json:"limit"`
+	Offset  int64     `json:"offset"`
 	Sorting []Sorting `json:"Sorting"`
 }
 
@@ -71,7 +72,8 @@ func (q Query) IsValid() error {
 	return nil
 }
 
-func (q Query) ToMongoSortFormat() (*mongoBSON.D, error) {
+func (q Query) ToMongoFindOptions() (*mongoDriverOptions.FindOptions, error) {
+	// get sorting
 	sorting := mongoBSON.D{}
 	for i := range q.Sorting {
 		sort, err := q.Sorting[i].ToMongoSortFormat()
@@ -80,5 +82,15 @@ func (q Query) ToMongoSortFormat() (*mongoBSON.D, error) {
 		}
 		sorting = append(sorting, *sort)
 	}
-	return &sorting, nil
+	// create find options
+	findOptions := new(mongoDriverOptions.FindOptions)
+
+	// populate find options
+	findOptions.SetSort(sorting)
+	findOptions.SetSkip(q.Offset)
+	if q.Limit > 0 {
+		findOptions.SetLimit(q.Limit)
+	}
+
+	return findOptions, nil
 }
