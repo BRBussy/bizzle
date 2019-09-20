@@ -2,6 +2,14 @@ package mongo
 
 import "strings"
 
+type ErrInvalidConfig struct {
+	Reasons []string
+}
+
+func (e ErrInvalidConfig) Error() string {
+	return "invalid config: " + strings.Join(e.Reasons, ", ")
+}
+
 type ErrUnexpected struct {
 }
 

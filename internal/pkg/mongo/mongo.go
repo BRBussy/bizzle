@@ -24,16 +24,26 @@ func New(
 	var db *Database
 	var err error
 
+	// try connect with a connection string if one is provided
 	if connectionString != "" {
 		db, err = NewFromConnectionString(connectionString)
-	}
-	if len(hosts) != 0 {
+		if err != nil {
+			log.Error().Err(err).Msg("connecting to mongo")
+			return nil, ErrUnexpected{}
+		}
+	} else if len(hosts) != 0 {
 		db, err = NewFromHosts(hosts)
-	}
-	if err != nil {
+		if err != nil {
+			log.Error().Err(err).Msg("connecting to mongo")
+			return nil, ErrUnexpected{}
+		}
+	} else {
+		err = ErrInvalidConfig{Reasons: []string{"no hosts or connection string"}}
+		log.Error().Err(err).Msg("connecting to mongo")
 		return nil, err
 	}
 
+	// connection successful populate and return database
 	db.database = db.mongoClient.Database(databaseName)
 	return db, nil
 }
