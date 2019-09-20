@@ -4,7 +4,9 @@ import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/security/role"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
+	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	"github.com/BRBussy/bizzle/pkg/search/query"
 	"net/http"
 )
 
@@ -68,6 +70,33 @@ func (a *adaptor) FindOne(r *http.Request, request *FindOneRequest, response *Fi
 	}
 
 	response.Role = findOneResponse.Role
+
+	return nil
+}
+
+type FindManyRequest struct {
+	Criteria criteria.Serialized `json:"criteria"`
+	Query    query.Query         `json:"query"`
+}
+
+type FindManyResponse struct {
+	Records []role.Role `json:"records"`
+	Total   int         `json:"total"`
+}
+
+func (a *adaptor) FindMany(r *http.Request, request *FindManyRequest, response *FindManyResponse) error {
+	findOneResponse, err := a.store.FindMany(
+		&roleStore.FindManyRequest{
+			Criteria: request.Criteria.Criteria,
+			Query:    request.Query,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	response.Records = findOneResponse.Records
+	response.Total = findOneResponse.Total
 
 	return nil
 }

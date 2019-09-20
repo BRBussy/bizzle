@@ -19,6 +19,7 @@ type CreateOneRequest struct {
 }
 
 type CreateOneResponse struct {
+	User user.User
 }
 
 type UpdateOneRequest struct {
