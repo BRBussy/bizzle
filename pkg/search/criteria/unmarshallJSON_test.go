@@ -21,22 +21,6 @@ func TestUnmarshalSerializedCriteria_InvalidInput(t *testing.T) {
 	)
 }
 
-func TestBlankInput(t *testing.T) {
-	assert := testifyAssert.New(t)
-
-	testSerializedCriteria := Serialized{}
-
-	assert.Equal(
-		nil,
-		(&testSerializedCriteria).UnmarshalJSON([]byte("{\"serialized\":null,\"criteria\":null}")),
-	)
-
-	assert.Equal(
-		make([]searchCriterion.Criterion, 0),
-		testSerializedCriteria.Criteria,
-	)
-}
-
 func TestUnmarshalSerializedCriteria_OROperatorFailures(t *testing.T) {
 	assert := testifyAssert.New(t)
 	// invalid value provided for $or operator

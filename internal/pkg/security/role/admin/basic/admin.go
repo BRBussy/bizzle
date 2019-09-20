@@ -21,7 +21,7 @@ func New(
 }
 
 func (a *admin) CreateOne(request *roleAdmin.CreateOneRequest) (*roleAdmin.CreateOneResponse, error) {
-	request.Role.ID = uuid.NewV4().String()
+	request.Role.ID = identifier.ID(uuid.NewV4().String())
 
 	if _, err := a.roleStore.CreateOne(&roleStore.CreateOneRequest{Role: request.Role}); err != nil {
 		log.Error().Err(err).Msg("creating role")

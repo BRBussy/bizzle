@@ -2,10 +2,11 @@ package role
 
 import (
 	"github.com/BRBussy/bizzle/internal/pkg/security/permission"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 )
 
 type Role struct {
-	ID          string                  `json:"id" bson:"id"`
+	ID          identifier.ID           `json:"id" bson:"id"`
 	Name        string                  `json:"name" bson:"name"`
 	Permissions []permission.Permission `json:"permissions" bson:"permissions"`
 }

@@ -10,6 +10,8 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
+	"github.com/BRBussy/bizzle/pkg/search/criterion"
+	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 )
@@ -74,13 +76,31 @@ func Setup(
 		switch err.(type) {
 		case mongo.ErrNotFound:
 			// root user in bizzle not found, create it
-			// first retrieve the roles for root user
-			roleFindResponse, err := roleStoreImp.FindMany(&roleStore.FindManyRequest{})
-			if err != nil {
-				log.Error().Err(err).Msg("finding root user roles")
-				return bizzleException.ErrUnexpected{}
+
+			// if root user is to have any roles, find their ids now
+			if len(rootUserToCreate.RoleIDs) > 0 {
+				roleFindCriteria := make([]criterion.Criterion, 0)
+				for i := range rootUserToCreate.RoleIDs {
+					roleFindCriteria = append(
+						roleFindCriteria,
+						stringCriterion.Exact{
+							Field:  "name",
+							String: rootUserToCreate.RoleIDs[i].String(),
+						},
+					)
+				}
+				roleFindResponse, err := roleStoreImp.FindMany(&roleStore.FindManyRequest{
+					Criteria: roleFindCriteria,
+				})
+				if err != nil {
+					log.Error().Err(err).Msg("finding root user roles")
+					return bizzleException.ErrUnexpected{}
+				}
+				rootUserToCreate.RoleIDs = make([]identifier.ID, 0)
+				for i := range roleFindResponse.Records {
+					rootUserToCreate.RoleIDs = append(rootUserToCreate.RoleIDs, roleFindResponse.Records[i].ID)
+				}
 			}
-			fmt.Println("find all roles!", roleFindResponse)
 
 			createResponse, err := userAdminImp.CreateOne(&userAdmin.CreateOneRequest{User: rootUserToCreate})
 			if err != nil {

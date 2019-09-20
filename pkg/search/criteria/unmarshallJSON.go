@@ -10,12 +10,6 @@ import (
 )
 
 func (s *Serialized) UnmarshalJSON(data []byte) error {
-	// deal with nil serialized criteria
-	if string(data) == "{\"serialized\":null,\"criteria\":null}" {
-		s.Criteria = make([]searchCriterion.Criterion, 0)
-		return nil
-	}
-
 	// confirm that given data is not nil
 	if data == nil {
 		err := ErrInvalidSerializedCriteria{Reasons: []string{"json criterion data is nil"}}
