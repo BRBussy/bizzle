@@ -4,10 +4,8 @@ import (
 	"context"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
-	"github.com/BRBussy/bizzle/pkg/search/query"
 	"github.com/rs/zerolog/log"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
-	mongoDriverOptions "go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
@@ -59,7 +57,7 @@ func (c *Collection) FindOne(document interface{}, identifier identifier.Identif
 	return nil
 }
 
-func (c *Collection) FindMany(documents interface{}, criteria criteria.Criteria, query query.Query) error {
+func (c *Collection) FindMany(documents interface{}, criteria criteria.Criteria, query Query) (int64, error) {
 	// build filter
 	filter := make(map[string]interface{})
 	if criteria != nil {
@@ -70,37 +68,39 @@ func (c *Collection) FindMany(documents interface{}, criteria criteria.Criteria,
 			}
 		}
 		if len(reasonsInvalid) > 0 {
-			return ErrInvalidCriteria{Reasons: reasonsInvalid}
+			return 0, ErrInvalidCriteria{Reasons: reasonsInvalid}
 		}
 		filter = criteria.ToFilter()
 	}
 
-	// build options
-	findOptions := mongoDriverOptions.FindOptions{}
-	findOptions.SetSort()
+	// get options
+	findOptions, err := query.ToMongoFindOptions()
+	if err != nil {
+		return 0, err
+	}
 
+	// perform find
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	cur, err := c.driverCollection.Find(ctx, filter, &mongoDriverOptions.FindOptions{
-		AllowPartialResults: nil,
-		BatchSize:           nil,
-		Collation:           nil,
-		Comment:             nil,
-		CursorType:          nil,
-		Hint:                nil,
-		Limit:               nil,
-		Max:                 nil,
-		MaxAwaitTime:        nil,
-		MaxTime:             nil,
-		Min:                 nil,
-		NoCursorTimeout:     nil,
-		OplogReplay:         nil,
-		Projection:          nil,
-		ReturnKey:           nil,
-		ShowRecordID:        nil,
-		Skip:                nil,
-		Snapshot:            nil,
-		Sort:                nil,
-	})
+	cur, err := c.driverCollection.Find(ctx, filter, findOptions)
+	if err != nil {
+		log.Error().Err(err).Msg("performing find")
+		return 0, ErrUnexpected{}
+	}
+
+	// decode the results
+	if err := cur.All(ctx, documents); err != nil {
+		log.Error().Err(err).Msg("decoding documents")
+		return 0, ErrUnexpected{}
+	}
+
+	// get document count
+	count, err := c.driverCollection.CountDocuments(ctx, filter)
+	if err != nil {
+		log.Error().Err(err).Msg("counting documents")
+		return 0, ErrUnexpected{}
+	}
+
+	return count, nil
 }
 
 func (c *Collection) UpdateOne(document interface{}, identifier identifier.Identifier) error {

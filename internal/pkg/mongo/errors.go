@@ -2,6 +2,13 @@ package mongo
 
 import "strings"
 
+type ErrUnexpected struct {
+}
+
+func (e ErrUnexpected) Error() string {
+	return "unexpected mongo error"
+}
+
 type ErrNotFound struct {
 }
 
