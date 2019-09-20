@@ -26,10 +26,10 @@ func Setup(
 	rootPassword string,
 ) error {
 	// try and retrieve root user's firebase user
-	rootUser, err := firebaseImp.GetUserByEmail(rootUserTemplate.EmailAddress)
+	rootUser, err := firebaseImp.GetUserByEmail(rootUserTemplate.Email)
 	if err == nil {
 		// user could be retrieved, confirm user's details are correct
-		if rootUser.Email != rootUserTemplate.EmailAddress {
+		if rootUser.Email != rootUserTemplate.Email {
 			err := bizzleException.ErrUnexpected{Reasons: []string{"root firebase user email incorrect"}}
 			log.Error().Err(err)
 			return err
@@ -48,7 +48,7 @@ func Setup(
 		// user could not be retrieved, try and create user
 		firebaseUserToCreateParams := (&goFirebaseAuth.UserToCreate{}).
 			DisplayName(rootUserTemplate.Name).
-			Email(rootUserTemplate.EmailAddress).
+			Email(rootUserTemplate.Email).
 			EmailVerified(true).
 			Password(rootPassword)
 		createdRootUser, err := firebaseImp.CreateUser(firebaseUserToCreateParams)
@@ -61,9 +61,9 @@ func Setup(
 
 	// root user's firebase user retrieved or created
 	// try and retrieve root user's bizzle user
-	bizzleRootUser, err := userStoreImp.FindOne(userStore.FindOneRequest{
-		Identifier: identifier.
-			})
+	bizzleRootUser, err := userStoreImp.FindOne(&userStore.FindOneRequest{
+		Identifier: identifier.Email(rootUserTemplate.Email),
+	})
 
 	return nil
 }
