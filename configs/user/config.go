@@ -19,6 +19,7 @@ func init() {
 	viper.SetDefault("MongoDbName", "bizzle")
 	viper.SetDefault("RoleURL", "http://localhost:8080")
 	viper.SetDefault("FirebaseCredentialsPath", "firebaseCredentials.json")
+	viper.SetDefault("RootPassword", "123456")
 }
 
 type Config struct {
@@ -29,6 +30,7 @@ type Config struct {
 	MongoDbName             string
 	RoleURL                 string
 	FirebaseCredentialsPath string
+	RootPassword            string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {
