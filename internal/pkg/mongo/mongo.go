@@ -45,6 +45,7 @@ func New(
 
 	// connection successful populate and return database
 	db.database = db.mongoClient.Database(databaseName)
+
 	return db, nil
 }
 

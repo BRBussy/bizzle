@@ -70,10 +70,12 @@ func Setup(
 			switch err.(type) {
 			case mongo.ErrNotFound:
 				// role was not found, create it and move on to next role
-				if _, err := admin.CreateOne(&roleAdmin.CreateOneRequest{Role: initialRoles[i]}); err != nil {
+				createResponse, err := admin.CreateOne(&roleAdmin.CreateOneRequest{Role: initialRoles[i]})
+				if err != nil {
 					log.Error().Err(err).Msg("creating role")
 					return err
 				}
+				findOneResponse = &roleStore.FindOneResponse{Role: createResponse.Role}
 				continue
 
 			default:
