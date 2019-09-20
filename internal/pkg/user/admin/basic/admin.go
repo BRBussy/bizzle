@@ -22,7 +22,7 @@ func New(
 	}
 }
 
-func (a *admin) CreateOne(*userAdmin.CreateOneRequest) (*userAdmin.CreateOneResponse, error) {
+func (a *admin) CreateOne(request *userAdmin.CreateOneRequest) (*userAdmin.CreateOneResponse, error) {
 	return nil, errors.New("implement create one")
 }
 

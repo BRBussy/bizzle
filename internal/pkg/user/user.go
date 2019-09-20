@@ -6,10 +6,10 @@ import (
 
 type User struct {
 	ID          identifier.ID   `json:"id" bson:"id"`
-	Name        string          `json:"name" bson:"name"`
-	Email       string          `json:"email" bson:"email"`
-	RoleIDs     []identifier.ID `json:"roleIDs" bson:"roleIDs"`
-	FirebaseUID string          `json:"firebaseUID" bson:"firebaseUID"`
+	Name        string          `validate:"required" json:"name" bson:"name"`
+	Email       string          `validate:"required,email" json:"email" bson:"email"`
+	RoleIDs     []identifier.ID `validate:"required" json:"roleIDs" bson:"roleIDs"`
+	FirebaseUID string          `validate:"required" json:"firebaseUID" bson:"firebaseUID"`
 }
 
 func CompareUsers(a, b User) bool {
