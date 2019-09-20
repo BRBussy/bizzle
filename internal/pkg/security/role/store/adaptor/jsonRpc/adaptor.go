@@ -2,6 +2,7 @@ package jsonRpc
 
 import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/security/role"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
@@ -76,12 +77,12 @@ func (a *adaptor) FindOne(r *http.Request, request *FindOneRequest, response *Fi
 
 type FindManyRequest struct {
 	Criteria criteria.Serialized `json:"criteria"`
-	Query    query.Query         `json:"query"`
+	Query    mongo.Query         `json:"query"`
 }
 
 type FindManyResponse struct {
 	Records []role.Role `json:"records"`
-	Total   int         `json:"total"`
+	Total   int64       `json:"total"`
 }
 
 func (a *adaptor) FindMany(r *http.Request, request *FindManyRequest, response *FindManyResponse) error {

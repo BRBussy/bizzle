@@ -2,12 +2,10 @@ package jsonRpc
 
 import (
 	jsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client"
-	authenticatedJsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client/authenticated"
 	basicJsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client/basic"
-	"github.com/BRBussy/bizzle/internal/pkg/environment"
-	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
+	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 )
@@ -16,26 +14,9 @@ type store struct {
 	jsonRpcClient jsonRpcClient.Client
 }
 
-func New(
-	env environment.Environment,
-	url string,
-) (roleStore.Store, error) {
-	var client jsonRpcClient.Client
-	var err error
-	switch env {
-	case environment.Development:
-		client = basicJsonRpcClient.New(url)
-	case environment.Production:
-		client, err = authenticatedJsonRpcClient.New(url)
-		if err != nil {
-			log.Error().Err(err).Msg("creating new authenticated json rpc client")
-			return nil, err
-		}
-	default:
-		return nil, bizzleException.ErrUnexpected{Reasons: []string{"invalid environment", env.String()}}
-	}
+func New(url string) roleStore.Store {
 	return &store{
-		jsonRpcClient: client,
+		jsonRpcClient: basicJsonRpcClient.New(url),
 	}, nil
 }
 
@@ -70,6 +51,27 @@ func (a *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneRe
 
 	return &roleStore.FindOneResponse{
 		Role: findOneResponse.Role,
+	}, nil
+}
+
+func (a *store) FindMany(request *roleStore.FindManyRequest) (*roleStore.FindManyResponse, error) {
+	findManyResponse := new(roleStoreJsonRpcAdaptor.FindManyResponse)
+	if err := a.jsonRpcClient.JsonRpcRequest(
+		roleStore.FindManyService,
+		roleStoreJsonRpcAdaptor.FindManyRequest{
+			Criteria: criteria.Serialized{
+				Criteria: request.Criteria,
+			},
+			Query: request.Query,
+		},
+		findManyResponse); err != nil {
+		log.Error().Err(err).Msg("role jsonrpc store find many")
+		return nil, err
+	}
+
+	return &roleStore.FindManyResponse{
+		Records: findManyResponse.Records,
+		Total:   findManyResponse.Total,
 	}, nil
 }
 
