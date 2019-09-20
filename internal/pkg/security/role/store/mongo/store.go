@@ -50,6 +50,11 @@ func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneRe
 	return &roleStore.FindOneResponse{Role: result}, nil
 }
 
+func (s *store) FindMany(request *roleStore.FindManyRequest) (*roleStore.FindManyResponse, error) {
+	var records []role.Role
+	return nil, nil
+}
+
 func (s *store) UpdateOne(request *roleStore.UpdateOneRequest) (*roleStore.UpdateOneResponse, error) {
 	if err := s.collection.UpdateOne(request.Role, identifier.ID(request.Role.ID)); err != nil {
 		log.Error().Err(err).Msg("updating role")

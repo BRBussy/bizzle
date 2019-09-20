@@ -2,9 +2,12 @@ package mongo
 
 import (
 	"context"
+	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	"github.com/BRBussy/bizzle/pkg/search/query"
 	"github.com/rs/zerolog/log"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
+	mongoDriverOptions "go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
@@ -54,6 +57,50 @@ func (c *Collection) FindOne(document interface{}, identifier identifier.Identif
 		}
 	}
 	return nil
+}
+
+func (c *Collection) FindMany(documents interface{}, criteria criteria.Criteria, query query.Query) error {
+	// build filter
+	filter := make(map[string]interface{})
+	if criteria != nil {
+		reasonsInvalid := make([]string, 0)
+		for i := range criteria {
+			if err := criteria[i].IsValid(); err != nil {
+				reasonsInvalid = append(reasonsInvalid, err.Error())
+			}
+		}
+		if len(reasonsInvalid) > 0 {
+			return ErrInvalidCriteria{Reasons: reasonsInvalid}
+		}
+		filter = criteria.ToFilter()
+	}
+
+	// build options
+	findOptions := mongoDriverOptions.FindOptions{}
+	findOptions.SetSort()
+
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	cur, err := c.driverCollection.Find(ctx, filter, &mongoDriverOptions.FindOptions{
+		AllowPartialResults: nil,
+		BatchSize:           nil,
+		Collation:           nil,
+		Comment:             nil,
+		CursorType:          nil,
+		Hint:                nil,
+		Limit:               nil,
+		Max:                 nil,
+		MaxAwaitTime:        nil,
+		MaxTime:             nil,
+		Min:                 nil,
+		NoCursorTimeout:     nil,
+		OplogReplay:         nil,
+		Projection:          nil,
+		ReturnKey:           nil,
+		ShowRecordID:        nil,
+		Skip:                nil,
+		Snapshot:            nil,
+		Sort:                nil,
+	})
 }
 
 func (c *Collection) UpdateOne(document interface{}, identifier identifier.Identifier) error {

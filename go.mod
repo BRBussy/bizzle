@@ -8,6 +8,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/rpc v1.2.0
+	github.com/iot-my-world/brain v0.0.0-20190819203607-78e72228707f
 	github.com/rs/zerolog v1.15.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.4.0
