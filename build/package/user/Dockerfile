@@ -48,7 +48,7 @@ COPY --from=builder /user/user /user
 COPY --from=builder /user/configs/user/config.toml /config.toml
 
 # Copy firebase credentials file to production image from the builder stage
-COPY --from=builder /firebaseCredentials.json /firebaseCredentials.json
+COPY --from=builder /user/firebaseCredentials.json /firebaseCredentials.json
 
 # Run the web service on container startup
 CMD ["/user"]
