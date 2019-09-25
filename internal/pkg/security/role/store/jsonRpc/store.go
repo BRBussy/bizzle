@@ -15,6 +15,7 @@ type store struct {
 }
 
 func New(url string) roleStore.Store {
+	log.Info().Msg("role json rpc store for: " + url)
 	return &store{
 		jsonRpcClient: basicJsonRpcClient.New(url),
 	}
