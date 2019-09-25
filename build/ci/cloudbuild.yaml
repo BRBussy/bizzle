@@ -5,7 +5,7 @@ steps:
       - kms
       - decrypt
       - --ciphertext-file=configs/$_SERVICE/config.toml.enc
-      - --plaintext-file=config.toml
+      - --plaintext-file=configs/$_SERVICE/config.toml
       - --location=global
       - --keyring=bizzle
       - --key=cryptographer
