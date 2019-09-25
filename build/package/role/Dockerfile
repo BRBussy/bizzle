@@ -1,12 +1,12 @@
 #
 # to build image locally run the following from root of bizzle:
-# docker build -f build/package/user/Dockerfile -t gcr.io/$(gcloud config get-value project)/user .
+# docker build -f build/package/role/Dockerfile -t gcr.io/$(gcloud config get-value project)/role .
 #
 # to run locally
-# docker run -p 8080:8080 gcr.io/$(gcloud config get-value project)/user
+# docker run -p 8080:8080 gcr.io/$(gcloud config get-value project)/role
 #
 # to push:
-# docker push gcr.io/$(gcloud config get-value project)/user
+# docker push gcr.io/$(gcloud config get-value project)/role
 #
 # ensure that docker is is authorised to push to gcloud. set up with:
 # gcloud auth configure-docker
@@ -15,7 +15,7 @@
 FROM golang:latest AS build_base
 
 # set working directory inside the container
-WORKDIR /user
+WORKDIR /role
 
 # copy in go dependency management files
 COPY go.mod go.sum ./
@@ -33,7 +33,7 @@ COPY . .
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
-RUN go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o user cmd/user/main.go
+RUN go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o role cmd/role/main.go
 
 # this last stage produces the final lean production image
 # start from a fresh Alpine image to reduce the image size
@@ -42,13 +42,10 @@ FROM alpine
 RUN apk add --no-cache ca-certificates
 
 # Copy the binary to the production image from the builder stage.
-COPY --from=builder /user/user /user
+COPY --from=builder /role/role /role
 
 # Copy config file to the production image from the builder stage
-COPY --from=builder /user/configs/user/config.toml /config.toml
-
-# copy firebase credentials file to production image from the builder stage
-COPY --from=builder /firebaseCredentials.json /firebaseCredentials.json
+COPY --from=builder /role/configs/role/config.toml /config.toml
 
 # Run the web service on container startup
-CMD ["/user"]
+CMD ["/role"]
