@@ -1,11 +1,22 @@
 steps:
-  # decrypt secrets file
+  # decrypt config file
   - name: gcr.io/cloud-builders/gcloud
     args:
       - kms
       - decrypt
       - --ciphertext-file=configs/$_SERVICE/config.toml.enc
       - --plaintext-file=configs/$_SERVICE/config.toml
+      - --location=global
+      - --keyring=bizzle
+      - --key=cryptographer
+
+  # decrypt firebase file
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - kms
+      - decrypt
+      - --ciphertext-file=firebaseCredentials.json.enc
+      - --plaintext-file=firebaseCredentials.json
       - --location=global
       - --keyring=bizzle
       - --key=cryptographer
