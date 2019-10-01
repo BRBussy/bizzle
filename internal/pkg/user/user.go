@@ -5,11 +5,12 @@ import (
 )
 
 type User struct {
-	ID          identifier.ID   `json:"id" bson:"id"`
-	Name        string          `validate:"required" json:"name" bson:"name"`
-	Email       string          `validate:"required,email" json:"email" bson:"email"`
-	RoleIDs     []identifier.ID `validate:"required" json:"roleIDs" bson:"roleIDs"`
-	FirebaseUID string          `validate:"required" json:"firebaseUID" bson:"firebaseUID"`
+	ID         identifier.ID   `json:"id" bson:"id"`
+	Name       string          `validate:"required" json:"name" bson:"name"`
+	Email      string          `validate:"required,email" json:"email" bson:"email"`
+	RoleIDs    []identifier.ID `validate:"required" json:"roleIDs" bson:"roleIDs"`
+	Password   []byte          `json:"password" bson:"password"`
+	Registered bool            `json:"registered" bson:"registered"`
 }
 
 func CompareUsers(a, b User) bool {
@@ -36,9 +37,6 @@ nextRoleIDa:
 			}
 		}
 		// if execution reaches here roleA was not found in b
-		return false
-	}
-	if a.FirebaseUID != b.FirebaseUID {
 		return false
 	}
 	return true

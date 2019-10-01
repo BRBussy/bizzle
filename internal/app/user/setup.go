@@ -1,9 +1,7 @@
 package user
 
 import (
-	goFirebaseAuth "firebase.google.com/go/auth"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
-	"github.com/BRBussy/bizzle/internal/pkg/firebase"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
@@ -27,45 +25,8 @@ func Setup(
 	userAdminImp userAdmin.Admin,
 	userStoreImp userStore.Store,
 	roleStoreImp roleStore.Store,
-	firebaseImp *firebase.Firebase,
 	rootPassword string,
 ) error {
-	// try and retrieve root user's firebase user
-	rootUser, err := firebaseImp.GetUserByEmail(rootUserToCreate.Email)
-	if err == nil {
-		// user could be retrieved, confirm user's details are correct
-		if rootUser.Email != rootUserToCreate.Email {
-			err := bizzleException.ErrUnexpected{Reasons: []string{"root firebase user email incorrect"}}
-			log.Error().Err(err)
-			return err
-		}
-		if rootUser.DisplayName != rootUserToCreate.Name {
-			err := bizzleException.ErrUnexpected{Reasons: []string{"root firebase user name incorrect"}}
-			log.Error().Err(err)
-			return err
-		}
-		if !rootUser.EmailVerified {
-			err := bizzleException.ErrUnexpected{Reasons: []string{"root firebase user not email verified"}}
-			log.Error().Err(err)
-			return err
-		}
-	} else {
-		// user could not be retrieved, try and create user
-		firebaseUserToCreateParams := (&goFirebaseAuth.UserToCreate{}).
-			DisplayName(rootUserToCreate.Name).
-			Email(rootUserToCreate.Email).
-			EmailVerified(true).
-			Password(rootPassword)
-		createdRootUser, err := firebaseImp.CreateUser(firebaseUserToCreateParams)
-		if err != nil {
-			log.Error().Err(err).Msg("creating root firebase user")
-			return bizzleException.ErrUnexpected{}
-		}
-		rootUser = createdRootUser
-	}
-	// update firebase ID on root user to create
-	rootUserToCreate.FirebaseUID = rootUser.UID
-
 	// if root user to be created has any roles, find the role ids now
 	if len(rootUserToCreate.RoleIDs) > 0 {
 		roleFindCriteria := make([]criterion.Criterion, 0)

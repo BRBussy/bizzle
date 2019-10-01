@@ -40,12 +40,6 @@ func main() {
 		}
 	}()
 
-	// create firebase
-	Firebase, err := firebase.New(config.FirebaseCredentialsPath)
-	if err != nil {
-		log.Fatal().Err(err).Msg("creating firebase")
-	}
-
 	// create service providers
 	MongoUserStore, err := mongoUserStore.New(mongoDb)
 	if err != nil {
@@ -57,7 +51,6 @@ func main() {
 		BasicUserValidator,
 		MongoUserStore,
 		JSONRPCRoleStore,
-		Firebase,
 	)
 
 	// perform setup
@@ -65,7 +58,6 @@ func main() {
 		BasicUserAdmin,
 		MongoUserStore,
 		JSONRPCRoleStore,
-		Firebase,
 		config.RootPassword,
 	); err != nil {
 		log.Fatal().Err(err).Msg("user setup")

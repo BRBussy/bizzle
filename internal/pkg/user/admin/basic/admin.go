@@ -3,7 +3,6 @@ package basic
 import (
 	"errors"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
-	"github.com/BRBussy/bizzle/internal/pkg/firebase"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
@@ -15,7 +14,6 @@ import (
 
 type admin struct {
 	roleStore     roleStore.Store
-	firebase      *firebase.Firebase
 	userValidator userValidator.Validator
 	userStore     userStore.Store
 }
@@ -24,11 +22,9 @@ func New(
 	userValidator userValidator.Validator,
 	userStore userStore.Store,
 	roleStore roleStore.Store,
-	firebase *firebase.Firebase,
 ) userAdmin.Admin {
 	return &admin{
 		roleStore:     roleStore,
-		firebase:      firebase,
 		userValidator: userValidator,
 		userStore:     userStore,
 	}
