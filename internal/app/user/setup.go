@@ -52,15 +52,14 @@ func Setup(
 		}
 	}
 
-	// root user's firebase user retrieved or created
-	// try and retrieve root user's bizzle user
+	// try and retrieve root user's user
 	findRootUserResponse, err := userStoreImp.FindOne(&userStore.FindOneRequest{
 		Identifier: identifier.Email(rootUserToCreate.Email),
 	})
 	if err != nil {
 		switch err.(type) {
 		case mongo.ErrNotFound:
-			// root user in bizzle not found, create it
+			// root user not found, create it
 			createResponse, err := userAdminImp.CreateOne(&userAdmin.CreateOneRequest{User: rootUserToCreate})
 			if err != nil {
 				log.Error().Err(err).Msg("creating bizzle root user")

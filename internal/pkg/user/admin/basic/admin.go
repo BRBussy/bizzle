@@ -53,3 +53,7 @@ func (a *admin) CreateOne(request *userAdmin.CreateOneRequest) (*userAdmin.Creat
 func (a *admin) UpdateOne(*userAdmin.UpdateOneRequest) (*userAdmin.UpdateOneResponse, error) {
 	return nil, errors.New("implement update one")
 }
+
+func (a *admin) RegisterOne(*userAdmin.RegisterOneRequest) (*userAdmin.RegisterOneResponse, error) {
+	panic("implement me")
+}

@@ -6,7 +6,6 @@ import (
 	"github.com/BRBussy/bizzle/internal/app/user"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
-	"github.com/BRBussy/bizzle/internal/pkg/firebase"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	jsonRpcRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/jsonRpc"
 	basicUserAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin/basic"

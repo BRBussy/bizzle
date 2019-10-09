@@ -27,16 +27,6 @@ func (v validator) genericValidation(userToValidate user.User) ([]reasonInvalid.
 			})
 	}
 
-	if userToValidate.FirebaseUID == "" {
-		reasonsInvalid = append(reasonsInvalid,
-			reasonInvalid.ReasonInvalid{
-				Field: "firebaseUID",
-				Type:  reasonInvalid.Blank,
-				Help:  "can't be blank",
-				Data:  userToValidate.FirebaseUID,
-			})
-	}
-
 	if userToValidate.Email == "" {
 		reasonsInvalid = append(reasonsInvalid,
 			reasonInvalid.ReasonInvalid{
