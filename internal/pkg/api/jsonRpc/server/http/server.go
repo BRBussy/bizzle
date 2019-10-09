@@ -43,14 +43,20 @@ func New(
 }
 
 func (s *server) Start() error {
-	s.serverMux.Methods("OPTIONS").HandlerFunc(preFlightHandler)
+	// set preflight handler for options method
+	s.serverMux.Methods(netHttp.MethodOptions).HandlerFunc(preFlightHandler)
+
+	// wrap rpc server with middleware
+	var middlewareWrappedServer netHttp.Handler = s.rpcServer
+	for _, middleware := range s.middleware {
+		middlewareWrappedServer = middleware.Middleware(middlewareWrappedServer)
+	}
+
+	// start server
 	s.serverMux.Handle(
 		s.path,
-		s.rpcServer,
-	).Methods("POST")
-	for _, middleware := range s.middleware {
-		s.serverMux.Use(middleware)
-	}
+		middlewareWrappedServer,
+	).Methods(netHttp.MethodPost)
 	if err := netHttp.ListenAndServe(s.host+":"+s.port, s.serverMux); err != nil {
 		log.Error().Err(err).Msg("json rpc api server stopped")
 	}
