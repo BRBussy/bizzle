@@ -8,5 +8,4 @@ func (n Name) String() string {
 
 type Provider interface {
 	Name() Name
-	MethodRequiresAuthorization(string) bool
 }

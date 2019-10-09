@@ -1,18 +1,18 @@
 package basic
 
 import (
-	brizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
+	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 )
 
 type authenticator struct {
 }
 
-func New() brizzleAuthenticator.Authenticator {
+func (a *authenticator) Setup() bizzleAuthenticator.Authenticator {
 	return &authenticator{}
 }
 
-func (a *authenticator) SignUp(*brizzleAuthenticator.SignUpRequest) (*brizzleAuthenticator.SignUpResponse, error) {
-	return &brizzleAuthenticator.SignUpResponse{
-		Msg: "this has been a success!!!",
+func (a *authenticator) Login(*bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
+	return &bizzleAuthenticator.LoginResponse{
+		JWT: "this has been a success!!!",
 	}, nil
 }

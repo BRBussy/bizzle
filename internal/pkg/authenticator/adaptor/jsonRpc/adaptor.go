@@ -22,27 +22,27 @@ func (a *adaptor) Name() jsonRpcServiceProvider.Name {
 	return authenticator.ServiceProvider
 }
 
-func (a *adaptor) MethodRequiresAuthorization(method string) bool {
-	return false
-}
-
 type SignUpRequest struct {
-	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type SignUpResponse struct {
-	Msg string `json:"msg"`
+	JWT string `json:"jwt"`
 }
 
-func (a *adaptor) SignUp(r *http.Request, request *SignUpRequest, response *SignUpResponse) error {
-	signUpResponse, err := a.authenticator.SignUp(
-		&authenticator.SignUpRequest{},
+func (a *adaptor) Login(r *http.Request, request *SignUpRequest, response *SignUpResponse) error {
+	loginResponse, err := a.authenticator.Login(
+		&authenticator.LoginRequest{
+			Email:    request.Email,
+			Password: request.Password,
+		},
 	)
 	if err != nil {
 		return err
 	}
 
-	response.Msg = signUpResponse.Msg
+	response.JWT = loginResponse.JWT
 
 	return nil
 }

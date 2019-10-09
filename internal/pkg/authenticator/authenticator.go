@@ -1,15 +1,17 @@
 package authenticator
 
 type Authenticator interface {
-	SignUp(*SignUpRequest) (*SignUpResponse, error)
+	Login(*LoginRequest) (*LoginResponse, error)
 }
 
 const ServiceProvider = "Authenticator"
-const SignUpService = ServiceProvider + ".SignUp"
+const LoginService = ServiceProvider + ".Login"
 
-type SignUpRequest struct {
+type LoginRequest struct {
+	Email    string
+	Password string
 }
 
-type SignUpResponse struct {
-	Msg string
+type LoginResponse struct {
+	JWT string
 }

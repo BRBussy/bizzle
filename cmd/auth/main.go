@@ -1,4 +1,4 @@
-package auth
+package main
 
 import (
 	"flag"
@@ -35,9 +35,6 @@ func main() {
 		}
 	}()
 
-	loginMiddleware := new(middleware.Login).Setup(
-		config.PreSharedSecret,
-	)
 	authenticationMiddleware := new(middleware.Authentication).Setup(
 		config.PreSharedSecret,
 	)
@@ -48,7 +45,6 @@ func main() {
 		"0.0.0.0",
 		config.ServerPort,
 		[]mux.MiddlewareFunc{
-			loginMiddleware.Apply,
 			authenticationMiddleware.Apply,
 		},
 	)
