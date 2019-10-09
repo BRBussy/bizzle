@@ -6,10 +6,12 @@ import (
 	"github.com/BRBussy/bizzle/internal/app/role"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	basicRoleAdmin "github.com/BRBussy/bizzle/internal/pkg/security/role/admin/basic"
 	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
 	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
+	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -52,11 +54,16 @@ func main() {
 		log.Fatal().Err(err).Msg("role setup")
 	}
 
+	authMiddleware := new(middleware.AuthMiddleware).Setup()
+
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
 		"/",
 		"0.0.0.0",
 		config.ServerPort,
+		[]mux.MiddlewareFunc{
+			authMiddleware.ApplyAuth,
+		},
 	)
 
 	// register service providers

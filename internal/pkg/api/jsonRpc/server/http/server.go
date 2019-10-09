@@ -1,7 +1,6 @@
 package http
 
 import (
-	jsonRpcServerAuthoriser "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/authoriser"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/cors"
 	"github.com/gorilla/mux"
@@ -16,15 +15,16 @@ type server struct {
 	host             string
 	port             string
 	rpcServer        *rpc.Server
-	authoriser       jsonRpcServerAuthoriser.Authoriser
 	serverMux        *mux.Router
 	serviceProviders map[jsonRpcServiceProvider.Name]jsonRpcServiceProvider.Provider
+	middleware       []mux.MiddlewareFunc
 }
 
 func New(
 	path string,
 	host string,
 	port string,
+	middleware []mux.MiddlewareFunc,
 ) *server {
 	// create new gorilla mux rpc server
 	rpcServer := rpc.NewServer()
@@ -37,6 +37,7 @@ func New(
 		serverMux:        mux.NewRouter(),
 		rpcServer:        rpcServer,
 		serviceProviders: make(map[jsonRpcServiceProvider.Name]jsonRpcServiceProvider.Provider),
+		middleware:       middleware,
 	}
 }
 
@@ -46,6 +47,9 @@ func (s *server) Start() error {
 		s.path,
 		s.rpcServer,
 	).Methods("POST")
+	for _, middleware := range s.middleware {
+		s.serverMux.Use(middleware)
+	}
 	if err := netHttp.ListenAndServe(s.host+":"+s.port, s.serverMux); err != nil {
 		log.Error().Err(err).Msg("json rpc api server stopped")
 	}

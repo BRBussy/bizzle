@@ -12,6 +12,7 @@ import (
 	userStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/store/adaptor/jsonRpc"
 	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
 	basicUserValidator "github.com/BRBussy/bizzle/internal/pkg/user/validator/basic"
+	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
@@ -67,6 +68,7 @@ func main() {
 		"/",
 		"0.0.0.0",
 		config.ServerPort,
+		[]mux.MiddlewareFunc{},
 	)
 
 	// register service providers
