@@ -12,11 +12,11 @@ func init() {
 	}
 
 	// set default configuration
-	viper.SetDefault("ServerPort", "8081")
+	viper.SetDefault("ServerPort", "8082")
 	viper.SetDefault("MongoDbHosts", []string{"localhost:27017"})
 	viper.SetDefault("MongoDbName", "bizzle")
-	viper.SetDefault("RoleURL", "http://localhost:8080")
-	viper.SetDefault("FirebaseCredentialsPath", "firebaseCredentials.json")
+	viper.SetDefault("RoleURL", "http://localhost:8081")
+	viper.SetDefault("PreSharedSecret", "1234")
 	viper.SetDefault("RootPassword", "123456")
 }
 
@@ -26,8 +26,8 @@ type Config struct {
 	MongoDbHosts            []string
 	MongoDbName             string
 	RoleURL                 string
-	FirebaseCredentialsPath string
 	RootPassword            string
+	PreSharedSecret         string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {
