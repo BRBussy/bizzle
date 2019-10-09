@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/cors"
 	"github.com/gorilla/mux"
@@ -57,6 +58,7 @@ func (s *server) Start() error {
 }
 
 func (s *server) RegisterServiceProvider(serviceProvider jsonRpcServiceProvider.Provider) error {
+	log.Info().Msg(fmt.Sprintf("register %s jsonrpc service", serviceProvider.Name()))
 	s.serviceProviders[serviceProvider.Name()] = serviceProvider
 	if err := s.rpcServer.RegisterService(serviceProvider, string(serviceProvider.Name())); err != nil {
 		log.Error().Err(err).Msgf("registering service %s with json rpc http server", serviceProvider.Name())

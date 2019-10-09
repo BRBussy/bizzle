@@ -4,14 +4,14 @@ import (
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 )
 
-type authenticator struct {
+type Authenticator struct {
 }
 
-func (a *authenticator) Setup() bizzleAuthenticator.Authenticator {
-	return &authenticator{}
+func (a *Authenticator) Setup() bizzleAuthenticator.Authenticator {
+	return &Authenticator{}
 }
 
-func (a *authenticator) Login(*bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
+func (a *Authenticator) Login(*bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
 	return &bizzleAuthenticator.LoginResponse{
 		JWT: "this has been a success!!!",
 	}, nil

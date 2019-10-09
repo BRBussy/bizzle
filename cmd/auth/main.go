@@ -5,6 +5,8 @@ import (
 	authConfig "github.com/BRBussy/bizzle/configs/auth"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	authenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
+	basicAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/basic"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/gorilla/mux"
@@ -35,6 +37,9 @@ func main() {
 		}
 	}()
 
+	// create authenticator
+	BasicAuthenticator := new(basicAuthenticator.Authenticator).Setup()
+
 	authenticationMiddleware := new(middleware.Authentication).Setup(
 		config.PreSharedSecret,
 	)
@@ -50,7 +55,9 @@ func main() {
 	)
 
 	// register service providers
-	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{}); err != nil {
+	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
+		authenticatorJsonRpcAdaptor.New(BasicAuthenticator),
+	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}
 
