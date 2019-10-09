@@ -65,6 +65,14 @@ func Setup(
 				log.Error().Err(err).Msg("creating bizzle root user")
 				return bizzleException.ErrUnexpected{}
 			}
+			// register it
+			if _, err := userAdminImp.RegisterOne(&userAdmin.RegisterOneRequest{
+				Identifier: createResponse.User.ID,
+				Password:   rootPassword,
+			}); err != nil {
+				log.Error().Err(err).Msg("registering bizzle root user")
+				return bizzleException.ErrUnexpected{}
+			}
 			findRootUserResponse = &userStore.FindOneResponse{User: createResponse.User}
 		default:
 			log.Error().Err(err).Msg("retrieving root user")
