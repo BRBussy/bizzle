@@ -4,18 +4,18 @@ import (
 	"net/http"
 )
 
-type Authentication struct {
+type Login struct {
 	preSharedSecret string
 }
 
-func (a *Authentication) Setup(
+func (a *Login) Setup(
 	preSharedSecret string,
-) *Authentication {
+) *Login {
 	a.preSharedSecret = preSharedSecret
 	return a
 }
 
-func (a *Authentication) Apply(next http.Handler) http.Handler {
+func (a *Login) Apply(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// look for pre-shared secret header
 		pss := r.Header.Get("Pre-Shared-Secret")

@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/BRBussy/bizzle/internal/pkg/environment"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
@@ -13,7 +12,6 @@ func init() {
 	}
 
 	// set default configuration
-	viper.SetDefault("Environment", environment.Development)
 	viper.SetDefault("ServerPort", "8081")
 	viper.SetDefault("MongoDbHosts", []string{"localhost:27017"})
 	viper.SetDefault("MongoDbName", "bizzle")
@@ -23,7 +21,6 @@ func init() {
 }
 
 type Config struct {
-	Environment             environment.Environment
 	ServerPort              string
 	MongoDBConnectionString string
 	MongoDbHosts            []string

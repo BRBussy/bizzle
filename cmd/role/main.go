@@ -54,7 +54,9 @@ func main() {
 		log.Fatal().Err(err).Msg("role setup")
 	}
 
-	authMiddleware := new(middleware.AuthMiddleware).Setup()
+	authenticationMiddleware := new(middleware.Authentication).Setup(
+		config.PreSharedSecret,
+	)
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
@@ -62,7 +64,7 @@ func main() {
 		"0.0.0.0",
 		config.ServerPort,
 		[]mux.MiddlewareFunc{
-			authMiddleware.ApplyAuth,
+			authenticationMiddleware.Apply,
 		},
 	)
 
