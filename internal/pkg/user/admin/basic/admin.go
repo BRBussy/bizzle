@@ -10,6 +10,7 @@ import (
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type admin struct {
@@ -54,6 +55,30 @@ func (a *admin) UpdateOne(*userAdmin.UpdateOneRequest) (*userAdmin.UpdateOneResp
 	return nil, errors.New("implement update one")
 }
 
-func (a *admin) RegisterOne(*userAdmin.RegisterOneRequest) (*userAdmin.RegisterOneResponse, error) {
-	panic("implement me")
+func (a *admin) RegisterOne(request *userAdmin.RegisterOneRequest) (*userAdmin.RegisterOneResponse, error) {
+	// retrieve user being registered
+	retrieveUserResponse, err := a.userStore.FindOne(&userStore.FindOneRequest{Identifier: request.Identifier})
+	if err != nil {
+		log.Error().Err(err).Msg("finding user")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	// hash user password
+	pwdHash, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Error().Err(err).Msg("hashing password")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	// set user password
+	retrieveUserResponse.User.Password = pwdHash
+	retrieveUserResponse.User.Registered = true
+
+	// update user
+	if _, err := a.userStore.UpdateOne(&userStore.UpdateOneRequest{User: retrieveUserResponse.User}); err != nil {
+		log.Error().Err(err).Msg("update password")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	return &userAdmin.RegisterOneResponse{}, nil
 }

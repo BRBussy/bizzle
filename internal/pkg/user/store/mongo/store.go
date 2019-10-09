@@ -4,7 +4,6 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
-	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -56,7 +55,7 @@ func (s *store) FindOne(request *userStore.FindOneRequest) (*userStore.FindOneRe
 }
 
 func (s *store) UpdateOne(request *userStore.UpdateOneRequest) (*userStore.UpdateOneResponse, error) {
-	if err := s.collection.UpdateOne(request.User, identifier.ID(request.User.ID)); err != nil {
+	if err := s.collection.UpdateOne(request.User, request.User.ID); err != nil {
 		log.Error().Err(err).Msg("updating user")
 		return nil, err
 	}

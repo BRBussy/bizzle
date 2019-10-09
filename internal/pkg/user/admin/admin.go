@@ -2,6 +2,7 @@ package admin
 
 import (
 	"github.com/BRBussy/bizzle/internal/pkg/user"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 )
 
 type Admin interface {
@@ -32,8 +33,8 @@ type UpdateOneResponse struct {
 }
 
 type RegisterOneRequest struct {
-	User     user.User
-	Password string
+	Identifier identifier.Identifier
+	Password   string
 }
 
 type RegisterOneResponse struct {

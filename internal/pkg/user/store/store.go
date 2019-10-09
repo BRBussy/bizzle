@@ -15,6 +15,7 @@ const ServiceProvider = "User-Store"
 
 const CreateOneService = ServiceProvider + ".CreateOne"
 const FindOneService = ServiceProvider + ".FindOne"
+const UpdateOneService = ServiceProvider + ".UpdateOne"
 
 type CreateOneRequest struct {
 	User user.User
