@@ -1,7 +1,6 @@
 package jsonRPC
 
 import (
-	"context"
 	jsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client"
 	ybbusJsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client/ybbus"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
@@ -26,7 +25,7 @@ func New(
 	}
 }
 
-func (a *generator) GenerateToken(ctx context.Context, request *tokenGenerator.GenerateTokenRequest) (*tokenGenerator.GenerateTokenResponse, error) {
+func (a *generator) GenerateToken(request *tokenGenerator.GenerateTokenRequest) (*tokenGenerator.GenerateTokenResponse, error) {
 	if err := a.validator.ValidateRequest(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

@@ -1,7 +1,6 @@
 package token
 
 import (
-	"context"
 	"encoding/json"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
@@ -26,7 +25,7 @@ func New(
 	}
 }
 
-func (g *generator) GenerateToken(ctx context.Context, request *tokenGenerator.GenerateTokenRequest) (*tokenGenerator.GenerateTokenResponse, error) {
+func (g *generator) GenerateToken(request *tokenGenerator.GenerateTokenRequest) (*tokenGenerator.GenerateTokenResponse, error) {
 	if err := g.validator.ValidateRequest(request); err != nil {
 		return nil, err
 	}

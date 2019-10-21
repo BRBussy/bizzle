@@ -2,20 +2,28 @@ package basic
 
 import (
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	tokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 type Authenticator struct {
-	userStore userStore.Store
+	userStore      userStore.Store
+	tokenGenerator tokenGenerator.Generator
 }
 
 func (a *Authenticator) Setup(
 	userStore userStore.Store,
+	tokenGenerator tokenGenerator.Generator,
 ) bizzleAuthenticator.Authenticator {
 	return &Authenticator{
-		userStore: userStore,
+		userStore:      userStore,
+		tokenGenerator: tokenGenerator,
 	}
 }
 
@@ -25,6 +33,7 @@ func (a *Authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzl
 		Identifier: identifier.Email(request.Email),
 	})
 	if err != nil {
+		log.Error().Err(err).Msg("retrieving user for log in")
 		return nil, err
 	}
 
@@ -34,8 +43,20 @@ func (a *Authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzl
 	}
 
 	// generate login claims
+	generateTokenResponse, err := a.tokenGenerator.GenerateToken(
+		&tokenGenerator.GenerateTokenRequest{
+			Claims: claims.Login{
+				UserID:         retrieveResponse.User.ID,
+				ExpirationTime: time.Now().Add(time.Hour * 1).UTC().Unix(),
+			},
+		},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("generating token")
+		return nil, bizzleException.ErrUnexpected{}
+	}
 
 	return &bizzleAuthenticator.LoginResponse{
-		JWT: "this has been a success!!!",
+		JWT: generateTokenResponse.Token,
 	}, nil
 }

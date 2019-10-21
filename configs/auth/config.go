@@ -28,6 +28,7 @@ type Config struct {
 	PreSharedSecret         string
 	RoleURL                 string
 	UserURL                 string
+	PrivateKeyString        string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {

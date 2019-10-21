@@ -1,12 +1,11 @@
 package generator
 
 import (
-	"context"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 )
 
 type Generator interface {
-	GenerateToken(ctx context.Context, request *GenerateTokenRequest) (*GenerateTokenResponse, error)
+	GenerateToken(request *GenerateTokenRequest) (*GenerateTokenResponse, error)
 }
 
 const ServiceProvider = "Token-Generator"

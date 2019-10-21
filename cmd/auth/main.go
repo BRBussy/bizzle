@@ -9,9 +9,13 @@ import (
 	basicAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/basic"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	basicTokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator/basic"
 	jsonRPCUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/jsonRPC"
+	"github.com/BRBussy/bizzle/pkg/key"
+	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/basic"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
+	"gopkg.in/square/go-jose.v2"
 	"os"
 	"os/signal"
 )
@@ -27,6 +31,9 @@ func main() {
 		log.Fatal().Err(err).Msg("getting config from file")
 	}
 
+	// create validator
+	BasicValidator := basicValidator.New()
+
 	// create new mongo db connection
 	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, config.MongoDbName)
 	if err != nil {
@@ -38,14 +45,32 @@ func main() {
 		}
 	}()
 
+	// fetch or generate RSA key pair
+	rsaKeyPair, err := key.ParseRSAPrivateKeyFromString(config.PrivateKeyString)
+	if err != nil {
+		log.Fatal().Err(err).Msg("parsing private key")
+	}
+
+	// create a new signer using RSASSA-PSS (SHA512) with the given private key.
+	joseSigner, err := jose.NewSigner(jose.SigningKey{Algorithm: jose.PS512, Key: rsaKeyPair}, nil)
+	if err != nil {
+		log.Fatal().Err(err).Msg("generating new jose signer")
+	}
+
 	JSORPCUserStore := jsonRPCUserStore.New(
 		config.UserURL,
 		config.PreSharedSecret,
 	)
 
+	BasicTokenGenerator := basicTokenGenerator.New(
+		joseSigner,
+		BasicValidator,
+	)
+
 	// create authenticator
 	BasicAuthenticator := new(basicAuthenticator.Authenticator).Setup(
 		JSORPCUserStore,
+		BasicTokenGenerator,
 	)
 
 	authenticationMiddleware := new(middleware.Authentication).Setup(
