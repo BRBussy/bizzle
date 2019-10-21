@@ -12,6 +12,7 @@ require (
 	github.com/gorilla/rpc v1.2.0
 	github.com/iot-my-world/brain v0.0.0-20190819203607-78e72228707f // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
+	github.com/onsi/gomega v1.7.0 // indirect
 	github.com/rs/zerolog v1.15.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.4.0
@@ -19,6 +20,7 @@ require (
 	github.com/tidwall/pretty v1.0.0 // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
+	github.com/ybbus/jsonrpc v2.1.2+incompatible
 	go.mongodb.org/mongo-driver v1.1.1
 	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5
 	golang.org/x/net v0.0.0-20190620200207-3b0461eec859

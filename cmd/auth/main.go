@@ -37,6 +37,8 @@ func main() {
 		}
 	}()
 
+	JSORPCUserStore := new()
+
 	// create authenticator
 	BasicAuthenticator := new(basicAuthenticator.Authenticator).Setup()
 

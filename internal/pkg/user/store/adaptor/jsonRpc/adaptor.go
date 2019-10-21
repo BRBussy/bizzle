@@ -37,12 +37,11 @@ type CreateOneResponse struct {
 }
 
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
-	_, err := a.store.CreateOne(
+	if _, err := a.store.CreateOne(
 		&userStore.CreateOneRequest{
 			User: request.User,
 		},
-	)
-	if err != nil {
+	); err != nil {
 		return err
 	}
 
@@ -68,6 +67,26 @@ func (a *adaptor) FindOne(r *http.Request, request *FindOneRequest, response *Fi
 	}
 
 	response.User = findOneResponse.User
+
+	return nil
+}
+
+type UpdateOneRequest struct {
+	User user.User `json:"user"`
+}
+
+type UpdateOneResponse struct {
+	User user.User `json:"user"`
+}
+
+func (a *adaptor) UpdateOne(r *http.Request, request *UpdateOneRequest, response *UpdateOneResponse) error {
+	if _, err := a.store.UpdateOne(
+		&userStore.UpdateOneRequest{
+			User: request.User,
+		},
+	); err != nil {
+		return err
+	}
 
 	return nil
 }
