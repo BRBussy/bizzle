@@ -39,12 +39,11 @@ type CreateOneResponse struct {
 }
 
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
-	_, err := a.store.CreateOne(
+	if _, err := a.store.CreateOne(
 		&roleStore.CreateOneRequest{
 			Role: request.Role,
 		},
-	)
-	if err != nil {
+	); err != nil {
 		return err
 	}
 

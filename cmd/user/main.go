@@ -45,7 +45,10 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
 	}
-	JSONRPCRoleStore := jsonRpcRoleStore.New(config.RoleURL)
+	JSONRPCRoleStore := jsonRpcRoleStore.New(
+		config.RoleURL,
+		config.PreSharedSecret,
+	)
 	BasicUserValidator := basicUserValidator.New(JSONRPCRoleStore)
 	BasicUserAdmin := basicUserAdmin.New(
 		BasicUserValidator,

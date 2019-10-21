@@ -26,15 +26,11 @@ func New(
 	}
 }
 
-func (c *client) Post(request *jsonRPCClient.Request) (*jsonRPCClient.Response, error) {
-	panic("implement me")
-}
-
 func (c *client) JsonRpcRequest(method string, request, response interface{}) error {
 	// perform json rpc request
 	rpcResponse, err := c.Call(
 		method,
-		&request,
+		[]interface{}{request},
 	)
 	if err != nil {
 		return err
@@ -50,8 +46,4 @@ func (c *client) JsonRpcRequest(method string, request, response interface{}) er
 	}
 
 	return nil
-}
-
-func (c *client) AddAdditionalHeaderEntry(key, value string) {
-	panic("implement me")
 }

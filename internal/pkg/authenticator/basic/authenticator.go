@@ -4,6 +4,7 @@ import (
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Authenticator struct {
@@ -28,6 +29,11 @@ func (a *Authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzl
 	}
 
 	// check password is correct
+	if err := bcrypt.CompareHashAndPassword(retrieveResponse.User.Password, []byte(request.Password)); err != nil {
+		return nil, err
+	}
+
+	// generate login claims
 
 	return &bizzleAuthenticator.LoginResponse{
 		JWT: "this has been a success!!!",
