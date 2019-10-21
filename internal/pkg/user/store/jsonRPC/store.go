@@ -13,12 +13,13 @@ type store struct {
 	jsonRpcClient jsonRpcClient.Client
 }
 
-func (s *store) Setup(
+func New(
 	url, preSharedSecret string,
 ) userStore.Store {
 	log.Info().Msg("user json rpc store for: " + url)
-	s.jsonRpcClient = ybbusJsonRpcClient.New(url, preSharedSecret),
-	return s
+	return &store{
+		jsonRpcClient: ybbusJsonRpcClient.New(url, preSharedSecret),
+	}
 }
 
 func (s *store) CreateOne(request *userStore.CreateOneRequest) (*userStore.CreateOneResponse, error) {

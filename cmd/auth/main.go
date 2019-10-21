@@ -9,6 +9,7 @@ import (
 	basicAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/basic"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	jsonRPCUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/jsonRPC"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
 	"os"
@@ -37,10 +38,15 @@ func main() {
 		}
 	}()
 
-	JSORPCUserStore := new()
+	JSORPCUserStore := jsonRPCUserStore.New(
+		config.UserURL,
+		config.PreSharedSecret,
+	)
 
 	// create authenticator
-	BasicAuthenticator := new(basicAuthenticator.Authenticator).Setup()
+	BasicAuthenticator := new(basicAuthenticator.Authenticator).Setup(
+		JSORPCUserStore,
+	)
 
 	authenticationMiddleware := new(middleware.Authentication).Setup(
 		config.PreSharedSecret,
