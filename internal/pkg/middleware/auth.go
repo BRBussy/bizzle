@@ -68,7 +68,7 @@ func getMethod(r *http.Request) (string, error) {
 	// Retrieve id and method of json rpc request
 	var req struct {
 		// To unmarshal the received json
-		Id     string `json:"id"`
+		Id     int    `json:"id"`
 		Method string `json:"method"`
 	}
 	if err := json.Unmarshal(bodyBytes, &req); err != nil {

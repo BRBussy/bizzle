@@ -6,6 +6,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/app/user"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	jsonRpcRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/jsonRpc"
 	basicUserAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin/basic"
@@ -22,6 +23,7 @@ var configFileName = flag.String("config-file-name", "config", "specify config f
 
 func main() {
 	flag.Parse()
+	logs.Setup()
 
 	// get config
 	config, err := userConfig.GetConfig(configFileName)

@@ -7,6 +7,7 @@ import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	authenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
 	basicAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/basic"
+	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	basicTokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator/basic"
@@ -24,6 +25,7 @@ var configFileName = flag.String("config-file-name", "config", "specify config f
 
 func main() {
 	flag.Parse()
+	logs.Setup()
 
 	// get config
 	config, err := authConfig.GetConfig(configFileName)
