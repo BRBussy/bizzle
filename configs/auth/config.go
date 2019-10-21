@@ -33,7 +33,7 @@ type Config struct {
 
 func GetConfig(configFileName *string) (*Config, error) {
 	// set places to look for config file
-	viper.AddConfigPath("configs/role")
+	viper.AddConfigPath("configs/auth")
 	viper.AddConfigPath("config")
 	viper.AddConfigPath(".")
 
