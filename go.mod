@@ -27,5 +27,6 @@ require (
 	google.golang.org/api v0.9.0
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v9 v9.29.1 // indirect
+	gopkg.in/go-playground/validator.v9 v9.29.1
+	gopkg.in/square/go-jose.v2 v2.3.1
 )

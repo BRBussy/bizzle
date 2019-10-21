@@ -29,7 +29,8 @@ func (s *store) CreateOne(request *userStore.CreateOneRequest) (*userStore.Creat
 		userStoreJsonRpcAdaptor.CreateOneRequest{
 			User: request.User,
 		},
-		createResponse); err != nil {
+		createResponse,
+	); err != nil {
 		log.Error().Err(err).Msg("user jsonrpc store create")
 		return nil, err
 	}
