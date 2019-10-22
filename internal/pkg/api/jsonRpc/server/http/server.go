@@ -93,7 +93,7 @@ func preFlightHandler(w netHttp.ResponseWriter, r *netHttp.Request) {
 	)
 	w.Header().Set(
 		"Access-Control-Allow-Headers",
-		"Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin",
+		"Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin, Authorization",
 	)
 	w.WriteHeader(netHttp.StatusOK)
 }

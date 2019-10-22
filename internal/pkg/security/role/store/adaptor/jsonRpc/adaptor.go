@@ -16,7 +16,7 @@ type adaptor struct {
 
 func New(
 	authenticator roleStore.Store,
-) *adaptor {
+) jsonRpcServiceProvider.Provider {
 	return &adaptor{
 		store: authenticator,
 	}
@@ -24,10 +24,6 @@ func New(
 
 func (a *adaptor) Name() jsonRpcServiceProvider.Name {
 	return roleStore.ServiceProvider
-}
-
-func (a *adaptor) MethodRequiresAuthorization(method string) bool {
-	return false
 }
 
 type CreateOneRequest struct {

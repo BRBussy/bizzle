@@ -1,12 +1,12 @@
 package validator
 
-import (
-	"context"
-)
-
 type Validator interface {
-	Validate(ctx context.Context, request ValidateRequest) (*ValidateResponse, error)
+	Validate(request *ValidateRequest) (*ValidateResponse, error)
 }
+
+const ServiceProvider = "Token-Validator"
+
+const ValidateService = ServiceProvider + ".Validate"
 
 type ValidateRequest struct {
 	Token string `validate:"required"`

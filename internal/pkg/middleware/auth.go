@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/BRBussy/bizzle/internal/pkg/authenticator"
+	tokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator"
 	"github.com/rs/zerolog/log"
 	"io/ioutil"
 	"net/http"
@@ -12,12 +13,15 @@ import (
 
 type Authentication struct {
 	preSharedSecret string
+	tokenValidator  tokenValidator.Validator
 }
 
 func (a *Authentication) Setup(
 	preSharedSecret string,
+	tokenValidator tokenValidator.Validator,
 ) *Authentication {
 	a.preSharedSecret = preSharedSecret
+	a.tokenValidator = tokenValidator
 	return a
 }
 
@@ -46,7 +50,21 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 			return
 		}
 
-		// all other requests need to be authenticated
+		// all other requests need to be authenticated with a token header
+		// look for token in header
+		jwt := r.Header.Get("Authorization")
+		if jwt == "" {
+			log.Error().Err(err).Msg("not token in authentication header")
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		// validate token
+		if _, err := a.tokenValidator.Validate(&tokenValidator.ValidateRequest{Token: jwt}); err != nil {
+			log.Error().Err(err).Msg("token validation failure")
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
 
 		next.ServeHTTP(w, r)
 	})

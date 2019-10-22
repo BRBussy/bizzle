@@ -1,7 +1,6 @@
 package token
 
 import (
-	"context"
 	"crypto/rsa"
 	"github.com/BRBussy/bizzle/internal/pkg/security/token"
 	tokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator"
@@ -24,7 +23,7 @@ func New(
 	}
 }
 
-func (v *validator) Validate(ctx context.Context, request tokenValidator.ValidateRequest) (*tokenValidator.ValidateResponse, error) {
+func (v *validator) Validate(request *tokenValidator.ValidateRequest) (*tokenValidator.ValidateResponse, error) {
 	if err := v.requestValidator.ValidateRequest(request); err != nil {
 		return nil, err
 	}

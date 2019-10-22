@@ -1,25 +1,26 @@
 package jsonRPC
 
 import (
+	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
-	"github.com/BRBussy/bizzle/internal/pkg/security/token/generator"
+	tokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator"
 	"net/http"
 )
 
 type adaptor struct {
-	generator generator.Generator
+	generator tokenGenerator.Generator
 }
 
 func New(
-	generator generator.Generator,
-) *adaptor {
+	generator tokenGenerator.Generator,
+) jsonRpcServiceProvider.Provider {
 	return &adaptor{
 		generator: generator,
 	}
 }
 
-func (a *adaptor) ServiceName() string {
-	return "TokenGenerator"
+func (a *adaptor) Name() jsonRpcServiceProvider.Name {
+	return tokenGenerator.GenerateTokenService
 }
 
 type GenerateTokenRequest struct {
@@ -32,8 +33,7 @@ type GenerateTokenResponse struct {
 
 func (a *adaptor) GenerateToken(r *http.Request, request *GenerateTokenRequest, response *GenerateTokenResponse) error {
 	generateResponse, err := a.generator.GenerateToken(
-		r.Context(),
-		&generator.GenerateTokenRequest{
+		&tokenGenerator.GenerateTokenRequest{
 			Claims: request.Claims.Claims,
 		},
 	)

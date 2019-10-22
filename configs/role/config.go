@@ -16,6 +16,7 @@ func init() {
 	viper.SetDefault("MongoDbHosts", []string{"localhost:27017"})
 	viper.SetDefault("MongoDbName", "bizzle")
 	viper.SetDefault("PreSharedSecret", "1234")
+	viper.SetDefault("AuthURL", "http://localhost:8080")
 }
 
 type Config struct {
@@ -24,6 +25,7 @@ type Config struct {
 	MongoDbHosts            []string
 	MongoDbName             string
 	PreSharedSecret         string
+	AuthURL                 string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {

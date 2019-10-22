@@ -12,6 +12,7 @@ import (
 	basicRoleAdmin "github.com/BRBussy/bizzle/internal/pkg/security/role/admin/basic"
 	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
 	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
+	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
 	"os"
@@ -48,6 +49,11 @@ func main() {
 	}
 	BasicRoleAdmin := basicRoleAdmin.New(MongoRoleStore)
 
+	JSONRPCTokenValidator := jsonRPCTokenValidator.New(
+		config.AuthURL,
+		config.PreSharedSecret,
+	)
+
 	// run setup
 	if err := role.Setup(
 		BasicRoleAdmin,
@@ -58,6 +64,7 @@ func main() {
 
 	authenticationMiddleware := new(middleware.Authentication).Setup(
 		config.PreSharedSecret,
+		JSONRPCTokenValidator,
 	)
 
 	// create rpc http server

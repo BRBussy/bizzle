@@ -5,12 +5,14 @@ import (
 	authConfig "github.com/BRBussy/bizzle/configs/auth"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
-	authenticatorJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
+	authenticatorJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
 	basicAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/basic"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	basicTokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator/basic"
+	tokenValidatorJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/adaptor/jsonRPC"
+	basicTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/basic"
 	jsonRPCUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/jsonRPC"
 	"github.com/BRBussy/bizzle/pkg/key"
 	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/basic"
@@ -68,6 +70,10 @@ func main() {
 		joseSigner,
 		BasicValidator,
 	)
+	BasicTokenValidator := basicTokenValidator.New(
+		rsaKeyPair,
+		BasicValidator,
+	)
 
 	// create authenticator
 	BasicAuthenticator := new(basicAuthenticator.Authenticator).Setup(
@@ -77,6 +83,7 @@ func main() {
 
 	authenticationMiddleware := new(middleware.Authentication).Setup(
 		config.PreSharedSecret,
+		BasicTokenValidator,
 	)
 
 	// create rpc http server
@@ -91,7 +98,8 @@ func main() {
 
 	// register service providers
 	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
-		authenticatorJsonRpcAdaptor.New(BasicAuthenticator),
+		authenticatorJSONRPCAdaptor.New(BasicAuthenticator),
+		tokenValidatorJSONRPCAdaptor.New(BasicTokenValidator),
 	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}
