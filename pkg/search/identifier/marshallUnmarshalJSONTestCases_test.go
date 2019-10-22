@@ -26,7 +26,17 @@ var nameIdentifierTestCase0 = TestCase{
 	Identifier: Name("bob"),
 }
 
+var emailIdentifierTestCase0 = TestCase{
+	id: "emailIdentifierTestCase0",
+	SerializedIdentifier: []byte(fmt.Sprintf(
+		"{\"type\":\"%s\",\"email\":\"bob@gmail.com\"}",
+		EmailIdentifierType,
+	)),
+	Identifier: Email("bob@gmail.com"),
+}
+
 var allTestCases = []TestCase{
 	idIdentifierTestCase0,
 	nameIdentifierTestCase0,
+	emailIdentifierTestCase0,
 }

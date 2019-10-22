@@ -73,6 +73,23 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 		}
 		unmarshalledIdentifier = nameIdentifier
 
+	case EmailIdentifierType:
+		// try and get email field
+		marshalledID, found := s.Serialized["email"]
+		if !found {
+			err := ErrInvalidSerializedIdentifier{Reasons: []string{"no email field"}}
+			log.Error().Err(err)
+			return err
+		}
+		// unmarshal Email identifier
+		var emailIdentifier Email
+		if err := json.Unmarshal(marshalledID, &emailIdentifier); err != nil {
+			err = ErrUnmarshal{Reasons: []string{err.Error()}}
+			log.Error().Err(err)
+			return err
+		}
+		unmarshalledIdentifier = emailIdentifier
+
 	default:
 		err := ErrInvalidSerializedIdentifier{
 			Reasons: []string{
