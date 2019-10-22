@@ -79,6 +79,7 @@ func main() {
 	BasicAuthenticator := new(basicAuthenticator.Authenticator).Setup(
 		JSORPCUserStore,
 		BasicTokenGenerator,
+		BasicValidator,
 	)
 
 	authenticationMiddleware := new(middleware.Authentication).Setup(

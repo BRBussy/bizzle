@@ -8,8 +8,8 @@ const ServiceProvider = "Authenticator"
 const LoginService = ServiceProvider + ".Login"
 
 type LoginRequest struct {
-	Email    string
-	Password string
+	Email    string `validate:"required,email"`
+	Password string `validate:"required"`
 }
 
 type LoginResponse struct {

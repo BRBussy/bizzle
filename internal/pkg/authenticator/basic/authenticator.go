@@ -7,27 +7,36 @@ import (
 	tokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
 type Authenticator struct {
-	userStore      userStore.Store
-	tokenGenerator tokenGenerator.Generator
+	userStore        userStore.Store
+	tokenGenerator   tokenGenerator.Generator
+	requestValidator validationValidator.Validator
 }
 
 func (a *Authenticator) Setup(
 	userStore userStore.Store,
 	tokenGenerator tokenGenerator.Generator,
+	requestValidator validationValidator.Validator,
 ) bizzleAuthenticator.Authenticator {
 	return &Authenticator{
-		userStore:      userStore,
-		tokenGenerator: tokenGenerator,
+		requestValidator: requestValidator,
+		userStore:        userStore,
+		tokenGenerator:   tokenGenerator,
 	}
 }
 
 func (a *Authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
+	if err := a.requestValidator.ValidateRequest(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	// try and retrieve user by email address
 	retrieveResponse, err := a.userStore.FindOne(&userStore.FindOneRequest{
 		Identifier: identifier.Email(request.Email),
