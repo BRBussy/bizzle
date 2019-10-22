@@ -7,8 +7,10 @@ import (
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
+	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	jsonRpcRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/jsonRpc"
+	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
 	basicUserAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin/basic"
 	userStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/store/adaptor/jsonRpc"
 	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
@@ -57,6 +59,10 @@ func main() {
 		MongoUserStore,
 		JSONRPCRoleStore,
 	)
+	JSONRPCTokenValidator := jsonRPCTokenValidator.New(
+		config.AuthURL,
+		config.PreSharedSecret,
+	)
 
 	// perform setup
 	if err := user.Setup(
@@ -68,12 +74,19 @@ func main() {
 		log.Fatal().Err(err).Msg("user setup")
 	}
 
+	authenticationMiddleware := new(middleware.Authentication).Setup(
+		config.PreSharedSecret,
+		JSONRPCTokenValidator,
+	)
+
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
 		"/",
 		"0.0.0.0",
 		config.ServerPort,
-		[]mux.MiddlewareFunc{},
+		[]mux.MiddlewareFunc{
+			authenticationMiddleware.Apply,
+		},
 	)
 
 	// register service providers

@@ -33,5 +33,5 @@ func (a *validator) Validate(request *tokenValidator.ValidateRequest) (*tokenVal
 		log.Error().Err(err).Msg("TokenValidator.Validate json rpc")
 		return nil, exception.ErrUnexpected{}
 	}
-	return &tokenValidator.ValidateResponse{MarshalledClaims: response.MarshalledClaims}, nil
+	return &tokenValidator.ValidateResponse{Claims: response.Claims.Claims}, nil
 }

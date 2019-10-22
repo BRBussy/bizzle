@@ -1,5 +1,7 @@
 package validator
 
+import "github.com/BRBussy/bizzle/internal/pkg/security/claims"
+
 type Validator interface {
 	Validate(request *ValidateRequest) (*ValidateResponse, error)
 }
@@ -13,5 +15,5 @@ type ValidateRequest struct {
 }
 
 type ValidateResponse struct {
-	MarshalledClaims []byte
+	Claims claims.Claims
 }

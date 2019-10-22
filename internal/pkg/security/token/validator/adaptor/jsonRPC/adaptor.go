@@ -2,6 +2,7 @@ package jsonRPC
 
 import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	tokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator"
 	"net/http"
 )
@@ -25,7 +26,7 @@ type ValidateRequest struct {
 }
 
 type ValidateResponse struct {
-	MarshalledClaims []byte `json:"marshalledClaims"`
+	Claims claims.Serialized `json:"claims"`
 }
 
 func (a *adaptor) Validate(r *http.Request, request *ValidateRequest, response *ValidateResponse) error {
@@ -37,6 +38,6 @@ func (a *adaptor) Validate(r *http.Request, request *ValidateRequest, response *
 	if err != nil {
 		return err
 	}
-	response.MarshalledClaims = validateResponse.MarshalledClaims
+	response.Claims.Claims = validateResponse.Claims
 	return nil
 }

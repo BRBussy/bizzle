@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	tokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator"
 	"github.com/rs/zerolog/log"
@@ -59,12 +60,17 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 			return
 		}
 
-		// validate token
-		if _, err := a.tokenValidator.Validate(&tokenValidator.ValidateRequest{Token: jwt}); err != nil {
+		// validate token to get claims
+		validateResponse, err := a.tokenValidator.Validate(&tokenValidator.ValidateRequest{
+			Token: jwt,
+		})
+		if err != nil {
 			log.Error().Err(err).Msg("token validation failure")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
+
+		fmt.Println(validateResponse)
 
 		next.ServeHTTP(w, r)
 	})

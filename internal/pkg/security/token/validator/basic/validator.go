@@ -2,9 +2,12 @@ package token
 
 import (
 	"crypto/rsa"
+	"encoding/json"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/internal/pkg/security/token"
 	tokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator"
 	validateValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
+	"github.com/rs/zerolog/log"
 	"gopkg.in/square/go-jose.v2"
 )
 
@@ -41,6 +44,18 @@ func (v *validator) Validate(request *tokenValidator.ValidateRequest) (*tokenVal
 		return nil, token.ErrTokenVerification{Reasons: []string{err.Error()}}
 	}
 
+	// unmarshal claims
+	var serializedClaims claims.Serialized
+	if err := json.Unmarshal(jsonClaims, &serializedClaims); err != nil {
+		log.Warn().Err(err).Msg("could not unmarshal claims")
+		return nil, err
+	}
+
+	// check that claims are not expired
+	if serializedClaims.Claims.Expired() {
+		return nil, token.ErrInvalidToken{Reasons: []string{"token expired"}}
+	}
+
 	// return marshalled claims
-	return &tokenValidator.ValidateResponse{MarshalledClaims: jsonClaims}, nil
+	return &tokenValidator.ValidateResponse{Claims: serializedClaims.Claims}, nil
 }
