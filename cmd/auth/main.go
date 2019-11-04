@@ -76,15 +76,16 @@ func main() {
 	)
 
 	// create authenticator
-	BasicAuthenticator := new(basicAuthenticator.Authenticator).Setup(
+	BasicAuthenticator := basicAuthenticator.New(
 		JSORPCUserStore,
 		BasicTokenGenerator,
 		BasicValidator,
 	)
 
-	authenticationMiddleware := new(middleware.Authentication).Setup(
+	authenticationMiddleware := middleware.NewAuthentication(
 		config.PreSharedSecret,
 		BasicTokenValidator,
+		BasicAuthenticator,
 	)
 
 	// create rpc http server

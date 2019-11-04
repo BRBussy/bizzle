@@ -10,7 +10,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/rpc v1.2.0
-	github.com/iot-my-world/brain v0.0.0-20190819203607-78e72228707f // indirect
+	github.com/iot-my-world/brain v0.0.0-20190819203607-78e72228707f
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/onsi/gomega v1.7.0 // indirect
 	github.com/rs/zerolog v1.15.0

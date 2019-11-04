@@ -13,25 +13,25 @@ import (
 	"time"
 )
 
-type Authenticator struct {
+type authenticator struct {
 	userStore        userStore.Store
 	tokenGenerator   tokenGenerator.Generator
 	requestValidator validationValidator.Validator
 }
 
-func (a *Authenticator) Setup(
+func New(
 	userStore userStore.Store,
 	tokenGenerator tokenGenerator.Generator,
 	requestValidator validationValidator.Validator,
 ) bizzleAuthenticator.Authenticator {
-	return &Authenticator{
+	return &authenticator{
 		requestValidator: requestValidator,
 		userStore:        userStore,
 		tokenGenerator:   tokenGenerator,
 	}
 }
 
-func (a *Authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
+func (a *authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
 	if err := a.requestValidator.ValidateRequest(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -68,4 +68,13 @@ func (a *Authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzl
 	return &bizzleAuthenticator.LoginResponse{
 		JWT: generateTokenResponse.Token,
 	}, nil
+}
+
+func (a *authenticator) AuthenticateService(request *bizzleAuthenticator.AuthenticateServiceRequest) (*bizzleAuthenticator.AuthenticateServiceResponse, error) {
+	if err := a.requestValidator.ValidateRequest(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	return &bizzleAuthenticator.AuthenticateServiceResponse{}, nil
 }

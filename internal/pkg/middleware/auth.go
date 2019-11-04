@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/BRBussy/bizzle/internal/pkg/authenticator"
+	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	tokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator"
 	"github.com/rs/zerolog/log"
 	"io/ioutil"
@@ -15,15 +15,20 @@ import (
 type Authentication struct {
 	preSharedSecret string
 	tokenValidator  tokenValidator.Validator
+	authenticator   bizzleAuthenticator.Authenticator
 }
 
-func (a *Authentication) Setup(
+func NewAuthentication(
 	preSharedSecret string,
 	tokenValidator tokenValidator.Validator,
+	authenticator bizzleAuthenticator.Authenticator,
 ) *Authentication {
-	a.preSharedSecret = preSharedSecret
-	a.tokenValidator = tokenValidator
-	return a
+
+	return &Authentication{
+		preSharedSecret: preSharedSecret,
+		tokenValidator:  tokenValidator,
+		authenticator:   authenticator,
+	}
 }
 
 func (a *Authentication) Apply(next http.Handler) http.Handler {
@@ -46,7 +51,7 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 
 		// if method is login not authentication is required
 		// allow request to pass to service provider
-		if method == authenticator.LoginService {
+		if method == bizzleAuthenticator.LoginService {
 			next.ServeHTTP(w, r)
 			return
 		}
