@@ -30,7 +30,7 @@ func (c *client) JsonRpcRequest(method string, request, response interface{}) er
 	// perform json rpc request
 	rpcResponse, err := c.Call(
 		method,
-		[]interface{}{request},
+		request,
 	)
 	if err != nil {
 		return err
