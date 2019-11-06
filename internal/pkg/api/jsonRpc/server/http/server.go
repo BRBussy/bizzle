@@ -6,7 +6,6 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/cors"
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
-	"github.com/gorilla/mux"
 	"github.com/gorilla/rpc"
 	gorillaJson "github.com/gorilla/rpc/json"
 	"github.com/rs/zerolog/log"
@@ -22,14 +21,14 @@ type server struct {
 	rootRouter       *chi.Mux
 	apiRouter        *chi.Mux
 	serviceProviders map[jsonRpcServiceProvider.Name]jsonRpcServiceProvider.Provider
-	middleware       []mux.MiddlewareFunc
+	middleware       []func(netHttp.Handler) netHttp.Handler
 }
 
 func New(
 	path string,
 	host string,
 	port string,
-	middleware []mux.MiddlewareFunc,
+	middleware []func(netHttp.Handler) netHttp.Handler,
 ) *server {
 	// create a new server
 	newServer := new(server)
@@ -38,13 +37,13 @@ func New(
 	newServer.host = host
 	newServer.port = port
 
-	// create new gorilla mux rpc server
+	// create new gorilla rpc server
 	newServer.rpcServer = rpc.NewServer()
 	newServer.rpcServer.RegisterCodec(cors.CodecWithCors([]string{"*"}, gorillaJson.NewCodec()), "application/json")
 
 	// initialise middleware
 	if middleware == nil {
-		middleware = make([]mux.MiddlewareFunc, 0)
+		middleware = make([]func(netHttp.Handler) netHttp.Handler, 0)
 	}
 
 	// create chi root router and apply middleware
@@ -58,7 +57,7 @@ func New(
 		chiMiddleware.Timeout(time.Second * 60),
 	)
 	for _, middleware := range middleware {
-		newServer.apiRouter.Use(middleware.Middleware)
+		newServer.apiRouter.Use(middleware)
 	}
 
 	// mount api router on root router

@@ -15,8 +15,8 @@ import (
 	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
 	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
 	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/basic"
-	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
+	"net/http"
 	"os"
 	"os/signal"
 )
@@ -84,7 +84,7 @@ func main() {
 		"/",
 		"0.0.0.0",
 		config.ServerPort,
-		[]mux.MiddlewareFunc{
+		[]func(http.Handler) http.Handler{
 			authenticationMiddleware.Apply,
 		},
 	)

@@ -16,9 +16,9 @@ import (
 	jsonRPCUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/jsonRPC"
 	"github.com/BRBussy/bizzle/pkg/key"
 	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/basic"
-	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/square/go-jose.v2"
+	"net/http"
 	"os"
 	"os/signal"
 )
@@ -93,7 +93,7 @@ func main() {
 		"/",
 		"0.0.0.0",
 		config.ServerPort,
-		[]mux.MiddlewareFunc{
+		[]func(http.Handler) http.Handler{
 			authenticationMiddleware.Apply,
 		},
 	)
