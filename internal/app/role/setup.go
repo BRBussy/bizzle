@@ -1,7 +1,6 @@
 package role
 
 import (
-	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	securityPermission "github.com/BRBussy/bizzle/internal/pkg/security/permission"
 	securityRole "github.com/BRBussy/bizzle/internal/pkg/security/role"
@@ -13,10 +12,8 @@ import (
 
 var initialRoles = []securityRole.Role{
 	{
-		Name: "user",
-		Permissions: []securityPermission.Permission{
-			exerciseStore.FindService,
-		},
+		Name:        "user",
+		Permissions: []securityPermission.Permission{},
 	},
 }
 

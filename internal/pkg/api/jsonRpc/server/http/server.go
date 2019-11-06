@@ -3,11 +3,10 @@ package http
 import (
 	"fmt"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
-	"github.com/BRBussy/bizzle/internal/pkg/cors"
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
-	"github.com/gorilla/rpc"
-	gorillaJson "github.com/gorilla/rpc/json"
+	"github.com/gorilla/rpc/v2"
+	gorillaJson "github.com/gorilla/rpc/v2/json2"
 	"github.com/rs/zerolog/log"
 	netHttp "net/http"
 	"time"
@@ -39,7 +38,7 @@ func New(
 
 	// create new gorilla rpc server
 	newServer.rpcServer = rpc.NewServer()
-	newServer.rpcServer.RegisterCodec(cors.CodecWithCors([]string{"*"}, gorillaJson.NewCodec()), "application/json")
+	newServer.rpcServer.RegisterCodec(gorillaJson.NewCodec(), "application/json")
 
 	// initialise middleware
 	if middleware == nil {
