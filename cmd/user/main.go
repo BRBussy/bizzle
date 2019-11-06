@@ -109,7 +109,6 @@ func main() {
 	}
 
 	// start server
-	log.Info().Msgf("starting user json rpc http api server started on port %s", config.ServerPort)
 	go func() {
 		if err := server.Start(); err != nil {
 			log.Error().Err(err).Msg("json rpc http api server has stopped")

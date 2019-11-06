@@ -69,7 +69,7 @@ func New(
 }
 
 func (s *server) Start() error {
-	log.Info().Msg("staring http json rpc api server on: " + s.host + ":" + s.port)
+	log.Info().Msg("starting http json rpc api server on: " + s.host + ":" + s.port + "/api")
 	return netHttp.ListenAndServe(s.host+":"+s.port, s.rootRouter)
 }
 
