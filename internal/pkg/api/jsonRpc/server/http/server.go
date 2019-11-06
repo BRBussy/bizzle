@@ -4,11 +4,14 @@ import (
 	"fmt"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/cors"
+	"github.com/go-chi/chi"
+	chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/rpc"
 	gorillaJson "github.com/gorilla/rpc/json"
 	"github.com/rs/zerolog/log"
 	netHttp "net/http"
+	"time"
 )
 
 type server struct {
@@ -16,7 +19,8 @@ type server struct {
 	host             string
 	port             string
 	rpcServer        *rpc.Server
-	serverMux        *mux.Router
+	rootRouter       *chi.Mux
+	apiRouter        *chi.Mux
 	serviceProviders map[jsonRpcServiceProvider.Name]jsonRpcServiceProvider.Provider
 	middleware       []mux.MiddlewareFunc
 }
@@ -27,40 +31,48 @@ func New(
 	port string,
 	middleware []mux.MiddlewareFunc,
 ) *server {
-	// create new gorilla mux rpc server
-	rpcServer := rpc.NewServer()
-	rpcServer.RegisterCodec(cors.CodecWithCors([]string{"*"}, gorillaJson.NewCodec()), "application/json")
+	// create a new server
+	newServer := new(server)
+	newServer.serviceProviders = make(map[jsonRpcServiceProvider.Name]jsonRpcServiceProvider.Provider)
+	newServer.path = path
+	newServer.host = host
+	newServer.port = port
 
-	return &server{
-		path:             path,
-		host:             host,
-		port:             port,
-		serverMux:        mux.NewRouter(),
-		rpcServer:        rpcServer,
-		serviceProviders: make(map[jsonRpcServiceProvider.Name]jsonRpcServiceProvider.Provider),
-		middleware:       middleware,
+	// create new gorilla mux rpc server
+	newServer.rpcServer = rpc.NewServer()
+	newServer.rpcServer.RegisterCodec(cors.CodecWithCors([]string{"*"}, gorillaJson.NewCodec()), "application/json")
+
+	// initialise middleware
+	if middleware == nil {
+		middleware = make([]mux.MiddlewareFunc, 0)
 	}
+
+	// create chi root router and apply middleware
+	newServer.rootRouter = chi.NewRouter()
+
+	// create chi api router
+	newServer.apiRouter = chi.NewRouter()
+
+	// apply middleware to api router
+	newServer.apiRouter.Use(
+		chiMiddleware.Timeout(time.Second * 60),
+	)
+	for _, middleware := range middleware {
+		newServer.apiRouter.Use(middleware.Middleware)
+	}
+
+	// mount api router on root router
+	newServer.rootRouter.Mount("/api", newServer.apiRouter)
+
+	// handle post requests to api router
+	newServer.apiRouter.Post("/", newServer.rpcServer.ServeHTTP)
+
+	return newServer
 }
 
 func (s *server) Start() error {
-	// set preflight handler for options method
-	s.serverMux.Methods(netHttp.MethodOptions).HandlerFunc(preFlightHandler)
-
-	// wrap rpc server with middleware
-	var middlewareWrappedServer netHttp.Handler = s.rpcServer
-	for _, middleware := range s.middleware {
-		middlewareWrappedServer = middleware.Middleware(middlewareWrappedServer)
-	}
-
-	// start server
-	s.serverMux.Handle(
-		s.path,
-		middlewareWrappedServer,
-	).Methods(netHttp.MethodPost)
-	if err := netHttp.ListenAndServe(s.host+":"+s.port, s.serverMux); err != nil {
-		log.Error().Err(err).Msg("json rpc api server stopped")
-	}
-	return nil
+	log.Info().Msg("staring http json rpc api server on: " + s.host + ":" + s.port)
+	return netHttp.ListenAndServe(s.host+":"+s.port, s.rootRouter)
 }
 
 func (s *server) RegisterServiceProvider(serviceProvider jsonRpcServiceProvider.Provider) error {

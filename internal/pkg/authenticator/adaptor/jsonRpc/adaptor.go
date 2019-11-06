@@ -4,7 +4,6 @@ import (
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
-	"github.com/iot-my-world/brain/pkg/api/jsonRpc/server/authenticator"
 	"net/http"
 )
 
@@ -21,7 +20,7 @@ func New(
 }
 
 func (a *adaptor) Name() jsonRpcServiceProvider.Name {
-	return authenticator.ServiceProvider
+	return bizzleAuthenticator.ServiceProvider
 }
 
 type SignUpRequest struct {
