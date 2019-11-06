@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	tokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator"
 	"github.com/rs/zerolog/log"
@@ -75,7 +74,17 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 			return
 		}
 
-		fmt.Println(validateResponse)
+		// validate service access
+		if _, err := a.authenticator.AuthenticateService(
+			&bizzleAuthenticator.AuthenticateServiceRequest{
+				Claims:  validateResponse.Claims,
+				Service: method,
+			},
+		); err != nil {
+			log.Error().Err(err).Msg("unauthorized to access service")
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
 
 		next.ServeHTTP(w, r)
 	})
