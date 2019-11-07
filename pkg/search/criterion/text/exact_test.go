@@ -1,4 +1,4 @@
-package string
+package text
 
 import (
 	"fmt"
@@ -7,13 +7,13 @@ import (
 	"testing"
 )
 
-func TestSubstring(t *testing.T) {
+func TestExact(t *testing.T) {
 	assert := testifyAssert.New(t)
 
-	testCriterion := Substring{}
+	testCriterion := Exact{}
 
 	assert.Equal(
-		criterion.StringSubstringCriterionType,
+		criterion.TextExactCriterionType,
 		testCriterion.Type(),
 	)
 
@@ -25,7 +25,7 @@ func TestSubstring(t *testing.T) {
 		testCriterion.IsValid(),
 	)
 
-	testCriterion.String = "string"
+	testCriterion.Text = "string"
 
 	assert.Equal(
 		criterion.ErrInvalid{Reasons: []string{
@@ -34,7 +34,7 @@ func TestSubstring(t *testing.T) {
 		testCriterion.IsValid(),
 	)
 
-	testCriterion.String = ""
+	testCriterion.Text = ""
 	testCriterion.Field = "someField"
 
 	assert.Equal(
@@ -44,7 +44,7 @@ func TestSubstring(t *testing.T) {
 		testCriterion.IsValid(),
 	)
 
-	testCriterion.String = "string"
+	testCriterion.Text = "string"
 	testCriterion.Field = "someField"
 
 	assert.Equal(
@@ -54,10 +54,7 @@ func TestSubstring(t *testing.T) {
 
 	assert.Equal(
 		map[string]interface{}{
-			"someField": map[string]interface{}{
-				"$regex":   ".*string.*",
-				"$options": "i",
-			},
+			"someField": "string",
 		},
 		testCriterion.ToFilter(),
 	)
@@ -69,7 +66,7 @@ func TestSubstring(t *testing.T) {
 	assert.JSONEq(
 		fmt.Sprintf(
 			"{\"type\":\"%s\",\"string\":\"string\"}",
-			criterion.StringSubstringCriterionType.String(),
+			criterion.TextExactCriterionType.String(),
 		),
 		string(jsonMessage),
 	)

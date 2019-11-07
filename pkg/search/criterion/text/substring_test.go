@@ -1,4 +1,4 @@
-package string
+package text
 
 import (
 	"fmt"
@@ -7,13 +7,13 @@ import (
 	"testing"
 )
 
-func TestExact(t *testing.T) {
+func TestSubstring(t *testing.T) {
 	assert := testifyAssert.New(t)
 
-	testCriterion := Exact{}
+	testCriterion := Substring{}
 
 	assert.Equal(
-		criterion.StringExactCriterionType,
+		criterion.TextSubstringCriterionType,
 		testCriterion.Type(),
 	)
 
@@ -54,7 +54,10 @@ func TestExact(t *testing.T) {
 
 	assert.Equal(
 		map[string]interface{}{
-			"someField": "string",
+			"someField": map[string]interface{}{
+				"$regex":   ".*string.*",
+				"$options": "i",
+			},
 		},
 		testCriterion.ToFilter(),
 	)
@@ -66,7 +69,7 @@ func TestExact(t *testing.T) {
 	assert.JSONEq(
 		fmt.Sprintf(
 			"{\"type\":\"%s\",\"string\":\"string\"}",
-			criterion.StringExactCriterionType.String(),
+			criterion.TextSubstringCriterionType.String(),
 		),
 		string(jsonMessage),
 	)

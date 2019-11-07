@@ -1,4 +1,4 @@
-package string
+package text
 
 import (
 	"encoding/json"
@@ -6,15 +6,15 @@ import (
 )
 
 type Exact struct {
-	Field  string `json:"field"`
-	String string `json:"string"`
+	Field string `json:"field"`
+	Text  string `json:"text"`
 }
 
 func (e Exact) IsValid() error {
 
 	reasonsInvalid := make([]string, 0)
 
-	if e.String == "" {
+	if e.Text == "" {
 		reasonsInvalid = append(reasonsInvalid, "string is blank")
 	}
 
@@ -30,20 +30,20 @@ func (e Exact) IsValid() error {
 }
 
 func (e Exact) Type() criterion.Type {
-	return criterion.StringExactCriterionType
+	return criterion.TextExactCriterionType
 }
 
 func (e Exact) ToFilter() map[string]interface{} {
-	return map[string]interface{}{e.Field: e.String}
+	return map[string]interface{}{e.Field: e.Text}
 }
 
 func (e Exact) ToJSON() (string, json.RawMessage, error) {
 	data, err := json.Marshal(struct {
-		Type   string `json:"type"`
-		String string `json:"string"`
+		Type string `json:"type"`
+		Text string `json:"text"`
 	}{
-		Type:   e.Type().String(),
-		String: e.String,
+		Type: e.Type().String(),
+		Text: e.Text,
 	})
 	return e.Field, data, err
 }

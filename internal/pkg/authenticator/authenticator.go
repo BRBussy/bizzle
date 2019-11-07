@@ -21,8 +21,8 @@ type LoginResponse struct {
 }
 
 type AuthenticateServiceRequest struct {
-	Claims  claims.Claims
-	Service string
+	Claims  claims.Claims `validate:"required"`
+	Service string        `validate:"required"`
 }
 
 type AuthenticateServiceResponse struct {

@@ -1,6 +1,7 @@
 package basic
 
 import (
+	"fmt"
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
@@ -74,6 +75,22 @@ func (a *authenticator) AuthenticateService(request *bizzleAuthenticator.Authent
 	if err := a.requestValidator.ValidateRequest(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
+	}
+
+	switch typedClaims := request.Claims.(type) {
+	case claims.Login:
+		// try and retrieve user that owns claims
+		findOneUserResponse, err := a.userStore.FindOne(
+			&userStore.FindOneRequest{
+				Identifier: typedClaims.UserID,
+			},
+		)
+		if err != nil {
+			return nil, bizzleException.ErrUnauthorized{Reason: "could not retrieve user: " + err.Error()}
+		}
+
+		// create exact list criteria to try and retrieve all of the users roles
+		fmt.Println(findOneUserResponse)
 	}
 
 	return &bizzleAuthenticator.AuthenticateServiceResponse{}, nil

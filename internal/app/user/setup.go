@@ -8,7 +8,7 @@ import (
 	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
-	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
+	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/text"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 )
@@ -34,8 +34,8 @@ func Setup(
 			roleFindCriteria = append(
 				roleFindCriteria,
 				stringCriterion.Exact{
-					Field:  "name",
-					String: rootUserToCreate.RoleIDs[i].String(),
+					Field: "name",
+					Text:  rootUserToCreate.RoleIDs[i].String(),
 				},
 			)
 		}

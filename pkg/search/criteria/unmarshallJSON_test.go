@@ -63,7 +63,7 @@ func TestUnmarshalSerializedCriteria_OROperatorFailures(t *testing.T) {
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
 			"{\"$or\":[{\"someField\":{\"type\":\"%s\",\"string\":555}}]}",
-			searchCriterion.StringExactCriterionType,
+			searchCriterion.TextExactCriterionType,
 		))),
 	)
 	// parsing failure in array with and
@@ -77,8 +77,8 @@ func TestUnmarshalSerializedCriteria_OROperatorFailures(t *testing.T) {
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
 			"{\"$or\":[{\"someField\":{\"type\":\"%s\",\"string\":555},\"someOtherField\":{\"type\":\"%s\",\"string\":\"someSubstring\"}}]}",
-			searchCriterion.StringExactCriterionType,
-			searchCriterion.StringSubstringCriterionType,
+			searchCriterion.TextExactCriterionType,
+			searchCriterion.TextSubstringCriterionType,
 		))),
 	)
 }
@@ -136,7 +136,7 @@ func TestUnmarshalSerializedCriteria_StringSubstringFailures(t *testing.T) {
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
 			"{\"someField\":{\"type\":\"%s\",\"string\":555}}",
-			searchCriterion.StringSubstringCriterionType,
+			searchCriterion.TextSubstringCriterionType,
 		))),
 	)
 }
@@ -150,7 +150,7 @@ func TestUnmarshalSerializedCriteria_StringExactFailures(t *testing.T) {
 		}},
 		(&Serialized{}).UnmarshalJSON([]byte(fmt.Sprintf(
 			"{\"someField\":{\"type\":\"%s\",\"string\":555}}",
-			searchCriterion.StringExactCriterionType,
+			searchCriterion.TextExactCriterionType,
 		))),
 	)
 }

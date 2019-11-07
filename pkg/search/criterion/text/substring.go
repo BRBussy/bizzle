@@ -1,4 +1,4 @@
-package string
+package text
 
 import (
 	"encoding/json"
@@ -30,7 +30,7 @@ func (s Substring) IsValid() error {
 }
 
 func (s Substring) Type() criterion.Type {
-	return criterion.StringSubstringCriterionType
+	return criterion.TextSubstringCriterionType
 }
 
 func (s Substring) ToFilter() map[string]interface{} {

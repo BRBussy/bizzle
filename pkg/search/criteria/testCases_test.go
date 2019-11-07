@@ -5,7 +5,7 @@ import (
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
-	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
+	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/text"
 )
 
 //
@@ -28,7 +28,7 @@ var stringSubstring1TestCase = serializedTestCase{
 	id: "stringSubstringTestCase 1",
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"stringSubstring1Field\":{\"type\":\"%s\",\"string\":\"stringSubstring1TestCase\"}}",
-		searchCriterion.StringSubstringCriterionType,
+		searchCriterion.TextSubstringCriterionType,
 	)),
 	criteria: []searchCriterion.Criterion{
 		stringCriterion.Substring{
@@ -42,7 +42,7 @@ var stringExact1 = serializedTestCase{
 	id: "stringExactTestCase 1",
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"stringExact1Field\":{\"type\":\"%s\",\"string\":\"stringExact1\"}}",
-		searchCriterion.StringExactCriterionType,
+		searchCriterion.TextExactCriterionType,
 	)),
 	criteria: []searchCriterion.Criterion{
 		stringCriterion.Exact{
@@ -94,7 +94,7 @@ var operationAnd1 = serializedTestCase{
 	serializedCriterion: []byte(fmt.Sprintf(
 		"{\"someField\":{\"type\":\"%s\",\"number\":123.45},\"someOtherField\":{\"type\":\"%s\",\"string\":\"someExactString\"}}",
 		searchCriterion.NumberExactCriterionType,
-		searchCriterion.StringExactCriterionType,
+		searchCriterion.TextExactCriterionType,
 	)),
 	criteria: []searchCriterion.Criterion{
 		numberCriterion.Exact{
@@ -119,7 +119,7 @@ var operationOrTestCase1 = serializedTestCase{
 		fmt.Sprintf(
 			"{\"someField\":{\"type\":\"%s\",\"number\":123.45},\"someOtherField\":{\"type\":\"%s\",\"string\":\"someExactString\"}}",
 			searchCriterion.NumberExactCriterionType,
-			searchCriterion.StringExactCriterionType,
+			searchCriterion.TextExactCriterionType,
 		),
 	)),
 	criteria: []searchCriterion.Criterion{
@@ -155,7 +155,7 @@ var operationOrTestCase2 = serializedTestCase{
 		fmt.Sprintf(
 			"{\"someField\":{\"type\":\"%s\",\"number\":123.45},\"someOtherField\":{\"type\":\"%s\",\"string\":\"someExactString\"}}",
 			searchCriterion.NumberExactCriterionType,
-			searchCriterion.StringExactCriterionType,
+			searchCriterion.TextExactCriterionType,
 		),
 	)),
 	criteria: []searchCriterion.Criterion{
@@ -189,9 +189,9 @@ var combinedTestCase1 = serializedTestCase{
 		fmt.Sprintf(
 			"{\"someField\":{\"type\":\"%s\",\"number\":123.45},\"someOtherField\":{\"type\":\"%s\",\"string\":\"someExactString\"}}",
 			searchCriterion.NumberExactCriterionType,
-			searchCriterion.StringExactCriterionType,
+			searchCriterion.TextExactCriterionType,
 		),
-		searchCriterion.StringSubstringCriterionType,
+		searchCriterion.TextSubstringCriterionType,
 	)),
 	criteria: []searchCriterion.Criterion{
 		operationCriterion.Or{

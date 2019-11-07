@@ -3,7 +3,7 @@ package criteria
 import (
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
-	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
+	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/text"
 	testifyAssert "github.com/stretchr/testify/assert"
 	"testing"
 )

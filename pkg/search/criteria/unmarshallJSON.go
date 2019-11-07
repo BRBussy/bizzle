@@ -5,7 +5,7 @@ import (
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
-	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/string"
+	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/text"
 	"github.com/rs/zerolog/log"
 )
 
@@ -100,7 +100,7 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 			return nil, err
 		}
 		switch th.Type {
-		case searchCriterion.StringSubstringCriterionType:
+		case searchCriterion.TextSubstringCriterionType:
 			var typedCriterion stringCriterion.Substring
 			if err := json.Unmarshal(value, &typedCriterion); err != nil {
 				err = ErrUnmarshal{Reasons: []string{
@@ -112,7 +112,7 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 			typedCriterion.Field = operationOrField
 			parsedCriterion = typedCriterion
 
-		case searchCriterion.StringExactCriterionType:
+		case searchCriterion.TextExactCriterionType:
 			var typedCriterion stringCriterion.Exact
 			if err := json.Unmarshal(value, &typedCriterion); err != nil {
 				err = ErrUnmarshal{Reasons: []string{
