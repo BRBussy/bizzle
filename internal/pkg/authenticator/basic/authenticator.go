@@ -1,12 +1,14 @@
 package basic
 
 import (
-	"fmt"
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	tokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
+	"github.com/BRBussy/bizzle/pkg/search/criterion"
+	"github.com/BRBussy/bizzle/pkg/search/criterion/text"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
@@ -16,16 +18,19 @@ import (
 
 type authenticator struct {
 	userStore        userStore.Store
+	roleStore        roleStore.Store
 	tokenGenerator   tokenGenerator.Generator
 	requestValidator validationValidator.Validator
 }
 
 func New(
 	userStore userStore.Store,
+	roleStore roleStore.Store,
 	tokenGenerator tokenGenerator.Generator,
 	requestValidator validationValidator.Validator,
 ) bizzleAuthenticator.Authenticator {
 	return &authenticator{
+		roleStore:        roleStore,
 		requestValidator: requestValidator,
 		userStore:        userStore,
 		tokenGenerator:   tokenGenerator,
@@ -89,9 +94,35 @@ func (a *authenticator) AuthenticateService(request *bizzleAuthenticator.Authent
 			return nil, bizzleException.ErrUnauthorized{Reason: "could not retrieve user: " + err.Error()}
 		}
 
-		// create exact list criteria to try and retrieve all of the users roles
-		fmt.Println(findOneUserResponse)
+		// create criterion to retrieve user's roles
+		roleCriteria := text.List{
+			Field: "id",
+			List:  make([]string, 0),
+		}
+		for _, roleID := range findOneUserResponse.User.RoleIDs {
+			roleCriteria.List = append(roleCriteria.List, roleID.String())
+		}
+		roleFindManyResponse, err := a.roleStore.FindMany(
+			&roleStore.FindManyRequest{
+				Criteria: []criterion.Criterion{
+					roleCriteria,
+					text.Exact{
+						Field: "permissions",
+						Text:  request.Service,
+					},
+				},
+			},
+		)
+		if err != nil {
+			return nil, bizzleException.ErrUnauthorized{Reason: "could not retrieve roles: " + err.Error()}
+		}
+
+		// if any roles match this criteria then the user has access to this service
+		if roleFindManyResponse.Total > 0 {
+			return &bizzleAuthenticator.AuthenticateServiceResponse{}, nil
+		}
+		return nil, bizzleException.ErrUnauthorized{Reason: "no permission"}
 	}
 
-	return &bizzleAuthenticator.AuthenticateServiceResponse{}, nil
+	return nil, bizzleException.ErrUnauthorized{Reason: "invalid claims"}
 }

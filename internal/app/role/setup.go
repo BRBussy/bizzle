@@ -15,6 +15,14 @@ var initialRoles = []securityRole.Role{
 		Name:        "user",
 		Permissions: []securityPermission.Permission{},
 	},
+	{
+		Name:        "system",
+		Permissions: []securityPermission.Permission{},
+	},
+}
+
+var rootOnlyPermissions = []securityPermission.Permission{
+	roleStore.FindOneService,
 }
 
 func Setup(
@@ -28,6 +36,7 @@ func Setup(
 	switch err.(type) {
 	case mongo.ErrNotFound:
 		// root role not found, it should be created
+		log.Info().Msg("creating root role")
 		createOneResponse, err := admin.CreateOne(&roleAdmin.CreateOneRequest{
 			Role: securityRole.Role{
 				Name: "root",
@@ -51,8 +60,8 @@ func Setup(
 		rootRole = findOneResponse.Role
 		rootRoleCopy = rootRole
 	}
-	// clear root role permissions
-	rootRole.Permissions = make([]securityPermission.Permission, 0)
+	// set root role permissions to root only permissions
+	rootRole.Permissions = rootOnlyPermissions
 
 	// for every initial role to create
 	for i := range initialRoles {
@@ -87,6 +96,7 @@ func Setup(
 		// compare them to see if an update is required
 		if !securityRole.CompareRoles(initialRoles[i], findOneResponse.Role) {
 			// update as required
+			log.Info().Msg("updating role " + initialRoles[i].Name)
 			if _, err := admin.UpdateOne(&roleAdmin.UpdateOneRequest{Role: initialRoles[i]}); err != nil {
 				log.Error().Err(err).Msg("updating role")
 				return err

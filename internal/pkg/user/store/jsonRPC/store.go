@@ -6,23 +6,32 @@ import (
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	userStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/store/adaptor/jsonRpc"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 )
 
 type store struct {
 	jsonRpcClient jsonRpcClient.Client
+	validator     validationValidator.Validator
 }
 
 func New(
+	validator validationValidator.Validator,
 	url, preSharedSecret string,
 ) userStore.Store {
 	log.Info().Msg("user json rpc store for: " + url)
 	return &store{
+		validator:     validator,
 		jsonRpcClient: ybbusJsonRpcClient.New(url, preSharedSecret),
 	}
 }
 
 func (s *store) CreateOne(request *userStore.CreateOneRequest) (*userStore.CreateOneResponse, error) {
+	if err := s.validator.ValidateRequest(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	createResponse := new(userStoreJsonRpcAdaptor.CreateOneResponse)
 	if err := s.jsonRpcClient.JsonRpcRequest(
 		userStore.CreateOneService,
@@ -38,6 +47,11 @@ func (s *store) CreateOne(request *userStore.CreateOneRequest) (*userStore.Creat
 }
 
 func (s *store) FindOne(request *userStore.FindOneRequest) (*userStore.FindOneResponse, error) {
+	if err := s.validator.ValidateRequest(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	findOneResponse := new(userStoreJsonRpcAdaptor.FindOneResponse)
 	if err := s.jsonRpcClient.JsonRpcRequest(
 		userStore.FindOneService,
@@ -57,6 +71,11 @@ func (s *store) FindOne(request *userStore.FindOneRequest) (*userStore.FindOneRe
 }
 
 func (s *store) UpdateOne(request *userStore.UpdateOneRequest) (*userStore.UpdateOneResponse, error) {
+	if err := s.validator.ValidateRequest(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	updateOneResponse := new(userStoreJsonRpcAdaptor.UpdateOneResponse)
 	if err := s.jsonRpcClient.JsonRpcRequest(
 		userStore.UpdateOneService,

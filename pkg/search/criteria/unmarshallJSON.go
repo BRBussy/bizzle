@@ -124,6 +124,18 @@ func parse(operationOrField string, value json.RawMessage) (searchCriterion.Crit
 			typedCriterion.Field = operationOrField
 			parsedCriterion = typedCriterion
 
+		case searchCriterion.TextListCriterionType:
+			var typedCriterion stringCriterion.List
+			if err := json.Unmarshal(value, &typedCriterion); err != nil {
+				err = ErrUnmarshal{Reasons: []string{
+					"list ",
+					err.Error(),
+				}}
+				return nil, err
+			}
+			typedCriterion.Field = operationOrField
+			parsedCriterion = typedCriterion
+
 		case searchCriterion.NumberRangeCriterionType:
 			var typedCriterion numberCriterion.Range
 			if err := json.Unmarshal(value, &typedCriterion); err != nil {

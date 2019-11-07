@@ -10,6 +10,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	jsonRPCRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/jsonRpc"
 	basicTokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator/basic"
 	tokenValidatorJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/adaptor/jsonRPC"
 	basicTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/basic"
@@ -62,7 +63,13 @@ func main() {
 	}
 
 	JSORPCUserStore := jsonRPCUserStore.New(
+		BasicValidator,
 		config.UserURL,
+		config.PreSharedSecret,
+	)
+	JSONRPCRoleStore := jsonRPCRoleStore.New(
+		BasicValidator,
+		config.RoleURL,
 		config.PreSharedSecret,
 	)
 
@@ -78,6 +85,7 @@ func main() {
 	// create authenticator
 	BasicAuthenticator := basicAuthenticator.New(
 		JSORPCUserStore,
+		JSONRPCRoleStore,
 		BasicTokenGenerator,
 		BasicValidator,
 	)

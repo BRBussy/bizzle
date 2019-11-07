@@ -63,6 +63,9 @@ func (s *store) FindMany(request *roleStore.FindManyRequest) (*roleStore.FindMan
 		log.Error().Err(err).Msg("finding roles")
 		return nil, bizzleException.ErrUnexpected{}
 	}
+	if records == nil {
+		records = make([]role.Role, 0)
+	}
 
 	return &roleStore.FindManyResponse{
 		Records: records,
