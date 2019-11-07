@@ -25,7 +25,7 @@ func TestSubstring(t *testing.T) {
 		testCriterion.IsValid(),
 	)
 
-	testCriterion.String = "string"
+	testCriterion.Text = "string"
 
 	assert.Equal(
 		criterion.ErrInvalid{Reasons: []string{
@@ -34,7 +34,7 @@ func TestSubstring(t *testing.T) {
 		testCriterion.IsValid(),
 	)
 
-	testCriterion.String = ""
+	testCriterion.Text = ""
 	testCriterion.Field = "someField"
 
 	assert.Equal(
@@ -44,7 +44,7 @@ func TestSubstring(t *testing.T) {
 		testCriterion.IsValid(),
 	)
 
-	testCriterion.String = "string"
+	testCriterion.Text = "string"
 	testCriterion.Field = "someField"
 
 	assert.Equal(

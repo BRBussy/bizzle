@@ -30,13 +30,13 @@ func TestOr(t *testing.T) {
 	}
 
 	stringCriterion1 := stringCriterion.Exact{
-		Field:  "name",
-		String: "sam",
+		Field: "name",
+		Text:  "sam",
 	}
 
 	stringCriterion2 := stringCriterion.Substring{
-		Field:  "surname",
-		String: "smith",
+		Field: "surname",
+		Text:  "smith",
 	}
 
 	testCriteria.Criteria = []criterion.Criterion{

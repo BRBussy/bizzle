@@ -20,7 +20,6 @@ type server struct {
 	rootRouter       *chi.Mux
 	apiRouter        *chi.Mux
 	serviceProviders map[jsonRpcServiceProvider.Name]jsonRpcServiceProvider.Provider
-	middleware       []func(netHttp.Handler) netHttp.Handler
 }
 
 func New(

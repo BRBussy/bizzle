@@ -19,12 +19,12 @@ func TestCriteriaToFilter(t *testing.T) {
 	)
 
 	stringExactCriterion := stringCriterion.Exact{
-		Field:  "testStringExactField",
-		String: "testStringExactContents",
+		Field: "testStringExactField",
+		Text:  "testStringExactContents",
 	}
 	stringSubstringCriterion := stringCriterion.Substring{
-		Field:  "testStringSubstringField",
-		String: "testStringSubstringContents",
+		Field: "testStringSubstringField",
+		Text:  "testStringSubstringContents",
 	}
 	numberExactCriterion := numberCriterion.Exact{
 		Field:  "testNumberExactField",

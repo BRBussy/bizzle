@@ -32,8 +32,8 @@ var stringSubstring1TestCase = serializedTestCase{
 	)),
 	criteria: []searchCriterion.Criterion{
 		stringCriterion.Substring{
-			Field:  "stringSubstring1Field",
-			String: "stringSubstring1TestCase",
+			Field: "stringSubstring1Field",
+			Text:  "stringSubstring1TestCase",
 		},
 	},
 }
@@ -46,8 +46,8 @@ var stringExact1 = serializedTestCase{
 	)),
 	criteria: []searchCriterion.Criterion{
 		stringCriterion.Exact{
-			Field:  "stringExact1Field",
-			String: "stringExact1",
+			Field: "stringExact1Field",
+			Text:  "stringExact1",
 		},
 	},
 }
@@ -102,8 +102,8 @@ var operationAnd1 = serializedTestCase{
 			Number: 123.45,
 		},
 		stringCriterion.Exact{
-			Field:  "someOtherField",
-			String: "someExactString",
+			Field: "someOtherField",
+			Text:  "someExactString",
 		},
 	},
 }
@@ -136,8 +136,8 @@ var operationOrTestCase1 = serializedTestCase{
 							Number: 123.45,
 						},
 						stringCriterion.Exact{
-							Field:  "someOtherField",
-							String: "someExactString",
+							Field: "someOtherField",
+							Text:  "someExactString",
 						},
 					},
 				},
@@ -170,8 +170,8 @@ var operationOrTestCase2 = serializedTestCase{
 							Number: 123.45,
 						},
 						stringCriterion.Exact{
-							Field:  "someOtherField",
-							String: "someExactString",
+							Field: "someOtherField",
+							Text:  "someExactString",
 						},
 					},
 				},
@@ -205,16 +205,16 @@ var combinedTestCase1 = serializedTestCase{
 							Number: 123.45,
 						},
 						stringCriterion.Exact{
-							Field:  "someOtherField",
-							String: "someExactString",
+							Field: "someOtherField",
+							Text:  "someExactString",
 						},
 					},
 				},
 			},
 		},
 		stringCriterion.Substring{
-			Field:  "stringSubstring1Field",
-			String: "stringSubstring1TestCase",
+			Field: "stringSubstring1Field",
+			Text:  "stringSubstring1TestCase",
 		},
 	},
 }

@@ -94,8 +94,8 @@ func TestSerializedCriteria_MarshallFailures(t *testing.T) {
 	// embedded marshalling failure
 	testSerializedCriteria.Criteria = []searchCriterion.Criterion{
 		stringCriterion.Exact{
-			Field:  "testField",
-			String: "exactString",
+			Field: "testField",
+			Text:  "exactString",
 		},
 		operationCriterion.Or{
 			Criteria: []searchCriterion.Criterion{

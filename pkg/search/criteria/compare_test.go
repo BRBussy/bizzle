@@ -1,7 +1,6 @@
 package criteria
 
 import (
-	"fmt"
 	searchCriterion "github.com/BRBussy/bizzle/pkg/search/criterion"
 	numberCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/number"
 	operationCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/operation"
@@ -53,14 +52,14 @@ var fieldOnlyTestCases = []compareTestCase{
 		id: "fieldOnlyTestCase 4",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testField",
-				String: "testString",
+				Field: "testField",
+				Text:  "testString",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testField",
-				String: "testString",
+				Field: "testField",
+				Text:  "testString",
 			},
 		},
 		result: true,
@@ -69,14 +68,14 @@ var fieldOnlyTestCases = []compareTestCase{
 		id: "fieldOnlyTestCase 5",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testFieldDifferent",
-				String: "testString",
+				Field: "testFieldDifferent",
+				Text:  "testString",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testField",
-				String: "testString",
+				Field: "testField",
+				Text:  "testString",
 			},
 		},
 		result: false,
@@ -85,18 +84,18 @@ var fieldOnlyTestCases = []compareTestCase{
 		id: "fieldOnlyTestCase 6",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testFieldDifferent",
-				String: "testString",
+				Field: "testFieldDifferent",
+				Text:  "testString",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testField",
-				String: "testString",
+				Field: "testField",
+				Text:  "testString",
 			},
 			stringCriterion.Substring{
-				Field:  "testFieldDifferent",
-				String: "testString",
+				Field: "testFieldDifferent",
+				Text:  "testString",
 			},
 		},
 		result: false,
@@ -109,26 +108,26 @@ var fieldOnlyTestCases = []compareTestCase{
 				Number: 112.123,
 			},
 			stringCriterion.Substring{
-				Field:  "testSubstringField",
-				String: "testSubstring",
+				Field: "testSubstringField",
+				Text:  "testSubstring",
 			},
 			stringCriterion.Exact{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Exact{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 			numberCriterion.Exact{
 				Field:  "testNumberExactField",
 				Number: 112.123,
 			},
 			stringCriterion.Substring{
-				Field:  "testSubstringField",
-				String: "testSubstring",
+				Field: "testSubstringField",
+				Text:  "testSubstring",
 			},
 		},
 		result: true,
@@ -143,14 +142,14 @@ var operationORTestCases = []compareTestCase{
 				Criteria: Criteria{},
 			},
 			stringCriterion.Exact{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Exact{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 			operationCriterion.Or{
 				Criteria: Criteria{},
@@ -179,20 +178,20 @@ var operationORTestCases = []compareTestCase{
 				},
 			},
 			stringCriterion.Substring{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 			operationCriterion.Or{
 				Criteria: Criteria{
 					stringCriterion.Substring{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 				},
 			},
@@ -218,26 +217,26 @@ var operationORTestCases = []compareTestCase{
 						},
 					},
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 				},
 			},
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 			operationCriterion.Or{
 				Criteria: Criteria{
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					numberCriterion.Range{
 						Field: "testNumberRange",
@@ -263,26 +262,26 @@ var operationORTestCases = []compareTestCase{
 			operationCriterion.Or{
 				Criteria: Criteria{
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 				},
 			},
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 			operationCriterion.Or{
 				Criteria: Criteria{
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					numberCriterion.Range{
 						Field: "testNumberRange",
@@ -306,14 +305,14 @@ var operationORTestCases = []compareTestCase{
 		id: "operationORTestCase 5",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 			operationCriterion.Or{
 				Criteria: Criteria{
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					operationCriterion.Or{
 						Criteria: Criteria{
@@ -331,8 +330,8 @@ var operationORTestCases = []compareTestCase{
 								},
 							},
 							stringCriterion.Exact{
-								Field:  "testStringExactField",
-								String: "testStringExact",
+								Field: "testStringExactField",
+								Text:  "testStringExact",
 							},
 						},
 					},
@@ -354,16 +353,16 @@ var operationORTestCases = []compareTestCase{
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 			operationCriterion.Or{
 				Criteria: Criteria{
 					operationCriterion.Or{
 						Criteria: Criteria{
 							stringCriterion.Exact{
-								Field:  "testStringExactField",
-								String: "testStringExact",
+								Field: "testStringExactField",
+								Text:  "testStringExact",
 							},
 							numberCriterion.Range{
 								Field: "testNumberRange",
@@ -381,8 +380,8 @@ var operationORTestCases = []compareTestCase{
 						},
 					},
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					numberCriterion.Range{
 						Field: "testNumberRange",
@@ -412,14 +411,14 @@ var operationANDTestCases = []compareTestCase{
 				Criteria: Criteria{},
 			},
 			stringCriterion.Exact{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Exact{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 			operationCriterion.And{
 				Criteria: Criteria{},
@@ -448,20 +447,20 @@ var operationANDTestCases = []compareTestCase{
 				},
 			},
 			stringCriterion.Substring{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 			operationCriterion.And{
 				Criteria: Criteria{
 					stringCriterion.Substring{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 				},
 			},
@@ -487,26 +486,26 @@ var operationANDTestCases = []compareTestCase{
 						},
 					},
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 				},
 			},
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 			operationCriterion.And{
 				Criteria: Criteria{
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					numberCriterion.Range{
 						Field: "testNumberRange",
@@ -532,26 +531,26 @@ var operationANDTestCases = []compareTestCase{
 			operationCriterion.And{
 				Criteria: Criteria{
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 				},
 			},
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 			operationCriterion.And{
 				Criteria: Criteria{
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					numberCriterion.Range{
 						Field: "testNumberRange",
@@ -575,14 +574,14 @@ var operationANDTestCases = []compareTestCase{
 		id: "operationANDTestCase 5",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 			operationCriterion.And{
 				Criteria: Criteria{
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					operationCriterion.And{
 						Criteria: Criteria{
@@ -600,8 +599,8 @@ var operationANDTestCases = []compareTestCase{
 								},
 							},
 							stringCriterion.Exact{
-								Field:  "testStringExactField",
-								String: "testStringExact",
+								Field: "testStringExactField",
+								Text:  "testStringExact",
 							},
 						},
 					},
@@ -623,16 +622,16 @@ var operationANDTestCases = []compareTestCase{
 		},
 		b: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 			operationCriterion.And{
 				Criteria: Criteria{
 					operationCriterion.And{
 						Criteria: Criteria{
 							stringCriterion.Exact{
-								Field:  "testStringExactField",
-								String: "testStringExact",
+								Field: "testStringExactField",
+								Text:  "testStringExact",
 							},
 							numberCriterion.Range{
 								Field: "testNumberRange",
@@ -650,8 +649,8 @@ var operationANDTestCases = []compareTestCase{
 						},
 					},
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					numberCriterion.Range{
 						Field: "testNumberRange",
@@ -678,8 +677,8 @@ var combinedTestCases = []compareTestCase{
 		id: "combinedTestCase 1",
 		a: []searchCriterion.Criterion{
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 			operationCriterion.Or{
 				Criteria: Criteria{
@@ -720,8 +719,8 @@ var combinedTestCases = []compareTestCase{
 								},
 							},
 							stringCriterion.Exact{
-								Field:  "testStringExactField",
-								String: "testStringExact",
+								Field: "testStringExactField",
+								Text:  "testStringExact",
 							},
 							numberCriterion.Range{
 								Field: "testNumberRange",
@@ -739,8 +738,8 @@ var combinedTestCases = []compareTestCase{
 						},
 					},
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					numberCriterion.Range{
 						Field: "testNumberRange",
@@ -758,8 +757,8 @@ var combinedTestCases = []compareTestCase{
 				},
 			},
 			stringCriterion.Substring{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 		},
 		b: []searchCriterion.Criterion{
@@ -802,8 +801,8 @@ var combinedTestCases = []compareTestCase{
 								},
 							},
 							stringCriterion.Exact{
-								Field:  "testStringExactField",
-								String: "testStringExact",
+								Field: "testStringExactField",
+								Text:  "testStringExact",
 							},
 							numberCriterion.Range{
 								Field: "testNumberRange",
@@ -821,8 +820,8 @@ var combinedTestCases = []compareTestCase{
 						},
 					},
 					stringCriterion.Exact{
-						Field:  "testStringExactField",
-						String: "testStringExact",
+						Field: "testStringExactField",
+						Text:  "testStringExact",
 					},
 					numberCriterion.Range{
 						Field: "testNumberRange",
@@ -840,12 +839,12 @@ var combinedTestCases = []compareTestCase{
 				},
 			},
 			stringCriterion.Substring{
-				Field:  "testStringExactField",
-				String: "testStringExact",
+				Field: "testStringExactField",
+				Text:  "testStringExact",
 			},
 			stringCriterion.Substring{
-				Field:  "testStringSubstringField",
-				String: "testStringSubstring",
+				Field: "testStringSubstringField",
+				Text:  "testStringSubstring",
 			},
 		},
 		result: true,
@@ -868,7 +867,7 @@ func TestCriteriaCompare(t *testing.T) {
 			assert.Equal(
 				allCompareTestCases[i][j].result,
 				Compare(allCompareTestCases[i][j].a, allCompareTestCases[i][j].b),
-				fmt.Sprintf("%s", allCompareTestCases[i][j].id),
+				allCompareTestCases[i][j].id,
 			)
 		}
 	}
