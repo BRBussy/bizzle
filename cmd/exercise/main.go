@@ -46,7 +46,10 @@ func main() {
 	}()
 
 	// create service providers
-	MongoExerciseStore, err := mongoExerciseStore.New(mongoDb)
+	MongoExerciseStore, err := mongoExerciseStore.New(
+		BasicValidator,
+		mongoDb,
+	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo exercise store")
 	}

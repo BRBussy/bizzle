@@ -31,7 +31,6 @@ type CreateOneRequest struct {
 }
 
 type CreateOneResponse struct {
-	Exercise exercise.Serialized `json:"exercise"`
 }
 
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {

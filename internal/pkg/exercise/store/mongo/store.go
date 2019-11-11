@@ -14,6 +14,7 @@ type store struct {
 }
 
 func New(
+	validator validationValidator.Validator,
 	database *mongo.Database,
 ) (exerciseStore.Store, error) {
 	// get exercise collection
@@ -28,6 +29,7 @@ func New(
 	}
 
 	return &store{
+		validator:  validator,
 		collection: exerciseCollection,
 	}, nil
 }
