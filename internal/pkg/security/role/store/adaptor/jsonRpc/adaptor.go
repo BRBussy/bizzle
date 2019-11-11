@@ -15,10 +15,10 @@ type adaptor struct {
 }
 
 func New(
-	authenticator roleStore.Store,
+	store roleStore.Store,
 ) jsonRpcServiceProvider.Provider {
 	return &adaptor{
-		store: authenticator,
+		store: store,
 	}
 }
 

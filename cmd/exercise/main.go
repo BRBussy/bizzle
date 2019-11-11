@@ -6,6 +6,8 @@ import (
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
+	exerciseStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/store/adaptor/jsonRpc"
+	mongoExerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
@@ -44,6 +46,10 @@ func main() {
 	}()
 
 	// create service providers
+	MongoExerciseStore, err := mongoExerciseStore.New(mongoDb)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating mongo exercise store")
+	}
 
 	JSONRPCTokenValidator := jsonRPCTokenValidator.New(
 		config.AuthURL,
@@ -73,7 +79,9 @@ func main() {
 	)
 
 	// register service providers
-	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{}); err != nil {
+	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
+		exerciseStoreJsonRpcAdaptor.New(MongoExerciseStore),
+	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}
 
