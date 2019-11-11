@@ -2,7 +2,6 @@ package exercise
 
 import (
 	"encoding/json"
-	"github.com/BRBussy/bizzle/internal/pkg/exercise/arm"
 	"github.com/rs/zerolog/log"
 )
 
@@ -30,7 +29,7 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 	var unmarshalledExercise Exercise
 	switch th.Type {
 	case ArmCurlExerciseType:
-		var typedExercise arm.Curl
+		var typedExercise ArmCurl
 		if err := json.Unmarshal(data, &typedExercise); err != nil {
 			err = ErrUnmarshal{Reasons: []string{err.Error()}}
 			log.Error().Err(err)
