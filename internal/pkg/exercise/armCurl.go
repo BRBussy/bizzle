@@ -2,10 +2,16 @@ package exercise
 
 import (
 	"encoding/json"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 )
 
 type ArmCurl struct {
-	SomeField string `json:"someField" bson:"someField"`
+	ID        identifier.ID `json:"id" bson:"id"`
+	SomeField string        `json:"someField" bson:"someField"`
+}
+
+func (c ArmCurl) SetID(id identifier.ID) {
+	c.ID = id
 }
 
 func (c ArmCurl) Type() Type {

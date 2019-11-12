@@ -1,7 +1,7 @@
 package role
 
 import (
-	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
+	exerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	securityPermission "github.com/BRBussy/bizzle/internal/pkg/security/permission"
 	securityRole "github.com/BRBussy/bizzle/internal/pkg/security/role"
@@ -24,7 +24,7 @@ var initialRoles = []securityRole.Role{
 
 var rootOnlyPermissions = []securityPermission.Permission{
 	roleStore.FindOneService,
-	exerciseStore.CreateOneService,
+	exerciseAdmin.CreateOneService,
 }
 
 func Setup(
