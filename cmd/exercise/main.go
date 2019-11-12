@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	exerciseConfig "github.com/BRBussy/bizzle/configs/exercise"
+	"github.com/BRBussy/bizzle/internal/app/exercise"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
@@ -76,6 +77,11 @@ func main() {
 		JSONRPCTokenValidator,
 		JSONRPCBizzleAuthenticator,
 	)
+
+	// perform setup
+	if err := exercise.Setup(BasicExerciseAdmin); err != nil {
+		log.Fatal().Err(err).Msg("performing exercise creation")
+	}
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
