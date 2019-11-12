@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"github.com/BRBussy/bizzle/internal/pkg/exercise"
 	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
@@ -37,6 +38,10 @@ func New(
 func (s store) CreateOne(request *exerciseStore.CreateOneRequest) (*exerciseStore.CreateOneResponse, error) {
 	if err := s.validator.ValidateRequest(request); err != nil {
 		log.Error().Err(err)
+		return nil, err
+	}
+	if err := s.collection.CreateOne(exercise.Serialized{Exercise: request.Exercise}); err != nil {
+		log.Error().Err(err).Msg("creating role")
 		return nil, err
 	}
 	return &exerciseStore.CreateOneResponse{}, nil
