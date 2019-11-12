@@ -1,15 +1,15 @@
 package exercise
 
 import (
-	"encoding/json"
 	"github.com/rs/zerolog/log"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-type jsonUnmarshalTypeHolder struct {
-	Type Type `json:"type"`
+type bsonUnmarshalTypeHolder struct {
+	Type Type `bson:"type"`
 }
 
-func (s *Serialized) UnmarshalJSON(data []byte) error {
+func (s *Serialized) UnmarshalBSON(data []byte) error {
 	// confirm that given data is not nil
 	if data == nil {
 		err := ErrInvalidSerializedExercise{Reasons: []string{"json exercise data is nil"}}
@@ -18,8 +18,8 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 	}
 
 	// unmarshal into type holder
-	var th jsonUnmarshalTypeHolder
-	if err := json.Unmarshal(data, &th); err != nil {
+	var th bsonUnmarshalTypeHolder
+	if err := bson.Unmarshal(data, &th); err != nil {
 		err = ErrUnmarshal{Reasons: []string{"json unmarshal into type holder", err.Error()}}
 		log.Error().Err(err)
 		return err
@@ -30,7 +30,7 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 	switch th.Type {
 	case ArmCurlExerciseType:
 		var typedExercise ArmCurl
-		if err := json.Unmarshal(data, &typedExercise); err != nil {
+		if err := bson.Unmarshal(data, &typedExercise); err != nil {
 			err = ErrUnmarshal{Reasons: []string{err.Error()}}
 			log.Error().Err(err)
 			return err
