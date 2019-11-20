@@ -11,15 +11,15 @@ type ArmCurl struct {
 	SomeField string        `json:"someField" bson:"someField"`
 }
 
-func (c ArmCurl) SetID(id identifier.ID) {
+func (c *ArmCurl) SetID(id identifier.ID) {
 	c.ID = id
 }
 
-func (c ArmCurl) Type() Type {
+func (c *ArmCurl) Type() Type {
 	return ArmCurlExerciseType
 }
 
-func (c ArmCurl) ToJSON() ([]byte, error) {
+func (c *ArmCurl) ToJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Type      Type   `json:"type"`
 		SomeField string `json:"someField"`
@@ -29,7 +29,7 @@ func (c ArmCurl) ToJSON() ([]byte, error) {
 	})
 }
 
-func (c ArmCurl) ToBSON() ([]byte, error) {
+func (c *ArmCurl) ToBSON() ([]byte, error) {
 	return bson.Marshal(struct {
 		Type      Type   `json:"type"`
 		SomeField string `json:"someField"`
