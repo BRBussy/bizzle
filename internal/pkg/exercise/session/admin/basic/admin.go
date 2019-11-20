@@ -1,6 +1,7 @@
 package basic
 
 import (
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	sessionAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/session/admin"
 	sessionStore "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
@@ -32,5 +33,12 @@ func (a admin) CreateOne(request *sessionAdmin.CreateOneRequest) (*sessionAdmin.
 
 	request.Session.ID = identifier.ID(uuid.NewV4().String())
 
-	return &sessionAdmin.CreateOneResponse{}, nil
+	if _, err := a.sessionStore.CreateOne(&sessionStore.CreateOneRequest{Session: request.Session}); err != nil {
+		log.Error().Err(err).Msg("creating session")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	return &sessionAdmin.CreateOneResponse{
+		Session: request.Session,
+	}, nil
 }
