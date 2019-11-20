@@ -9,6 +9,8 @@ import (
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
 	exerciseAdminJsonRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/admin/adaptor/jsonRPC"
 	basicExerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin/basic"
+	sessionStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store/adaptor/jsonRpc"
+	mongoSessionStore "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store/mongo"
 	exerciseStoreJsonRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/store/adaptor/jsonRpc"
 	mongoExerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
@@ -48,7 +50,9 @@ func main() {
 		}
 	}()
 
-	// create service providers
+	//
+	// Exercise
+	//
 	MongoExerciseStore, err := mongoExerciseStore.New(
 		RequestValidator,
 		mongoDb,
@@ -61,17 +65,29 @@ func main() {
 		MongoExerciseStore,
 	)
 
+	//
+	// Session
+	//
+	MongoSessionStore, err := mongoSessionStore.New(
+		RequestValidator,
+		mongoDb,
+	)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating session store")
+	}
+
+	//
+	// Authentication
+	//
 	JSONRPCTokenValidator := jsonRPCTokenValidator.New(
 		config.AuthURL,
 		config.PreSharedSecret,
 	)
-
 	JSONRPCBizzleAuthenticator := bizzleJSONRPCAuthenticator.New(
 		RequestValidator,
 		config.AuthURL,
 		config.PreSharedSecret,
 	)
-
 	authenticationMiddleware := middleware.NewAuthentication(
 		config.PreSharedSecret,
 		JSONRPCTokenValidator,
@@ -97,6 +113,7 @@ func main() {
 	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
 		exerciseStoreJsonRPCAdaptor.New(MongoExerciseStore),
 		exerciseAdminJsonRPCAdaptor.New(BasicExerciseAdmin),
+		sessionStoreJSONRPCAdaptor.New(MongoSessionStore),
 	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}

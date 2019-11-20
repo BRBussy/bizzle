@@ -17,8 +17,8 @@ type store struct {
 }
 
 func New(
-	database *mongo.Database,
 	requestValidator validateValidator.Validator,
+	database *mongo.Database,
 ) (sessionStore.Store, error) {
 	// get session collection
 	sessionCollection := database.Collection("session")
