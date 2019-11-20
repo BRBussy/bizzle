@@ -34,7 +34,7 @@ func main() {
 	}
 
 	// create validator
-	BasicValidator := requestValidator.New()
+	RequestValidator := requestValidator.New()
 
 	// create new mongo db connection
 	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, config.MongoDbName)
@@ -60,7 +60,7 @@ func main() {
 	)
 
 	JSONRPCBizzleAuthenticator := bizzleJSONRPCAuthenticator.New(
-		BasicValidator,
+		RequestValidator,
 		config.AuthURL,
 		config.PreSharedSecret,
 	)

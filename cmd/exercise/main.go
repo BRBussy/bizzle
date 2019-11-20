@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// create validator
-	BasicValidator := requestValidator.New()
+	RequestValidator := requestValidator.New()
 
 	// create new mongo db connection
 	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, config.MongoDbName)
@@ -50,14 +50,14 @@ func main() {
 
 	// create service providers
 	MongoExerciseStore, err := mongoExerciseStore.New(
-		BasicValidator,
+		RequestValidator,
 		mongoDb,
 	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo exercise store")
 	}
 	BasicExerciseAdmin := basicExerciseAdmin.New(
-		BasicValidator,
+		RequestValidator,
 		MongoExerciseStore,
 	)
 
@@ -67,7 +67,7 @@ func main() {
 	)
 
 	JSONRPCBizzleAuthenticator := bizzleJSONRPCAuthenticator.New(
-		BasicValidator,
+		RequestValidator,
 		config.AuthURL,
 		config.PreSharedSecret,
 	)

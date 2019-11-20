@@ -36,7 +36,7 @@ func main() {
 	}
 
 	// create validator
-	BasicValidator := requestValidator.New()
+	RequestValidator := requestValidator.New()
 
 	// create new mongo db connection
 	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, config.MongoDbName)
@@ -55,7 +55,7 @@ func main() {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
 	}
 	JSONRPCRoleStore := jsonRpcRoleStore.New(
-		BasicValidator,
+		RequestValidator,
 		config.RoleURL,
 		config.PreSharedSecret,
 	)
@@ -70,7 +70,7 @@ func main() {
 		config.PreSharedSecret,
 	)
 	JSONRPCBizzleAuthenticator := bizzleJSONRPCAuthenticator.New(
-		BasicValidator,
+		RequestValidator,
 		config.AuthURL,
 		config.PreSharedSecret,
 	)

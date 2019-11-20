@@ -37,7 +37,7 @@ func main() {
 	}
 
 	// create validator
-	BasicValidator := requestValidator.New()
+	RequestValidator := requestValidator.New()
 
 	// create new mongo db connection
 	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, config.MongoDbName)
@@ -63,23 +63,23 @@ func main() {
 	}
 
 	JSORPCUserStore := jsonRPCUserStore.New(
-		BasicValidator,
+		RequestValidator,
 		config.UserURL,
 		config.PreSharedSecret,
 	)
 	JSONRPCRoleStore := jsonRPCRoleStore.New(
-		BasicValidator,
+		RequestValidator,
 		config.RoleURL,
 		config.PreSharedSecret,
 	)
 
 	BasicTokenGenerator := basicTokenGenerator.New(
 		joseSigner,
-		BasicValidator,
+		RequestValidator,
 	)
 	BasicTokenValidator := basicTokenValidator.New(
 		rsaKeyPair,
-		BasicValidator,
+		RequestValidator,
 	)
 
 	// create authenticator
@@ -87,7 +87,7 @@ func main() {
 		JSORPCUserStore,
 		JSONRPCRoleStore,
 		BasicTokenGenerator,
-		BasicValidator,
+		RequestValidator,
 	)
 
 	authenticationMiddleware := middleware.NewAuthentication(
