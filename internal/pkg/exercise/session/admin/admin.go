@@ -6,6 +6,10 @@ type Admin interface {
 	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
 }
 
+const ServiceProvider = "Session-Admin"
+
+const CreateOneService = ServiceProvider + ".CreateOne"
+
 type CreateOneRequest struct {
 	Session session.Session `validate:"required"`
 }

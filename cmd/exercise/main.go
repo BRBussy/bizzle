@@ -9,6 +9,8 @@ import (
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
 	exerciseAdminJsonRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/admin/adaptor/jsonRPC"
 	basicExerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin/basic"
+	sessionAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/session/admin/adaptor/jsonRpc"
+	basicSessionAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/session/admin/basic"
 	sessionStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store/adaptor/jsonRpc"
 	mongoSessionStore "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store/mongo"
 	exerciseStoreJsonRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/store/adaptor/jsonRpc"
@@ -75,6 +77,10 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating session store")
 	}
+	BasicSessionAdmin := basicSessionAdmin.New(
+		RequestValidator,
+		MongoSessionStore,
+	)
 
 	//
 	// Authentication
@@ -114,6 +120,7 @@ func main() {
 		exerciseStoreJsonRPCAdaptor.New(MongoExerciseStore),
 		exerciseAdminJsonRPCAdaptor.New(BasicExerciseAdmin),
 		sessionStoreJSONRPCAdaptor.New(MongoSessionStore),
+		sessionAdminJSONRPCAdaptor.New(BasicSessionAdmin),
 	}); err != nil {
 		log.Fatal().Err(err).Msg("registering batch service providers")
 	}

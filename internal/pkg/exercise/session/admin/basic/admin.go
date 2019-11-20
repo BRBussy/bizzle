@@ -16,8 +16,8 @@ type admin struct {
 }
 
 func New(
-	sessionStore sessionStore.Store,
 	requestValidator validateValidator.Validator,
+	sessionStore sessionStore.Store,
 ) sessionAdmin.Admin {
 	return &admin{
 		requestValidator: requestValidator,
