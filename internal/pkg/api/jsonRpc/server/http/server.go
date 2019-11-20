@@ -59,10 +59,8 @@ func New(
 	}
 
 	// mount api router on root router
-	newServer.rootRouter.Mount("/api", newServer.apiRouter)
-
-	// handle post requests to api router
-	newServer.apiRouter.Post("/", newServer.rpcServer.ServeHTTP)
+	newServer.rootRouter.Options("/api", preFlightHandler)
+	newServer.rootRouter.Post("/api", newServer.rpcServer.ServeHTTP)
 
 	return newServer
 }
