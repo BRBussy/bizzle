@@ -44,7 +44,7 @@ func (s *Serialized) UnmarshalBSON(data []byte) error {
 			log.Error().Err(err)
 			return err
 		}
-		unmarshalledExercise = typedExercise
+		unmarshalledExercise = &typedExercise
 
 	default:
 		err := ErrInvalidSerializedExercise{
@@ -96,7 +96,7 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 			log.Error().Err(err)
 			return err
 		}
-		unmarshalledExercise = typedExercise
+		unmarshalledExercise = &typedExercise
 
 	default:
 		err := ErrInvalidSerializedExercise{
