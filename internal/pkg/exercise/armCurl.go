@@ -21,9 +21,11 @@ func (c *ArmCurl) Type() Type {
 
 func (c *ArmCurl) ToJSON() ([]byte, error) {
 	return json.Marshal(struct {
-		Type      Type   `json:"type"`
-		SomeField string `json:"someField"`
+		ID        identifier.ID `json:"id"`
+		Type      Type          `json:"type"`
+		SomeField string        `json:"someField"`
 	}{
+		ID:        c.ID,
 		Type:      c.Type(),
 		SomeField: c.SomeField,
 	})
@@ -31,9 +33,11 @@ func (c *ArmCurl) ToJSON() ([]byte, error) {
 
 func (c *ArmCurl) ToBSON() ([]byte, error) {
 	return bson.Marshal(struct {
-		Type      Type   `json:"type"`
-		SomeField string `json:"someField"`
+		ID        identifier.ID `bson:"id"`
+		Type      Type          `bson:"type"`
+		SomeField string        `bson:"someField"`
 	}{
+		ID:        c.ID,
 		Type:      c.Type(),
 		SomeField: c.SomeField,
 	})

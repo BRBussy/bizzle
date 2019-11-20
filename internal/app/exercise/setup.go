@@ -8,7 +8,7 @@ import (
 )
 
 var initialExercises = []exercise.Exercise{
-	exercise.ArmCurl{
+	&exercise.ArmCurl{
 		SomeField: "Field data",
 	},
 }
