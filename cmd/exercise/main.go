@@ -15,7 +15,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
-	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
+	requestValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// create validator
-	BasicValidator := basicValidator.New()
+	BasicValidator := requestValidator.New()
 
 	// create new mongo db connection
 	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, config.MongoDbName)
