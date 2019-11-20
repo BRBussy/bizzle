@@ -1,4 +1,4 @@
-package basic
+package request
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ func New() validateValidator.Validator {
 	}
 }
 
-func (v validator) ValidateRequest(request interface{}) error {
+func (v validator) Validate(request interface{}) error {
 	var reasons []string
 
 	if err := v.validate.Struct(request); err != nil {

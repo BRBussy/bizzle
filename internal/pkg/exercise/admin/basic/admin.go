@@ -25,7 +25,7 @@ func New(
 }
 
 func (a admin) CreateOne(request *exerciseAdmin.CreateOneRequest) (*exerciseAdmin.CreateOneResponse, error) {
-	if err := a.validator.ValidateRequest(request); err != nil {
+	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (a admin) CreateOne(request *exerciseAdmin.CreateOneRequest) (*exerciseAdmi
 }
 
 func (a admin) UpdateOne(request *exerciseAdmin.UpdateOneRequest) (*exerciseAdmin.UpdateOneResponse, error) {
-	if err := a.validator.ValidateRequest(request); err != nil {
+	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}

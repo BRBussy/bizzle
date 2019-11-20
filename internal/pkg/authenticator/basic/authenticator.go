@@ -38,7 +38,7 @@ func New(
 }
 
 func (a *authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
-	if err := a.requestValidator.ValidateRequest(request); err != nil {
+	if err := a.requestValidator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (a *authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzl
 }
 
 func (a *authenticator) AuthenticateService(request *bizzleAuthenticator.AuthenticateServiceRequest) (*bizzleAuthenticator.AuthenticateServiceResponse, error) {
-	if err := a.requestValidator.ValidateRequest(request); err != nil {
+	if err := a.requestValidator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}

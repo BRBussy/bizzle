@@ -16,7 +16,7 @@ import (
 	userStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/store/adaptor/jsonRpc"
 	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
 	basicUserValidator "github.com/BRBussy/bizzle/internal/pkg/user/validator/basic"
-	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/basic"
+	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"

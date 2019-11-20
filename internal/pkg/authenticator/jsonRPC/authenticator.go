@@ -32,7 +32,7 @@ func (a *authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzl
 }
 
 func (a *authenticator) AuthenticateService(request *bizzleAuthenticator.AuthenticateServiceRequest) (*bizzleAuthenticator.AuthenticateServiceResponse, error) {
-	if err := a.validator.ValidateRequest(request); err != nil {
+	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}

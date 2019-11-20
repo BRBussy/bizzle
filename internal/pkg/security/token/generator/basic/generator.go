@@ -26,7 +26,7 @@ func New(
 }
 
 func (g *generator) GenerateToken(request *tokenGenerator.GenerateTokenRequest) (*tokenGenerator.GenerateTokenResponse, error) {
-	if err := g.validator.ValidateRequest(request); err != nil {
+	if err := g.validator.Validate(request); err != nil {
 		return nil, err
 	}
 

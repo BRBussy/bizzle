@@ -14,7 +14,7 @@ import (
 	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
 	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
 	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
-	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/basic"
+	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"

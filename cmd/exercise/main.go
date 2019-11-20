@@ -15,7 +15,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
-	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/basic"
+	basicValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
