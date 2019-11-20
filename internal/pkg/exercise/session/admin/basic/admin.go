@@ -3,8 +3,10 @@ package basic
 import (
 	sessionAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/session/admin"
 	sessionStore "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	validateValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
+	uuid "github.com/satori/go.uuid"
 )
 
 type admin struct {
@@ -27,6 +29,8 @@ func (a admin) CreateOne(request *sessionAdmin.CreateOneRequest) (*sessionAdmin.
 		log.Error().Err(err)
 		return nil, err
 	}
+
+	request.Session.ID = identifier.ID(uuid.NewV4().String())
 
 	return &sessionAdmin.CreateOneResponse{}, nil
 }
