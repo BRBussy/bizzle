@@ -22,18 +22,18 @@ const FindManyService = ServiceProvider + ".FindMany"
 const UpdateOneService = ServiceProvider + ".UpdateOne"
 
 type CreateOneRequest struct {
-	Session session.Session
+	Session session.Session `validate:"required"`
 }
 
 type CreateOneResponse struct {
 }
 
 type FindOneRequest struct {
-	Identifier identifier.Identifier
+	Identifier identifier.Identifier `validate:"required"`
 }
 
 type FindOneResponse struct {
-	Session session.Session
+	Session session.Session `validate:"required"`
 }
 
 type FindManyRequest struct {
@@ -47,7 +47,7 @@ type FindManyResponse struct {
 }
 
 type UpdateOneRequest struct {
-	Session session.Session
+	Session session.Session `validate:"required"`
 }
 
 type UpdateOneResponse struct {
