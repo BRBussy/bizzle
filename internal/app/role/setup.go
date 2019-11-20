@@ -2,6 +2,9 @@ package role
 
 import (
 	exerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin"
+	sessionAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/session/admin"
+	sessionStore "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store"
+	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	securityPermission "github.com/BRBussy/bizzle/internal/pkg/security/permission"
 	securityRole "github.com/BRBussy/bizzle/internal/pkg/security/role"
@@ -13,8 +16,14 @@ import (
 
 var initialRoles = []securityRole.Role{
 	{
-		Name:        "user",
-		Permissions: []securityPermission.Permission{},
+		Name: "user",
+		Permissions: []securityPermission.Permission{
+			exerciseStore.FindOneService,
+			exerciseStore.FindManyService,
+			sessionStore.FindManyService,
+			sessionStore.FindOneService,
+			sessionAdmin.CreateOneService,
+		},
 	},
 	{
 		Name:        "system",
