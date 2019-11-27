@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
@@ -19,7 +18,7 @@ type server struct {
 	rpcServer        *rpc.Server
 	rootRouter       *chi.Mux
 	apiRouter        *chi.Mux
-	serviceProviders map[jsonRpcServiceProvider.Name]jsonRpcServiceProvider.Provider
+	serviceProviders []jsonRpcServiceProvider.Provider
 }
 
 func New(
@@ -27,10 +26,11 @@ func New(
 	host string,
 	port string,
 	middleware []func(netHttp.Handler) netHttp.Handler,
+	serviceProviders []jsonRpcServiceProvider.Provider,
 ) *server {
 	// create a new server
 	newServer := new(server)
-	newServer.serviceProviders = make(map[jsonRpcServiceProvider.Name]jsonRpcServiceProvider.Provider)
+	newServer.serviceProviders = serviceProviders
 	newServer.path = path
 	newServer.host = host
 	newServer.port = port
@@ -38,6 +38,13 @@ func New(
 	// create new gorilla rpc server
 	newServer.rpcServer = rpc.NewServer()
 	newServer.rpcServer.RegisterCodec(gorillaJson.NewCodec(), "application/json")
+
+	for _, serviceProvider := range serviceProviders {
+		log.Info().Msg("registering: " + serviceProvider.Name().String())
+		if err := newServer.rpcServer.RegisterService(serviceProvider, serviceProvider.Name().String()); err != nil {
+			log.Fatal().Err(err).Msg("could not register: " + serviceProvider.Name().String())
+		}
+	}
 
 	// initialise middleware
 	if middleware == nil {
@@ -57,10 +64,18 @@ func New(
 	for _, middleware := range middleware {
 		newServer.apiRouter.Use(middleware)
 	}
+	newServer.apiRouter.Use(
+		func(next netHttp.Handler) netHttp.Handler {
+			return netHttp.HandlerFunc(preFlightHandler)
+		},
+	)
 
 	// mount api router on root router
-	newServer.rootRouter.Options("/api", preFlightHandler)
-	newServer.rootRouter.Post("/api", newServer.rpcServer.ServeHTTP)
+	newServer.rootRouter.Mount("/api", newServer.apiRouter)
+	newServer.apiRouter.Options("/", preFlightHandler)
+	newServer.apiRouter.Post("/", func() netHttp.HandlerFunc {
+		return newServer.rpcServer.ServeHTTP
+	})
 
 	return newServer
 }
@@ -70,37 +85,10 @@ func (s *server) Start() error {
 	return netHttp.ListenAndServe(s.host+":"+s.port, s.rootRouter)
 }
 
-func (s *server) RegisterServiceProvider(serviceProvider jsonRpcServiceProvider.Provider) error {
-	log.Info().Msg(fmt.Sprintf("register %s jsonrpc service", serviceProvider.Name()))
-	s.serviceProviders[serviceProvider.Name()] = serviceProvider
-	if err := s.rpcServer.RegisterService(serviceProvider, string(serviceProvider.Name())); err != nil {
-		log.Error().Err(err).Msgf("registering service %s with json rpc http server", serviceProvider.Name())
-		return err
-	}
-	return nil
-}
-
-func (s *server) RegisterBatchServiceProviders(serviceProviders []jsonRpcServiceProvider.Provider) error {
-	for _, serviceProvider := range serviceProviders {
-		if err := s.RegisterServiceProvider(serviceProvider); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func preFlightHandler(w netHttp.ResponseWriter, r *netHttp.Request) {
-	w.Header().Set(
-		"Access-Control-Allow-Origin",
-		"*",
-	)
-	w.Header().Set(
-		"Content-Type",
-		"application/json",
-	)
-	w.Header().Set(
-		"Access-Control-Allow-Headers",
-		"Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin, Authorization",
-	)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin")
 	w.WriteHeader(netHttp.StatusOK)
 }

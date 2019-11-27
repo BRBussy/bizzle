@@ -104,15 +104,11 @@ func main() {
 		[]func(http.Handler) http.Handler{
 			authenticationMiddleware.Apply,
 		},
+		[]jsonRpcServiceProvider.Provider{
+			authenticatorJSONRPCAdaptor.New(BasicAuthenticator),
+			tokenValidatorJSONRPCAdaptor.New(BasicTokenValidator),
+		},
 	)
-
-	// register service providers
-	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
-		authenticatorJSONRPCAdaptor.New(BasicAuthenticator),
-		tokenValidatorJSONRPCAdaptor.New(BasicTokenValidator),
-	}); err != nil {
-		log.Fatal().Err(err).Msg("registering batch service providers")
-	}
 
 	// start server
 	go func() {

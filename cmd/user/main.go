@@ -99,14 +99,10 @@ func main() {
 		[]func(http.Handler) http.Handler{
 			authenticationMiddleware.Apply,
 		},
+		[]jsonRpcServiceProvider.Provider{
+			userStoreJsonRpcAdaptor.New(MongoUserStore),
+		},
 	)
-
-	// register service providers
-	if err := server.RegisterBatchServiceProviders([]jsonRpcServiceProvider.Provider{
-		userStoreJsonRpcAdaptor.New(MongoUserStore),
-	}); err != nil {
-		log.Fatal().Err(err).Msg("registering batch service providers")
-	}
 
 	// start server
 	go func() {
