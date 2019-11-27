@@ -1,14 +1,13 @@
 package http
 
 import (
+	"fmt"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/go-chi/chi"
-	chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/gorilla/rpc/v2"
 	gorillaJson "github.com/gorilla/rpc/v2/json2"
 	"github.com/rs/zerolog/log"
 	netHttp "net/http"
-	"time"
 )
 
 type server struct {
@@ -30,7 +29,6 @@ func New(
 ) *server {
 	// create a new server
 	newServer := new(server)
-	newServer.serviceProviders = serviceProviders
 	newServer.path = path
 	newServer.host = host
 	newServer.port = port
@@ -53,29 +51,13 @@ func New(
 
 	// create chi root router and apply middleware
 	newServer.rootRouter = chi.NewRouter()
+	newServer.rootRouter.Use(preFlightAndCORSHandler)
 
 	// create chi api router
 	newServer.apiRouter = chi.NewRouter()
 
-	// apply middleware to api router
-	newServer.apiRouter.Use(
-		chiMiddleware.Timeout(time.Second * 60),
-	)
-	for _, middleware := range middleware {
-		newServer.apiRouter.Use(middleware)
-	}
-	newServer.apiRouter.Use(
-		func(next netHttp.Handler) netHttp.Handler {
-			return netHttp.HandlerFunc(preFlightHandler)
-		},
-	)
-
-	// mount api router on root router
+	newServer.apiRouter.Post("/", func() netHttp.HandlerFunc { return newServer.rpcServer.ServeHTTP }())
 	newServer.rootRouter.Mount("/api", newServer.apiRouter)
-	newServer.apiRouter.Options("/", preFlightHandler)
-	newServer.apiRouter.Post("/", func() netHttp.HandlerFunc {
-		return newServer.rpcServer.ServeHTTP
-	})
 
 	return newServer
 }
@@ -85,10 +67,16 @@ func (s *server) Start() error {
 	return netHttp.ListenAndServe(s.host+":"+s.port, s.rootRouter)
 }
 
-func preFlightHandler(w netHttp.ResponseWriter, r *netHttp.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin")
-	w.WriteHeader(netHttp.StatusOK)
+func preFlightAndCORSHandler(next netHttp.Handler) netHttp.Handler {
+	return netHttp.HandlerFunc(func(w netHttp.ResponseWriter, r *netHttp.Request) {
+		fmt.Println("pre flight!")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST")
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin")
+		w.WriteHeader(netHttp.StatusOK)
+		if r.Method == netHttp.MethodPost {
+			next.ServeHTTP(w, r)
+		}
+	})
 }

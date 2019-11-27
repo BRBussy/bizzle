@@ -33,7 +33,9 @@ func main() {
 				w.Header().Set("Content-Type", "application/json")
 				w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin")
 				w.WriteHeader(http.StatusOK)
-				next.ServeHTTP(w, r)
+				if r.Method == http.MethodPost {
+					next.ServeHTTP(w, r)
+				}
 			})
 		},
 	)
@@ -44,7 +46,6 @@ func main() {
 	router.Mount("/api", apiRouter)
 
 	apiRouter.Post("/", func() http.HandlerFunc { return rpcServer.ServeHTTP }())
-	apiRouter.Options("/", preFlightHandler)
 
 	go func() {
 		if err := http.ListenAndServe("0.0.0.0:8080", router); err != nil {
@@ -74,13 +75,4 @@ type TestResponse struct {
 func (t *TestAdaptor) Test(r *http.Request, request *TestRequest, response *TestResponse) error {
 	fmt.Println("test running!!!")
 	return nil
-}
-
-func preFlightHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("pre flight!")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin")
-	w.WriteHeader(http.StatusOK)
 }
