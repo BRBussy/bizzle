@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/go-chi/chi"
 	"github.com/gorilla/rpc/v2"
@@ -69,7 +68,6 @@ func (s *server) Start() error {
 
 func preFlightAndCORSHandler(next netHttp.Handler) netHttp.Handler {
 	return netHttp.HandlerFunc(func(w netHttp.ResponseWriter, r *netHttp.Request) {
-		fmt.Println("pre flight!")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST")
 		w.Header().Set("Content-Type", "application/json")
