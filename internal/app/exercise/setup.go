@@ -17,6 +17,12 @@ var initialExercises = []exercise.Exercise{
 		Variant:     "Dumbbell",
 		Description: "Perform curl with dumbbells",
 	},
+	{
+		Name:        "Push Ups",
+		MuscleGroup: exercise.PectoralMuscleGroup,
+		Variant:     "Outside Shoulder",
+		Description: "Perform push ups outside shoulder",
+	},
 }
 
 func Setup(
