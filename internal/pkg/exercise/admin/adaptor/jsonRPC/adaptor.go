@@ -24,24 +24,24 @@ func (a *adaptor) Name() jsonRpcServiceProvider.Name {
 }
 
 type CreateOneRequest struct {
-	Exercise exercise.Serialized `json:"exercise"`
+	Exercise exercise.Exercise `json:"exercise"`
 }
 
 type CreateOneResponse struct {
-	Exercise exercise.Serialized `json:"exercise"`
+	Exercise exercise.Exercise `json:"exercise"`
 }
 
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
 	createOneResponse, err := a.admin.CreateOne(
 		&exerciseAdmin.CreateOneRequest{
-			Exercise: request.Exercise.Exercise,
+			Exercise: request.Exercise,
 		},
 	)
 	if err != nil {
 		return err
 	}
 
-	response.Exercise.Exercise = createOneResponse.Exercise
+	response.Exercise = createOneResponse.Exercise
 
 	return nil
 }

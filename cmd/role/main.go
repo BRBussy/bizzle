@@ -46,7 +46,10 @@ func main() {
 	}()
 
 	// create service providers
-	MongoRoleStore, err := mongoRoleStore.New(mongoDb)
+	MongoRoleStore, err := mongoRoleStore.New(
+		RequestValidator,
+		mongoDb,
+	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo role store")
 	}
