@@ -2,18 +2,18 @@ package exercise
 
 import "github.com/BRBussy/bizzle/pkg/search/identifier"
 
-type Exercise interface {
-	SetID(identifier.ID)     // Set ID on exercise
-	Type() Type              // Returns the Type of the exercise
-	ToJSON() ([]byte, error) // Returns json marshalled version of exercise
-	ToBSON() ([]byte, error) // Returns bson marshalled version of exercise
+type Exercise struct {
+	ID          identifier.ID `json:"id" bson:"id"`
+	Name        string        `json:"name" bson:"name"`
+	MuscleGroup MuscleGroup   `json:"muscleGroup" bson:"muscleGroup"`
+	Variant     string        `json:"variant" bson:"variant"`
+	Description string        `json:"description" bson:"description"`
 }
 
-type Type string
+type MuscleGroup string
 
-func (t Type) String() string {
-	return string(t)
+func (m MuscleGroup) String() string {
+	return string(m)
 }
 
-// arm exercises
-const ArmCurlExerciseType Type = "ArmCurl"
+const BicepsMuscleGroup MuscleGroup = "Biceps"

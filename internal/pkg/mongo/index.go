@@ -6,11 +6,16 @@ import (
 	"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
-func NewUniqueIndex(key string) mongoDriver.IndexModel {
+func NewUniqueIndex(keys ...string) mongoDriver.IndexModel {
 	unique := true
+	bsonIndexDoc := bsonx.Doc{}
+
+	for _, key := range keys {
+		bsonIndexDoc = bsonIndexDoc.Append(key, bsonx.Int32(1))
+	}
 
 	return mongoDriver.IndexModel{
-		Keys: bsonx.Doc{{Key: key, Value: bsonx.Int32(1)}},
+		Keys: bsonIndexDoc,
 		Options: &mongoOptions.IndexOptions{
 			Unique: &unique,
 		},

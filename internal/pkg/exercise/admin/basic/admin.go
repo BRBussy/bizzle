@@ -30,7 +30,7 @@ func (a admin) CreateOne(request *exerciseAdmin.CreateOneRequest) (*exerciseAdmi
 		return nil, err
 	}
 
-	request.Exercise.SetID(identifier.ID(uuid.NewV4().String()))
+	request.Exercise.ID = identifier.ID(uuid.NewV4().String())
 
 	if _, err := a.exerciseStore.CreateOne(&exerciseStore.CreateOneRequest{
 		Exercise: request.Exercise,

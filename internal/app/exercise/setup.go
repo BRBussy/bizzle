@@ -8,8 +8,11 @@ import (
 )
 
 var initialExercises = []exercise.Exercise{
-	&exercise.ArmCurl{
-		SomeField: "Field data",
+	{
+		Name:        "Arm Curl",
+		MuscleGroup: exercise.BicepsMuscleGroup,
+		Variant:     "Dumbbell",
+		Description: "Stand and Curl",
 	},
 }
 

@@ -27,7 +27,7 @@ func (a *adaptor) Name() jsonRpcServiceProvider.Name {
 }
 
 type CreateOneRequest struct {
-	Exercise exercise.Serialized `json:"exercise"`
+	Exercise exercise.Exercise `json:"exercise"`
 }
 
 type CreateOneResponse struct {
@@ -36,7 +36,7 @@ type CreateOneResponse struct {
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
 	if _, err := a.store.CreateOne(
 		&exerciseStore.CreateOneRequest{
-			Exercise: request.Exercise.Exercise,
+			Exercise: request.Exercise,
 		},
 	); err != nil {
 		return err
