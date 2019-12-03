@@ -56,8 +56,17 @@ func (a admin) UpdateOne(request *exerciseAdmin.UpdateOneRequest) (*exerciseAdmi
 		return nil, err
 	}
 
+	findOneResponse.Exercise.Name = request.Exercise.Name
+	findOneResponse.Exercise.Variant = request.Exercise.Variant
 	findOneResponse.Exercise.Description = request.Exercise.Description
 	findOneResponse.Exercise.MuscleGroup = request.Exercise.MuscleGroup
+
+	if _, err := a.exerciseStore.UpdateOne(&exerciseStore.UpdateOneRequest{
+		Exercise: findOneResponse.Exercise,
+	}); err != nil {
+		log.Error().Err(err).Msg("updating exercise")
+		return nil, err
+	}
 
 	return &exerciseAdmin.UpdateOneResponse{}, nil
 }

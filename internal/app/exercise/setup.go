@@ -15,7 +15,7 @@ var initialExercises = []exercise.Exercise{
 		Name:        "Arm Curl",
 		MuscleGroup: exercise.BicepsMuscleGroup,
 		Variant:     "Dumbbell",
-		Description: "Stand and Curl",
+		Description: "Perform curl with dumbbells",
 	},
 }
 
