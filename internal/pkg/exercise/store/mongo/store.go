@@ -1,6 +1,8 @@
 package mongo
 
 import (
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
+	"github.com/BRBussy/bizzle/internal/pkg/exercise"
 	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
@@ -52,7 +54,21 @@ func (s store) FindOne(request *exerciseStore.FindOneRequest) (*exerciseStore.Fi
 		log.Error().Err(err)
 		return nil, err
 	}
-	return &exerciseStore.FindOneResponse{}, nil
+
+	var result exercise.Exercise
+	if err := s.collection.FindOne(&result, request.Identifier); err != nil {
+		switch err.(type) {
+		case mongo.ErrNotFound:
+			return nil, err
+		default:
+			log.Error().Err(err).Msg("finding one exercise")
+			return nil, err
+		}
+	}
+
+	return &exerciseStore.FindOneResponse{
+		Exercise: result,
+	}, nil
 }
 
 func (s store) FindMany(request *exerciseStore.FindManyRequest) (*exerciseStore.FindManyResponse, error) {
@@ -60,7 +76,21 @@ func (s store) FindMany(request *exerciseStore.FindManyRequest) (*exerciseStore.
 		log.Error().Err(err)
 		return nil, err
 	}
-	return &exerciseStore.FindManyResponse{}, nil
+
+	var records []exercise.Exercise
+	count, err := s.collection.FindMany(&records, request.Criteria, request.Query)
+	if err != nil {
+		log.Error().Err(err).Msg("finding exercises")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+	if records == nil {
+		records = make([]exercise.Exercise, 0)
+	}
+
+	return &exerciseStore.FindManyResponse{
+		Records: records,
+		Total:   count,
+	}, nil
 }
 
 func (s store) UpdateOne(request *exerciseStore.UpdateOneRequest) (*exerciseStore.UpdateOneResponse, error) {
@@ -68,5 +98,11 @@ func (s store) UpdateOne(request *exerciseStore.UpdateOneRequest) (*exerciseStor
 		log.Error().Err(err)
 		return nil, err
 	}
+
+	if err := s.collection.UpdateOne(request.Exercise, request.Exercise.ID); err != nil {
+		log.Error().Err(err).Msg("updating exercise")
+		return nil, err
+	}
+
 	return &exerciseStore.UpdateOneResponse{}, nil
 }

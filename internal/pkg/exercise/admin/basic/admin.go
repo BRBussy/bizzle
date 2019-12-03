@@ -48,5 +48,16 @@ func (a admin) UpdateOne(request *exerciseAdmin.UpdateOneRequest) (*exerciseAdmi
 		return nil, err
 	}
 
+	findOneResponse, err := a.exerciseStore.FindOne(&exerciseStore.FindOneRequest{
+		Identifier: request.Exercise.ID,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("finding exercise")
+		return nil, err
+	}
+
+	findOneResponse.Exercise.Description = request.Exercise.Description
+	findOneResponse.Exercise.MuscleGroup = request.Exercise.MuscleGroup
+
 	return &exerciseAdmin.UpdateOneResponse{}, nil
 }

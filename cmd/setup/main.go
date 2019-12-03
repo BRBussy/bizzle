@@ -47,7 +47,10 @@ func main() {
 	//
 	// Role
 	//
-	MongoRoleStore, err := mongoRoleStore.New(mongoDb)
+	MongoRoleStore, err := mongoRoleStore.New(
+		RequestValidator,
+		mongoDb,
+	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo role store")
 	}
@@ -101,8 +104,11 @@ func main() {
 	}
 
 	log.Info().Msg("Running exercise setup")
-	if err := exercise.Setup(BasicExerciseAdmin); err != nil {
-		log.Fatal().Err(err).Msg("performing exercise creation")
+	if err := exercise.Setup(
+		BasicExerciseAdmin,
+		MongoExerciseStore,
+	); err != nil {
+		log.Fatal().Err(err).Msg("performing exercise setup")
 	}
 
 }

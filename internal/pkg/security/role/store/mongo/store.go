@@ -5,16 +5,18 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/security/role"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
-	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type store struct {
+	validator  validationValidator.Validator
 	collection *mongo.Collection
 }
 
 func New(
+	validator validationValidator.Validator,
 	database *mongo.Database,
 ) (roleStore.Store, error) {
 	// get role collection
@@ -31,10 +33,16 @@ func New(
 
 	return &store{
 		collection: database.Collection("role"),
+		validator:  validator,
 	}, nil
 }
 
 func (s *store) CreateOne(request *roleStore.CreateOneRequest) (*roleStore.CreateOneResponse, error) {
+	if err := s.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	if err := s.collection.CreateOne(request.Role); err != nil {
 		log.Error().Err(err).Msg("creating role")
 		return nil, err
@@ -43,6 +51,11 @@ func (s *store) CreateOne(request *roleStore.CreateOneRequest) (*roleStore.Creat
 }
 
 func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {
+	if err := s.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	var result role.Role
 	if err := s.collection.FindOne(&result, request.Identifier); err != nil {
 		switch err.(type) {
@@ -57,6 +70,11 @@ func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneRe
 }
 
 func (s *store) FindMany(request *roleStore.FindManyRequest) (*roleStore.FindManyResponse, error) {
+	if err := s.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	var records []role.Role
 	count, err := s.collection.FindMany(&records, request.Criteria, request.Query)
 	if err != nil {
@@ -74,7 +92,12 @@ func (s *store) FindMany(request *roleStore.FindManyRequest) (*roleStore.FindMan
 }
 
 func (s *store) UpdateOne(request *roleStore.UpdateOneRequest) (*roleStore.UpdateOneResponse, error) {
-	if err := s.collection.UpdateOne(request.Role, identifier.ID(request.Role.ID)); err != nil {
+	if err := s.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	if err := s.collection.UpdateOne(request.Role, request.Role.ID); err != nil {
 		log.Error().Err(err).Msg("updating role")
 		return nil, err
 	}

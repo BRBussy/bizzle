@@ -9,3 +9,4 @@ func (t Type) String() string {
 const IDIdentifierType Type = "ID"
 const NameIdentifierType Type = "Name"
 const EmailIdentifierType Type = "Email"
+const NameVariantIdentifierType Type = "NameVariant"
