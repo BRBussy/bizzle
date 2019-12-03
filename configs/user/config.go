@@ -18,7 +18,6 @@ func init() {
 	viper.SetDefault("AuthURL", "http://localhost:8080/api")
 	viper.SetDefault("RoleURL", "http://localhost:8081/api")
 	viper.SetDefault("PreSharedSecret", "1234")
-	viper.SetDefault("RootPassword", "123456")
 }
 
 type Config struct {
@@ -28,7 +27,6 @@ type Config struct {
 	MongoDbName             string
 	RoleURL                 string
 	AuthURL                 string
-	RootPassword            string
 	PreSharedSecret         string
 }
 
