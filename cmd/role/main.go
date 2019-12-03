@@ -3,14 +3,12 @@ package main
 import (
 	"flag"
 	roleConfig "github.com/BRBussy/bizzle/configs/role"
-	"github.com/BRBussy/bizzle/internal/app/role"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
-	basicRoleAdmin "github.com/BRBussy/bizzle/internal/pkg/security/role/admin/basic"
 	roleStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/security/role/store/adaptor/jsonRpc"
 	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
 	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
@@ -52,7 +50,6 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo role store")
 	}
-	BasicRoleAdmin := basicRoleAdmin.New(MongoRoleStore)
 
 	JSONRPCTokenValidator := jsonRPCTokenValidator.New(
 		config.AuthURL,
@@ -64,14 +61,6 @@ func main() {
 		config.AuthURL,
 		config.PreSharedSecret,
 	)
-
-	// run setup
-	if err := role.Setup(
-		BasicRoleAdmin,
-		MongoRoleStore,
-	); err != nil {
-		log.Fatal().Err(err).Msg("role setup")
-	}
 
 	authenticationMiddleware := middleware.NewAuthentication(
 		config.PreSharedSecret,

@@ -3,19 +3,15 @@ package main
 import (
 	"flag"
 	userConfig "github.com/BRBussy/bizzle/configs/user"
-	"github.com/BRBussy/bizzle/internal/app/user"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
-	jsonRpcRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/jsonRpc"
 	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
-	basicUserAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin/basic"
 	userStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/store/adaptor/jsonRpc"
 	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
-	basicUserValidator "github.com/BRBussy/bizzle/internal/pkg/user/validator/basic"
 	requestValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -54,17 +50,6 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
 	}
-	JSONRPCRoleStore := jsonRpcRoleStore.New(
-		RequestValidator,
-		config.RoleURL,
-		config.PreSharedSecret,
-	)
-	BasicUserValidator := basicUserValidator.New(JSONRPCRoleStore)
-	BasicUserAdmin := basicUserAdmin.New(
-		BasicUserValidator,
-		MongoUserStore,
-		JSONRPCRoleStore,
-	)
 	JSONRPCTokenValidator := jsonRPCTokenValidator.New(
 		config.AuthURL,
 		config.PreSharedSecret,
@@ -74,17 +59,6 @@ func main() {
 		config.AuthURL,
 		config.PreSharedSecret,
 	)
-
-	// perform setup
-	if err := user.Setup(
-		BasicUserAdmin,
-		MongoUserStore,
-		JSONRPCRoleStore,
-		config.RootPassword,
-	); err != nil {
-		log.Fatal().Err(err).Msg("user setup")
-	}
-
 	authenticationMiddleware := middleware.NewAuthentication(
 		config.PreSharedSecret,
 		JSONRPCTokenValidator,
