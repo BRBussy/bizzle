@@ -23,6 +23,42 @@ var initialExercises = []exercise.Exercise{
 		Variant:     "Outside Shoulder",
 		Description: "Perform push ups outside shoulder",
 	},
+	{
+		Name:        "Lateral Raise",
+		MuscleGroup: exercise.ShouldersMuscleGroup,
+		Variant:     "Dumbbell",
+		Description: "Raise dumbbells to the sides",
+	},
+	{
+		Name:        "Lateral Raise",
+		MuscleGroup: exercise.ShouldersMuscleGroup,
+		Variant:     "Barbell",
+		Description: "Raise barbell vertically to the sides",
+	},
+	{
+		Name:        "Deltoid Raise",
+		MuscleGroup: exercise.ShouldersMuscleGroup,
+		Variant:     "Dumbbell",
+		Description: "Raise dumbbells to the front",
+	},
+	{
+		Name:        "Deltoid Raise",
+		MuscleGroup: exercise.ShouldersMuscleGroup,
+		Variant:     "Barbell",
+		Description: "Raise barbell in an arc",
+	},
+	{
+		Name:        "Plank",
+		MuscleGroup: exercise.CoreMuscleGroup,
+		Variant:     "Standard",
+		Description: "Normal Plank Position",
+	},
+	{
+		Name:        "Plank",
+		MuscleGroup: exercise.CoreMuscleGroup,
+		Variant:     "Side",
+		Description: "Plank with one hand down, the other pointing up",
+	},
 }
 
 func Setup(

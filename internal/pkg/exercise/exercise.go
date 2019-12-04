@@ -18,3 +18,5 @@ func (m MuscleGroup) String() string {
 
 const BicepsMuscleGroup MuscleGroup = "Biceps"
 const PectoralMuscleGroup MuscleGroup = "Pectoral"
+const ShouldersMuscleGroup MuscleGroup = "Shoulders"
+const CoreMuscleGroup MuscleGroup = "Core"
