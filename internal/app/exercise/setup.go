@@ -24,6 +24,12 @@ var initialExercises = []exercise.Exercise{
 		Description: "Perform push ups outside shoulder",
 	},
 	{
+		Name:        "Push Ups",
+		MuscleGroup: exercise.PectoralMuscleGroup,
+		Variant:     "Star",
+		Description: "Perform push ups while making a star with hands",
+	},
+	{
 		Name:        "Lateral Raise",
 		MuscleGroup: exercise.ShouldersMuscleGroup,
 		Variant:     "Dumbbell",
@@ -58,6 +64,18 @@ var initialExercises = []exercise.Exercise{
 		MuscleGroup: exercise.CoreMuscleGroup,
 		Variant:     "Side",
 		Description: "Plank with one hand down, the other pointing up",
+	},
+	{
+		Name:        "Plank",
+		MuscleGroup: exercise.CoreMuscleGroup,
+		Variant:     "Rear",
+		Description: "Upside down plank",
+	},
+	{
+		Name:        "Lunges",
+		MuscleGroup: exercise.LegsMuscleGroup,
+		Variant:     "Standard",
+		Description: "Perform Lunges",
 	},
 }
 
