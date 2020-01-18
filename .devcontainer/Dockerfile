@@ -1,26 +1,35 @@
-FROM ubuntu
+FROM golang
 
-# set working directory to home
-WORKDIR /root
+# Avoid warnings by switching to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# variables
+ARG USERNAME=beanie
 
 # update system
-RUN apt update
+RUN apt-get update
 
-# install required software
-RUN apt install -y git
-RUN apt install -y vim
-RUN apt install -y zsh
-RUN apt install -y curl
-RUN apt install -y wget
-RUN apt install -y htop
-RUN apt install -y fonts-powerline
-RUN apt install -y locales
+# install desired software
+RUN apt-get install -y git
+RUN apt-get install -y vim
+RUN apt-get install -y zsh
+RUN apt-get install -y curl
+RUN apt-get install -y wget
+RUN apt-get install -y htop
+RUN apt-get install -y fonts-powerline
+RUN apt-get install -y locales
+RUN apt-get install -y sudo
 
-# install golang
-RUN curl -O https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz
-RUN tar -xvf go1.13.6.linux-amd64.tar.gz -C /usr/local
-RUN rm -rf https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz
-ENV PATH="/usr/local/go/bin:${PATH}"
+# add non-root user
+RUN groupadd ${USERNAME}
+RUN useradd -s /bin/zsh -g $USERNAME -m ${USERNAME}
+
+# make user a sudo user
+RUN echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME
+RUN chmod 0440 /etc/sudoers.d/$USERNAME
+
+USER $USERNAME
+WORKDIR /home/$USERNAME
 
 # perform setup
 RUN locale-gen en_ZA.UTF-8
