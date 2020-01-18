@@ -1,12 +1,16 @@
 {
-    "name": "gostudio",
+    "name": "bizzle",
     "dockerFile": "Dockerfile",
     "runArgs": [ "-v", "/c/Users/beanie/.ssh:/home/beanie/.ssh" ],
     
 
     // Use 'appPort' to create a container with published ports. If the port isn't working, be sure
     // your server accepts connections from all interfaces (0.0.0.0 or '*'), not just localhost.
-    "appPort": [3000],
+    // "appPort": [3000]
 
-    "remoteUser": "beanie"
+    "remoteUser": "beanie", 
+
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/zsh"
+    }
 }
