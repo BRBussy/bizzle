@@ -5,7 +5,7 @@ type Parser interface {
 }
 
 type ParseStatementRequest struct {
-	XLSXStatement string
+	Statement []byte
 }
 
 type ParseStatementResponse struct {
