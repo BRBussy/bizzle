@@ -4,6 +4,11 @@ import "strings"
 
 type Category string
 
+const (
+	OtherCategory       Category = "Other"
+	ElectricityCategory Category = "Electricity"
+)
+
 type CategoryIdentifier string
 
 func (c CategoryIdentifier) String() string {
@@ -62,6 +67,6 @@ var CategorisationRules = []CategorisationRule{
 			"electricity",
 			"fee",
 		},
-		Category: "Electricity",
+		Category: ElectricityCategory,
 	},
 }

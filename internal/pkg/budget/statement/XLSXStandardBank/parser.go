@@ -115,12 +115,21 @@ func (p Parser) ParseStatement(request *statement.ParseStatementRequest) (*state
 			continue
 		}
 
+		description := transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DescriptionColumnHeader]].String()
+
+		// try and categorise
+		category, _, err := budget.Categorise(description)
+		if err != nil {
+			category = budget.OtherCategory
+		}
+
 		parsedBudgetEntries = append(
 			parsedBudgetEntries,
 			budget.Entry{
 				Date:        entryDate.Unix(),
-				Description: transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DescriptionColumnHeader]].String(),
+				Description: description,
 				Amount:      amount,
+				Category:    category,
 			},
 		)
 	}
