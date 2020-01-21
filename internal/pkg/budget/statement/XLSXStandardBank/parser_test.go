@@ -1,7 +1,6 @@
 package XLSXStandardBank
 
 import (
-	"fmt"
 	"github.com/BRBussy/bizzle/internal/pkg/budget/statement"
 	testifyAssert "github.com/stretchr/testify/assert"
 	"io/ioutil"
@@ -21,18 +20,15 @@ func TestParser_ParseStatement(t *testing.T) {
 		return
 	}
 
-	parseStatementResponse, err := xlsxStandardBankParser.ParseStatement(
+	if _, err := xlsxStandardBankParser.ParseStatement(
 		&statement.ParseStatementRequest{
 			Statement: dat,
 		},
-	)
-	if err != nil {
+	); err != nil {
 		assert.FailNow(
 			"failed to parse statement",
 			err.Error(),
 		)
 		return
 	}
-
-	fmt.Println(parseStatementResponse)
 }
