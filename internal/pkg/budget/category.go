@@ -5,8 +5,12 @@ import "strings"
 type Category string
 
 const (
-	OtherCategory       Category = "Other"
-	ElectricityCategory Category = "Electricity"
+	OtherCategory                Category = "Other"
+	ElectricityCategory          Category = "Electricity"
+	CarRepaymentCategory         Category = "Car Repayment"
+	CellphoneAirtimeDataCategory Category = "Cellphone Airtime Data"
+	InternetCategory             Category = "Internet"
+	MedicalAidCategory           Category = "Medical Aid"
 )
 
 type CategoryIdentifier string
@@ -68,5 +72,35 @@ var CategorisationRules = []CategorisationRule{
 			"fee",
 		},
 		Category: ElectricityCategory,
+		Strict:   true,
+	},
+	{
+		CategoryIdentifiers: []CategoryIdentifier{
+			"wesbank",
+		},
+		Category: CarRepaymentCategory,
+	},
+	{
+		CategoryIdentifiers: []CategoryIdentifier{
+			"vod",
+			"prepaid",
+		},
+		Category: CellphoneAirtimeDataCategory,
+		Strict:   true,
+	},
+	{
+		CategoryIdentifiers: []CategoryIdentifier{
+			"telkommobi",
+		},
+		Category: InternetCategory,
+	},
+	{
+		CategoryIdentifiers: []CategoryIdentifier{
+			"disc",
+			"prem",
+			"medical",
+		},
+		Category: MedicalAidCategory,
+		Strict:   true,
 	},
 }
