@@ -2,10 +2,12 @@ package basic
 
 import (
 	"fmt"
+	"github.com/BRBussy/bizzle/internal/pkg/budget"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
+	"time"
 )
 
 type admin struct {
@@ -29,6 +31,7 @@ func (a admin) XLSXStandardBankStatementToXLSXBudget(request *budgetAdmin.XLSXSt
 		return nil, err
 	}
 
+	// parse standard bank statement
 	parseStatementResponse, err := a.xlsxStandardBankStatementParser.ParseStatement(&statementParser.ParseStatementRequest{
 		Statement: request.XLSXStatement,
 	})
@@ -37,7 +40,16 @@ func (a admin) XLSXStandardBankStatementToXLSXBudget(request *budgetAdmin.XLSXSt
 		return nil, err
 	}
 
-	for _, item := range parseStatementResponse.Entries {
+	// process resultant budget entries into budgets
+	budgetEntriesToBudgetsResponse, err := a.BudgetEntriesToBudgets(&budgetAdmin.BudgetEntriesToBudgetsRequest{
+		BudgetEntries: parseStatementResponse.Entries,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("error processing budget entries into budgets")
+		return nil, err
+	}
+
+	for _, item := range budgetEntriesToBudgetsResponse.Budgets {
 		fmt.Printf("%v\n", item)
 	}
 
@@ -50,7 +62,32 @@ func (a admin) BudgetEntriesToBudgets(request *budgetAdmin.BudgetEntriesToBudget
 		return nil, err
 	}
 
-	return &budgetAdmin.BudgetEntriesToBudgetResponse{}, nil
+	budgetEntryIndex := make(map[string]*budget.Budget)
+
+	for _, budgetEntry := range request.BudgetEntries {
+		budgetEntryDate := time.Unix(budgetEntry.Date, 0)
+		budgetEntryIdx := fmt.Sprintf(
+			"%d-%s",
+			budgetEntryDate.Year(),
+			budgetEntryDate.Month(),
+		)
+		// if an entry has not yet been made in index, make one
+		if _, found := budgetEntryIndex[budgetEntryIdx]; !found {
+			budgetEntryIndex[budgetEntryIdx] = &budget.Budget{
+				Month:   budgetEntryDate.Month().String(),
+				Year:    budgetEntryDate.Year(),
+				Summary: make(map[budget.Category]float64),
+				Entries: make(map[budget.Category][]budget.Entry, 0),
+			}
+		}
+		// update entry
+	}
+
+	budgets := make([]budget.Budget, 0)
+	for _, budgetPtr := range budgetEntryIndex {
+		budgets = append(budgets, *budgetPtr)
+	}
+	return &budgetAdmin.BudgetEntriesToBudgetResponse{Budgets: budgets}, nil
 }
 
 func (a admin) BudgetToXLSX(request *budgetAdmin.BudgetToXLSXRequest) (*budgetAdmin.BudgetToXLSXResponse, error) {
