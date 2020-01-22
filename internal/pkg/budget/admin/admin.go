@@ -7,7 +7,8 @@ import (
 
 type Admin interface {
 	XLSXStandardBankStatementToXLSXBudget(*XLSXStandardBankStatementToXLSXBudgetRequest) (*XLSXStandardBankStatementToXLSXBudgetResponse, error)
-	BudgetEntriesToXLSXBudget(*BudgetEntriesToXLSXBudgetRequest) (*BudgetEntriesToXLSXBudgetResponse, error)
+	BudgetEntriesToBudgets(*BudgetEntriesToBudgetsRequest) (*BudgetEntriesToBudgetResponse, error)
+	BudgetToXLSX(*BudgetToXLSXRequest) (*BudgetToXLSXResponse, error)
 }
 
 const ServiceProvider = "Budget-Admin"
@@ -21,10 +22,18 @@ type XLSXStandardBankStatementToXLSXBudgetResponse struct {
 	XLSXBudgets map[string]map[time.Month][]byte
 }
 
-type BudgetEntriesToXLSXBudgetRequest struct {
+type BudgetEntriesToBudgetsRequest struct {
 	BudgetEntries []budget.Entry
 }
 
-type BudgetEntriesToXLSXBudgetResponse struct {
+type BudgetEntriesToBudgetResponse struct {
+	Budgets []budget.Budget
+}
+
+type BudgetToXLSXRequest struct {
+	Budget budget.Budget
+}
+
+type BudgetToXLSXResponse struct {
 	XLSXBudget []byte
 }

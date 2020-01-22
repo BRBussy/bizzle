@@ -44,11 +44,20 @@ func (a admin) XLSXStandardBankStatementToXLSXBudget(request *budgetAdmin.XLSXSt
 	return &budgetAdmin.XLSXStandardBankStatementToXLSXBudgetResponse{}, nil
 }
 
-func (a admin) BudgetEntriesToXLSXBudget(request *budgetAdmin.BudgetEntriesToXLSXBudgetRequest) (*budgetAdmin.BudgetEntriesToXLSXBudgetResponse, error) {
+func (a admin) BudgetEntriesToBudgets(request *budgetAdmin.BudgetEntriesToBudgetsRequest) (*budgetAdmin.BudgetEntriesToBudgetResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
-	return &budgetAdmin.BudgetEntriesToXLSXBudgetResponse{}, nil
+	return &budgetAdmin.BudgetEntriesToBudgetResponse{}, nil
+}
+
+func (a admin) BudgetToXLSX(request *budgetAdmin.BudgetToXLSXRequest) (*budgetAdmin.BudgetToXLSXResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	return &budgetAdmin.BudgetToXLSXResponse{}, nil
 }
