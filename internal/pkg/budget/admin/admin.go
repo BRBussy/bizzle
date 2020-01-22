@@ -7,6 +7,7 @@ type Admin interface {
 }
 
 const ServiceProvider = "Budget-Admin"
+const XLSXStandardBankStatementToXLSXBudget = ServiceProvider + ".XLSXStandardBankStatementToXLSXBudget"
 
 type XLSXStandardBankStatementToXLSXBudgetRequest struct {
 	XLSXStatement []byte
