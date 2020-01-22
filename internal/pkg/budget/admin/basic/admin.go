@@ -50,7 +50,7 @@ func (a admin) XLSXStandardBankStatementToXLSXBudget(request *budgetAdmin.XLSXSt
 	}
 
 	for _, item := range budgetEntriesToBudgetsResponse.Budgets {
-		fmt.Printf("%v\n", item)
+		fmt.Printf("%d %s\n%v\n", item.Year, item.Month, item.Summary)
 	}
 
 	return &budgetAdmin.XLSXStandardBankStatementToXLSXBudgetResponse{}, nil
@@ -81,6 +81,8 @@ func (a admin) BudgetEntriesToBudgets(request *budgetAdmin.BudgetEntriesToBudget
 			}
 		}
 		// update entry
+		budgetEntryIndex[budgetEntryIdx].Summary[budgetEntry.Category] = budgetEntryIndex[budgetEntryIdx].Summary[budgetEntry.Category] + budgetEntry.Amount
+		budgetEntryIndex[budgetEntryIdx].Entries[budgetEntry.Category] = append(budgetEntryIndex[budgetEntryIdx].Entries[budgetEntry.Category], budgetEntry)
 	}
 
 	budgets := make([]budget.Budget, 0)

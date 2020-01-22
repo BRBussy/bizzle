@@ -11,6 +11,7 @@ const (
 	CellphoneAirtimeDataCategory Category = "Cellphone Airtime Data"
 	InternetCategory             Category = "Internet"
 	MedicalAidCategory           Category = "Medical Aid"
+	SalaryCategory               Category = "Salary"
 )
 
 type CategoryIdentifier string
@@ -101,6 +102,14 @@ var CategorisationRules = []CategorisationRule{
 			"medical",
 		},
 		Category: MedicalAidCategory,
+		Strict:   true,
+	},
+	{
+		CategoryIdentifiers: []CategoryIdentifier{
+			"salary",
+			"andile",
+		},
+		Category: SalaryCategory,
 		Strict:   true,
 	},
 }
