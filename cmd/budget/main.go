@@ -6,6 +6,9 @@ import (
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
+	budgetAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/admin/adaptor/jsonRPC"
+	basicBudgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin/basic"
+	xlsxStandardBankStatementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser/XLSXStandardBank"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
@@ -46,6 +49,13 @@ func main() {
 	//
 	// Budget
 	//
+	XLSXStandardBankStatementParser := xlsxStandardBankStatementParser.New(
+		RequestValidator,
+	)
+	BasicBudgetAdmin := basicBudgetAdmin.New(
+		RequestValidator,
+		XLSXStandardBankStatementParser,
+	)
 
 	//
 	// Authentication
@@ -73,7 +83,9 @@ func main() {
 		[]func(http.Handler) http.Handler{
 			authenticationMiddleware.Apply,
 		},
-		[]jsonRpcServiceProvider.Provider{},
+		[]jsonRpcServiceProvider.Provider{
+			budgetAdminJSONRPCAdaptor.New(BasicBudgetAdmin),
+		},
 	)
 
 	// start server

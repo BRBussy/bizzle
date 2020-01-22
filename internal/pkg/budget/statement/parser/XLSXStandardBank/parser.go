@@ -3,17 +3,32 @@ package XLSXStandardBank
 import (
 	"fmt"
 	"github.com/BRBussy/bizzle/internal/pkg/budget"
-	"github.com/BRBussy/bizzle/internal/pkg/budget/statement"
+	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
+	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	"github.com/tealeg/xlsx"
 	"strconv"
 	"time"
 )
 
-type Parser struct {
+type parser struct {
+	validator validationValidator.Validator
 }
 
-func (p Parser) ParseStatement(request *statement.ParseStatementRequest) (*statement.ParseStatementResponse, error) {
+func New(
+	validator validationValidator.Validator,
+) statementParser.Parser {
+	return &parser{
+		validator: validator,
+	}
+}
+
+func (p parser) ParseStatement(request *statementParser.ParseStatementRequest) (*statementParser.ParseStatementResponse, error) {
+	if err := p.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	// parse file
 	excelFile, err := xlsx.OpenBinary(request.Statement)
 	if err != nil {
@@ -143,5 +158,5 @@ func (p Parser) ParseStatement(request *statement.ParseStatementRequest) (*state
 		fmt.Printf("%v\n", item)
 	}
 
-	return &statement.ParseStatementResponse{}, nil
+	return &statementParser.ParseStatementResponse{}, nil
 }

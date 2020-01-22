@@ -9,7 +9,7 @@ import (
 
 func TestParser_ParseStatement(t *testing.T) {
 	assert := testifyAssert.New(t)
-	xlsxStandardBankParser := Parser{}
+	xlsxStandardBankParser := parser{}
 
 	dat, err := ioutil.ReadFile("/Users/bernardbussy/Google Drive (brbitzbussy@gmail.com)/Personal/2020/Budget/statement.xlsx")
 	if err != nil {

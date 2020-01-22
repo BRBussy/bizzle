@@ -12,7 +12,7 @@ func init() {
 	}
 
 	// set default configuration
-	viper.SetDefault("ServerPort", "8083")
+	viper.SetDefault("ServerPort", "8084")
 	viper.SetDefault("MongoDbHosts", []string{"localhost:27017"})
 	viper.SetDefault("MongoDbName", "bizzle")
 	viper.SetDefault("AuthURL", "http://localhost:8080/api")
