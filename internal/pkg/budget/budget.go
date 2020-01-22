@@ -2,7 +2,7 @@ package budget
 
 type Budget struct {
 	Month   string               `json:"month" bson:"month"`
-	Year    int                  `json:"int" bson:"year"`
+	Year    int                  `json:"year" bson:"year"`
 	Summary map[Category]float64 `json:"summary" bson:"summary"`
 	Entries map[Category][]Entry `json:"entries" bson:"entries"`
 }
