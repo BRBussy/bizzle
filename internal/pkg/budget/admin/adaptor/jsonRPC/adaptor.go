@@ -1,8 +1,10 @@
 package jsonRPC
 
 import (
+	"encoding/base64"
 	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"time"
 )
@@ -24,7 +26,7 @@ func (a *adaptor) Name() jsonRpcServiceProvider.Name {
 }
 
 type XLSXStandardBankStatementToXLSXBudgetRequest struct {
-	XLSXStatement []byte `json:"xlsxStatement"`
+	XLSXStatement string `json:"xlsxStatement"`
 }
 
 type XLSXStandardBankStatementToXLSXBudgetResponse struct {
@@ -32,9 +34,17 @@ type XLSXStandardBankStatementToXLSXBudgetResponse struct {
 }
 
 func (a *adaptor) XLSXStandardBankStatementToXLSXBudget(r *http.Request, request *XLSXStandardBankStatementToXLSXBudgetRequest, response *XLSXStandardBankStatementToXLSXBudgetResponse) error {
+	// parse xlsx statement to bytes
+	statementFileDataBytes, err := base64.StdEncoding.DecodeString(request.XLSXStatement)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to decode picture data")
+		return err
+	}
+
+	// call service
 	processResponse, err := a.admin.XLSXStandardBankStatementToXLSXBudget(
 		&budgetAdmin.XLSXStandardBankStatementToXLSXBudgetRequest{
-			XLSXStatement: request.XLSXStatement,
+			XLSXStatement: statementFileDataBytes,
 		},
 	)
 	if err != nil {

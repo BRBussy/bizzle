@@ -154,9 +154,5 @@ func (p parser) ParseStatement(request *statementParser.ParseStatementRequest) (
 		return nil, ErrSheetInvalid{Reasons: reasonsInvalid}
 	}
 
-	for _, item := range parsedBudgetEntries {
-		fmt.Printf("%v\n", item)
-	}
-
-	return &statementParser.ParseStatementResponse{}, nil
+	return &statementParser.ParseStatementResponse{Entries: parsedBudgetEntries}, nil
 }

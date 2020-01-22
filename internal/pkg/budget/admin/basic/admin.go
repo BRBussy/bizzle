@@ -1,6 +1,7 @@
 package basic
 
 import (
+	"fmt"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
@@ -26,6 +27,18 @@ func (a admin) XLSXStandardBankStatementToXLSXBudget(request *budgetAdmin.XLSXSt
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
+	}
+
+	parseStatementResponse, err := a.xlsxStandardBankStatementParser.ParseStatement(&statementParser.ParseStatementRequest{
+		Statement: request.XLSXStatement,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("error parsing statement")
+		return nil, err
+	}
+
+	for _, item := range parseStatementResponse.Entries {
+		fmt.Printf("%v\n", item)
 	}
 
 	return &budgetAdmin.XLSXStandardBankStatementToXLSXBudgetResponse{}, nil
