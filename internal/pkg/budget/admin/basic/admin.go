@@ -25,7 +25,7 @@ func New(
 	}
 }
 
-func (a admin) XLSXStandardBankStatementToXLSXBudget(request *budgetAdmin.XLSXStandardBankStatementToXLSXBudgetRequest) (*budgetAdmin.XLSXStandardBankStatementToXLSXBudgetResponse, error) {
+func (a admin) XLSXStandardBankStatementToXLSXBudgets(request *budgetAdmin.XLSXStandardBankStatementToXLSXBudgetsRequest) (*budgetAdmin.XLSXStandardBankStatementToXLSXBudgetsResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -53,7 +53,7 @@ func (a admin) XLSXStandardBankStatementToXLSXBudget(request *budgetAdmin.XLSXSt
 		fmt.Printf("%d %s\n%v\n", item.Year, item.Month, item.Summary)
 	}
 
-	return &budgetAdmin.XLSXStandardBankStatementToXLSXBudgetResponse{}, nil
+	return &budgetAdmin.XLSXStandardBankStatementToXLSXBudgetsResponse{}, nil
 }
 
 func (a admin) BudgetEntriesToBudgets(request *budgetAdmin.BudgetEntriesToBudgetsRequest) (*budgetAdmin.BudgetEntriesToBudgetResponse, error) {
@@ -99,4 +99,31 @@ func (a admin) BudgetToXLSX(request *budgetAdmin.BudgetToXLSXRequest) (*budgetAd
 	}
 
 	return &budgetAdmin.BudgetToXLSXResponse{}, nil
+}
+
+func (a admin) XLSXStandardBankStatementToBudgets(request *budgetAdmin.XLSXStandardBankStatementToBudgetsRequest) (*budgetAdmin.XLSXStandardBankStatementToBudgetsResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	// parse standard bank statement
+	parseStatementResponse, err := a.xlsxStandardBankStatementParser.ParseStatement(&statementParser.ParseStatementRequest{
+		Statement: request.XLSXStatement,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("error parsing statement")
+		return nil, err
+	}
+
+	// process resultant budget entries into budgets
+	budgetEntriesToBudgetsResponse, err := a.BudgetEntriesToBudgets(&budgetAdmin.BudgetEntriesToBudgetsRequest{
+		BudgetEntries: parseStatementResponse.Entries,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("error processing budget entries into budgets")
+		return nil, err
+	}
+
+	return &budgetAdmin.XLSXStandardBankStatementToBudgetsResponse{Budgets: budgetEntriesToBudgetsResponse.Budgets}, nil
 }

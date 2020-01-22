@@ -25,6 +25,7 @@ var initialRoles = []securityRole.Role{
 			sessionStore.FindOneService,
 			sessionAdmin.CreateOneService,
 			budgetAdmin.XLSXStandardBankStatementToXLSXBudget,
+			budgetAdmin.XLSXStandardBankStatementBudgets,
 		},
 	},
 	{
