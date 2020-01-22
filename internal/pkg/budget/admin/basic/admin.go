@@ -43,3 +43,12 @@ func (a admin) XLSXStandardBankStatementToXLSXBudget(request *budgetAdmin.XLSXSt
 
 	return &budgetAdmin.XLSXStandardBankStatementToXLSXBudgetResponse{}, nil
 }
+
+func (a admin) BudgetEntriesToXLSXBudget(request *budgetAdmin.BudgetEntriesToXLSXBudgetRequest) (*budgetAdmin.BudgetEntriesToXLSXBudgetResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	return &budgetAdmin.BudgetEntriesToXLSXBudgetResponse{}, nil
+}

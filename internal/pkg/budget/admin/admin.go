@@ -1,9 +1,13 @@
 package admin
 
-import "time"
+import (
+	"github.com/BRBussy/bizzle/internal/pkg/budget"
+	"time"
+)
 
 type Admin interface {
 	XLSXStandardBankStatementToXLSXBudget(*XLSXStandardBankStatementToXLSXBudgetRequest) (*XLSXStandardBankStatementToXLSXBudgetResponse, error)
+	BudgetEntriesToXLSXBudget(*BudgetEntriesToXLSXBudgetRequest) (*BudgetEntriesToXLSXBudgetResponse, error)
 }
 
 const ServiceProvider = "Budget-Admin"
@@ -15,4 +19,12 @@ type XLSXStandardBankStatementToXLSXBudgetRequest struct {
 
 type XLSXStandardBankStatementToXLSXBudgetResponse struct {
 	XLSXBudgets map[string]map[time.Month][]byte
+}
+
+type BudgetEntriesToXLSXBudgetRequest struct {
+	BudgetEntries []budget.Entry
+}
+
+type BudgetEntriesToXLSXBudgetResponse struct {
+	XLSXBudget []byte
 }
