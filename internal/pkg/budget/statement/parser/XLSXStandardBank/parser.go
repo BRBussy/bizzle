@@ -141,7 +141,7 @@ func (p parser) ParseStatement(request *statementParser.ParseStatementRequest) (
 		parsedBudgetEntries = append(
 			parsedBudgetEntries,
 			budget.Entry{
-				Date:        entryDate.Unix(),
+				Date:        entryDate.Format("2006-01-02"),
 				Description: description,
 				Amount:      amount,
 				Category:    category,
