@@ -7,6 +7,8 @@ type Budget struct {
 	Entries map[Category][]Entry `json:"entries" bson:"entries"`
 }
 
+const DateFormat = "2006-01-02"
+
 type Entry struct {
 	Date        string   `json:"date" bson:"date"`
 	Description string   `json:"description" bson:"description"`

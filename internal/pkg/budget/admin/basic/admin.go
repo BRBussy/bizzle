@@ -5,6 +5,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/budget"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	"time"
@@ -65,7 +66,12 @@ func (a admin) BudgetEntriesToBudgets(request *budgetAdmin.BudgetEntriesToBudget
 	budgetEntryIndex := make(map[string]*budget.Budget)
 
 	for _, budgetEntry := range request.BudgetEntries {
-		budgetEntryDate := time.Unix(budgetEntry.Date, 0)
+		budgetEntryDate, err := time.Parse(budget.DateFormat, budgetEntry.Date)
+		if err != nil {
+			err = bizzleException.ErrUnexpected{Reasons: []string{"could not parse budget entry date", err.Error()}}
+			log.Error().Err(err)
+			return nil, err
+		}
 		budgetEntryIdx := fmt.Sprintf(
 			"%d-%s",
 			budgetEntryDate.Year(),
