@@ -34,3 +34,7 @@ func (l Login) Expired() bool {
 func (l Login) ExpiryTime() int64 {
 	return l.ExpirationTime
 }
+
+func (l Login) ScopingID() identifier.ID {
+	return l.UserID
+}

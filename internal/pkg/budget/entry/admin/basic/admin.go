@@ -31,6 +31,7 @@ func (a admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budgetE
 	}
 
 	for entryIdx := range request.BudgetEntries {
+		request.BudgetEntries[entryIdx].OwnerID = request.Claims.ScopingID()
 		request.BudgetEntries[entryIdx].ID = identifier.ID(uuid.NewV4().String())
 	}
 
@@ -42,4 +43,8 @@ func (a admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budgetE
 	}
 
 	return &budgetEntryAdmin.CreateManyResponse{}, nil
+}
+
+func (a admin) DuplicateCheck(*budgetEntryAdmin.DuplicateCheckRequest) (*budgetEntryAdmin.DuplicateCheckResponse, error) {
+	panic("implement me")
 }
