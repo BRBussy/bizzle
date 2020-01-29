@@ -1,7 +1,6 @@
 package admin
 
 import (
-	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 )
@@ -12,7 +11,7 @@ type Admin interface {
 	XLSXStandardBankStatementToBudgetEntries(*XLSXStandardBankStatementToBudgetEntriesRequest) (*XLSXStandardBankStatementToBudgetEntriesResponse, error)
 }
 
-const ServiceProvider jsonRPCServiceProvider.Name = "BudgetEntry-Admin"
+const ServiceProvider = "BudgetEntry-Admin"
 
 const CreateManyService = ServiceProvider + ".CreateMany"
 const DuplicateCheckService = ServiceProvider + ".DuplicateCheck"

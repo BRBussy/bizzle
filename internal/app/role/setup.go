@@ -1,7 +1,7 @@
 package role
 
 import (
-	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
+	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
 	exerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin"
 	sessionAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/session/admin"
 	sessionStore "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store"
@@ -24,8 +24,8 @@ var initialRoles = []securityRole.Role{
 			sessionStore.FindManyService,
 			sessionStore.FindOneService,
 			sessionAdmin.CreateOneService,
-			budgetAdmin.XLSXStandardBankStatementToXLSXBudget,
-			budgetAdmin.XLSXStandardBankStatementBudgets,
+			budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesService,
+			budgetEntryAdmin.CreateManyService,
 		},
 	},
 	{
