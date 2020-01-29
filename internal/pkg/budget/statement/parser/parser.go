@@ -5,7 +5,7 @@ import (
 )
 
 type Parser interface {
-	ParseStatement(*ParseStatementRequest) (*ParseStatementResponse, error)
+	ParseStatementToBudgetEntries(*ParseStatementRequest) (*ParseStatementResponse, error)
 }
 
 type ParseStatementRequest struct {

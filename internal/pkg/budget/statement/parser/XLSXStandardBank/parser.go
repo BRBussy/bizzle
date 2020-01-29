@@ -24,7 +24,7 @@ func New(
 	}
 }
 
-func (p parser) ParseStatement(request *statementParser.ParseStatementRequest) (*statementParser.ParseStatementResponse, error) {
+func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStatementRequest) (*statementParser.ParseStatementResponse, error) {
 	if err := p.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

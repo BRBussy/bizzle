@@ -20,7 +20,7 @@ func TestParser_ParseStatement(t *testing.T) {
 		return
 	}
 
-	if _, err := xlsxStandardBankParser.ParseStatement(
+	if _, err := xlsxStandardBankParser.ParseStatementToBudgetEntries(
 		&statement.ParseStatementRequest{
 			Statement: dat,
 		},
