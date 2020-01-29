@@ -1,7 +1,7 @@
 package jsonRPC
 
 import (
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/exercise"
 	exerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin"
 	"net/http"
@@ -13,13 +13,13 @@ type adaptor struct {
 
 func New(
 	admin exerciseAdmin.Admin,
-) jsonRpcServiceProvider.Provider {
+) jsonRPCServiceProvider.Provider {
 	return &adaptor{
 		admin: admin,
 	}
 }
 
-func (a *adaptor) Name() jsonRpcServiceProvider.Name {
+func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 	return exerciseAdmin.ServiceProvider
 }
 

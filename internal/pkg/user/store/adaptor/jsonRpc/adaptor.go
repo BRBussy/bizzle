@@ -1,7 +1,7 @@
 package jsonRpc
 
 import (
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
@@ -20,7 +20,7 @@ func New(
 	}
 }
 
-func (a *adaptor) Name() jsonRpcServiceProvider.Name {
+func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 	return userStore.ServiceProvider
 }
 

@@ -1,7 +1,7 @@
 package jsonRPC
 
 import (
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	tokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator"
 	"net/http"
@@ -13,13 +13,13 @@ type adaptor struct {
 
 func New(
 	generator tokenGenerator.Generator,
-) jsonRpcServiceProvider.Provider {
+) jsonRPCServiceProvider.Provider {
 	return &adaptor{
 		generator: generator,
 	}
 }
 
-func (a *adaptor) Name() jsonRpcServiceProvider.Name {
+func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 	return tokenGenerator.GenerateTokenService
 }
 

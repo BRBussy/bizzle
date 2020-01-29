@@ -4,10 +4,8 @@ import (
 	"flag"
 	budgetConfig "github.com/BRBussy/bizzle/configs/budget"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
-	budgetAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/admin/adaptor/jsonRPC"
-	basicBudgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin/basic"
 	budgetEntryAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin/adaptor/jsonRPC"
 	basicBudgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin/basic"
 	mongoBudgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store/mongo"
@@ -55,10 +53,6 @@ func main() {
 	XLSXStandardBankStatementParser := xlsxStandardBankStatementParser.New(
 		RequestValidator,
 	)
-	BasicBudgetAdmin := basicBudgetAdmin.New(
-		RequestValidator,
-		XLSXStandardBankStatementParser,
-	)
 	MongoBudgetEntryStore, err := mongoBudgetEntryStore.New(
 		RequestValidator,
 		mongoDb,
@@ -69,6 +63,7 @@ func main() {
 	BasicBudgetEntryAdmin := basicBudgetEntryAdmin.New(
 		RequestValidator,
 		MongoBudgetEntryStore,
+		XLSXStandardBankStatementParser,
 	)
 
 	//
@@ -97,8 +92,7 @@ func main() {
 		[]func(http.Handler) http.Handler{
 			authenticationMiddleware.Apply,
 		},
-		[]jsonRpcServiceProvider.Provider{
-			budgetAdminJSONRPCAdaptor.New(BasicBudgetAdmin),
+		[]jsonRPCServiceProvider.Provider{
 			budgetEntryAdminJSONRPCAdaptor.New(BasicBudgetEntryAdmin),
 		},
 	)

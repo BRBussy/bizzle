@@ -1,7 +1,7 @@
 package http
 
 import (
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/go-chi/chi"
 	"github.com/gorilla/rpc/v2"
 	gorillaJson "github.com/gorilla/rpc/v2/json2"
@@ -16,7 +16,7 @@ type server struct {
 	rpcServer        *rpc.Server
 	rootRouter       *chi.Mux
 	apiRouter        *chi.Mux
-	serviceProviders []jsonRpcServiceProvider.Provider
+	serviceProviders []jsonRPCServiceProvider.Provider
 }
 
 func New(
@@ -24,7 +24,7 @@ func New(
 	host string,
 	port string,
 	middleware []func(netHttp.Handler) netHttp.Handler,
-	serviceProviders []jsonRpcServiceProvider.Provider,
+	serviceProviders []jsonRPCServiceProvider.Provider,
 ) *server {
 	// create a new server
 	newServer := new(server)

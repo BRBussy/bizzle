@@ -1,6 +1,7 @@
 package jsonRPC
 
 import (
+	"encoding/base64"
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
@@ -46,6 +47,34 @@ func (a *adaptor) CreateMany(r *http.Request, request *CreateManyRequest, respon
 	}); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+type XLSXStandardBankStatementToBudgetEntriesRequest struct {
+	XLSXStatement string `json:"xlsxStatement"`
+}
+
+type XLSXStandardBankStatementToBudgetEntriesResponse struct {
+	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
+}
+
+func (a *adaptor) XLSXStandardBankStatementToBudgetEntries(r *http.Request, request *XLSXStandardBankStatementToBudgetEntriesRequest, response *XLSXStandardBankStatementToBudgetEntriesResponse) error {
+	// parse xlsx statement to bytes
+	statementFileDataBytes, err := base64.StdEncoding.DecodeString(request.XLSXStatement)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to decode picture data")
+		return err
+	}
+
+	xlsxStandardBankStatementToBudgetEntriesResponse, err := a.admin.XLSXStandardBankStatementToBudgetEntries(&budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest{
+		XLSXStatement: statementFileDataBytes,
+	})
+	if err != nil {
+		return err
+	}
+
+	response.BudgetEntries = xlsxStandardBankStatementToBudgetEntriesResponse.BudgetEntries
 
 	return nil
 }

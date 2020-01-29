@@ -1,7 +1,7 @@
 package jsonRPC
 
 import (
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	tokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator"
 	"net/http"
@@ -11,13 +11,13 @@ type adaptor struct {
 	validator tokenValidator.Validator
 }
 
-func New(validator tokenValidator.Validator) jsonRpcServiceProvider.Provider {
+func New(validator tokenValidator.Validator) jsonRPCServiceProvider.Provider {
 	return &adaptor{
 		validator: validator,
 	}
 }
 
-func (a *adaptor) Name() jsonRpcServiceProvider.Name {
+func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 	return tokenValidator.ServiceProvider
 }
 

@@ -4,7 +4,7 @@ import (
 	"flag"
 	authConfig "github.com/BRBussy/bizzle/configs/auth"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	authenticatorJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/authenticator/adaptor/jsonRpc"
 	basicAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/basic"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
@@ -104,7 +104,7 @@ func main() {
 		[]func(http.Handler) http.Handler{
 			authenticationMiddleware.Apply,
 		},
-		[]jsonRpcServiceProvider.Provider{
+		[]jsonRPCServiceProvider.Provider{
 			authenticatorJSONRPCAdaptor.New(BasicAuthenticator),
 			tokenValidatorJSONRPCAdaptor.New(BasicTokenValidator),
 		},

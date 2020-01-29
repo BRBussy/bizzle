@@ -4,7 +4,7 @@ import (
 	"flag"
 	exerciseConfig "github.com/BRBussy/bizzle/configs/exercise"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
 	exerciseAdminJsonRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/exercise/admin/adaptor/jsonRPC"
 	basicExerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin/basic"
@@ -107,7 +107,7 @@ func main() {
 		[]func(http.Handler) http.Handler{
 			authenticationMiddleware.Apply,
 		},
-		[]jsonRpcServiceProvider.Provider{
+		[]jsonRPCServiceProvider.Provider{
 			exerciseStoreJsonRPCAdaptor.New(MongoExerciseStore),
 			exerciseAdminJsonRPCAdaptor.New(BasicExerciseAdmin),
 			sessionStoreJSONRPCAdaptor.New(MongoSessionStore),

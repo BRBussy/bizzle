@@ -3,6 +3,7 @@ package basic
 import (
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
+	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
@@ -10,17 +11,20 @@ import (
 )
 
 type admin struct {
-	validator        validationValidator.Validator
-	budgetEntryStore budgetEntryStore.Store
+	validator                       validationValidator.Validator
+	budgetEntryStore                budgetEntryStore.Store
+	xlsxStandardBankStatementParser statementParser.Parser
 }
 
 func New(
 	validator validationValidator.Validator,
 	budgetEntryStore budgetEntryStore.Store,
+	xlsxStandardBankStatementParser statementParser.Parser,
 ) budgetEntryAdmin.Admin {
 	return &admin{
-		budgetEntryStore: budgetEntryStore,
-		validator:        validator,
+		budgetEntryStore:                budgetEntryStore,
+		validator:                       validator,
+		xlsxStandardBankStatementParser: xlsxStandardBankStatementParser,
 	}
 }
 
@@ -47,4 +51,24 @@ func (a admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budgetE
 
 func (a admin) DuplicateCheck(*budgetEntryAdmin.DuplicateCheckRequest) (*budgetEntryAdmin.DuplicateCheckResponse, error) {
 	panic("implement me")
+}
+
+func (a admin) XLSXStandardBankStatementToBudgetEntries(request *budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest) (*budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	// parse standard bank statement
+	parseStatementToBudgetEntriesResponse, err := a.xlsxStandardBankStatementParser.ParseStatementToBudgetEntries(&statementParser.ParseStatementRequest{
+		Statement: request.XLSXStatement,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("error parsing statement to budget entries")
+		return nil, err
+	}
+
+	return &budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse{
+		BudgetEntries: parseStatementToBudgetEntriesResponse.Entries,
+	}, nil
 }

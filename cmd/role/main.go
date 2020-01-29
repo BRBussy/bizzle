@@ -4,7 +4,7 @@ import (
 	"flag"
 	roleConfig "github.com/BRBussy/bizzle/configs/role"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
@@ -79,7 +79,7 @@ func main() {
 		[]func(http.Handler) http.Handler{
 			authenticationMiddleware.Apply,
 		},
-		[]jsonRpcServiceProvider.Provider{
+		[]jsonRPCServiceProvider.Provider{
 			roleStoreJsonRpcAdaptor.New(MongoRoleStore),
 		},
 	)

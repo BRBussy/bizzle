@@ -1,7 +1,7 @@
 package jsonRpc
 
 import (
-	jsonRpcServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/exercise/session"
 	sessionStore "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
@@ -16,13 +16,13 @@ type adaptor struct {
 
 func New(
 	store sessionStore.Store,
-) jsonRpcServiceProvider.Provider {
+) jsonRPCServiceProvider.Provider {
 	return &adaptor{
 		store: store,
 	}
 }
 
-func (a *adaptor) Name() jsonRpcServiceProvider.Name {
+func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 	return sessionStore.ServiceProvider
 }
 
