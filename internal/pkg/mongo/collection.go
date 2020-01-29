@@ -37,6 +37,12 @@ func (c *Collection) CreateOne(document interface{}) error {
 	return err
 }
 
+func (c *Collection) CreateMany(documents []interface{}) error {
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	_, err := c.driverCollection.InsertMany(ctx, documents)
+	return err
+}
+
 func (c *Collection) FindOne(document interface{}, identifier identifier.Identifier) error {
 	if identifier == nil {
 		return ErrInvalidIdentifier{Reasons: []string{"nil identifier"}}

@@ -25,7 +25,6 @@ func New(
 	// setup collection indices
 	if err := budgetEntryCollection.SetupIndices([]mongoDriver.IndexModel{
 		mongo.NewUniqueIndex("id"),
-		mongo.NewUniqueIndex("name", "variant"),
 	}); err != nil {
 		log.Error().Err(err).Msg("error setting up budgetEntry collection indices")
 		return nil, err
@@ -47,6 +46,24 @@ func (s store) CreateOne(request *budgetEntryStore.CreateOneRequest) (*budgetEnt
 		return nil, err
 	}
 	return &budgetEntryStore.CreateOneResponse{}, nil
+}
+
+func (s store) CreateMany(request *budgetEntryStore.CreateManyRequest) (*budgetEntryStore.CreateManyResponse, error) {
+	if err := s.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	documentsToCreate := make([]interface{}, 0)
+	for _, entry := range request.Entries {
+		documentsToCreate = append(documentsToCreate, entry)
+	}
+	if err := s.collection.CreateMany(documentsToCreate); err != nil {
+		log.Error().Err(err).Msg("creating budget entries")
+		return nil, err
+	}
+
+	return &budgetEntryStore.CreateManyResponse{}, nil
 }
 
 func (s store) FindOne(request *budgetEntryStore.FindOneRequest) (*budgetEntryStore.FindOneResponse, error) {

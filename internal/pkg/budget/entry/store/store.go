@@ -9,6 +9,7 @@ import (
 
 type Store interface {
 	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
+	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
 	FindOne(*FindOneRequest) (*FindOneResponse, error)
 	FindMany(*FindManyRequest) (*FindManyResponse, error)
 	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
@@ -26,6 +27,13 @@ type CreateOneRequest struct {
 }
 
 type CreateOneResponse struct {
+}
+
+type CreateManyRequest struct {
+	Entries []budgetEntry.Entry
+}
+
+type CreateManyResponse struct {
 }
 
 type FindOneRequest struct {
