@@ -2,9 +2,11 @@ package middleware
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	tokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator"
 	"github.com/rs/zerolog/log"
 	"io/ioutil"
@@ -86,7 +88,15 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		// marshall claims to put into context
+		marshalledClaims, err := json.Marshal(claims.Serialized{Claims: validateResponse.Claims})
+		if err != nil {
+			log.Error().Err(err).Msg("could not marshall claims")
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "Claims", marshalledClaims)))
 	})
 }
 

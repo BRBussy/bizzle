@@ -4,6 +4,9 @@ import (
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
+	"github.com/BRBussy/bizzle/internal/pkg/exception"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -31,8 +34,15 @@ type CreateManyResponse struct {
 }
 
 func (a *adaptor) CreateMany(r *http.Request, request *CreateManyRequest, response *CreateManyResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err)
+		return exception.ErrUnexpected{}
+	}
+
 	if _, err := a.admin.CreateMany(&budgetEntryAdmin.CreateManyRequest{
 		BudgetEntries: request.BudgetEntries,
+		Claims:        c,
 	}); err != nil {
 		return err
 	}

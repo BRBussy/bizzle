@@ -21,3 +21,10 @@ func (e ErrUnmarshal) Error() string {
 type ErrMarshal struct {
 	Reasons []string
 }
+
+type ErrClaimsNotInContext struct {
+}
+
+func (e ErrClaimsNotInContext) Error() string {
+	return "claims not in context"
+}
