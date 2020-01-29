@@ -3,6 +3,7 @@ package XLSXStandardBank
 import (
 	"fmt"
 	"github.com/BRBussy/bizzle/internal/pkg/budget"
+	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
@@ -76,7 +77,7 @@ func (p parser) ParseStatement(request *statementParser.ParseStatementRequest) (
 	}
 
 	// sheet appears valid, parse the rest
-	parsedBudgetEntries := make([]budget.Entry, 0)
+	parsedBudgetEntries := make([]budgetEntry.Entry, 0)
 	for rowIdx := range transactionsSheet.Rows[2:] {
 		// check if this is a year row and update year if it is
 		potentialYear, err := transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DateColumnHeader]].Int()
@@ -133,14 +134,14 @@ func (p parser) ParseStatement(request *statementParser.ParseStatementRequest) (
 		description := transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DescriptionColumnHeader]].String()
 
 		// try and categorise
-		category, _, err := budget.Categorise(description)
+		category, _, err := budgetEntry.Categorise(description)
 		if err != nil {
-			category = budget.OtherCategory
+			category = budgetEntry.OtherCategory
 		}
 
 		parsedBudgetEntries = append(
 			parsedBudgetEntries,
-			budget.Entry{
+			budgetEntry.Entry{
 				Date:        entryDate.Format(budget.DateFormat),
 				Description: description,
 				Amount:      amount,

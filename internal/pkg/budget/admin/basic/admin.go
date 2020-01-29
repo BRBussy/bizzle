@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/BRBussy/bizzle/internal/pkg/budget"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
+	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
@@ -65,8 +66,8 @@ func (a admin) BudgetEntriesToBudgets(request *budgetAdmin.BudgetEntriesToBudget
 
 	budgetEntryIndex := make(map[string]*budget.Budget)
 
-	for _, budgetEntry := range request.BudgetEntries {
-		budgetEntryDate, err := time.Parse(budget.DateFormat, budgetEntry.Date)
+	for _, entry := range request.BudgetEntries {
+		budgetEntryDate, err := time.Parse(budget.DateFormat, entry.Date)
 		if err != nil {
 			err = bizzleException.ErrUnexpected{Reasons: []string{"could not parse budget entry date", err.Error()}}
 			log.Error().Err(err)
@@ -82,13 +83,13 @@ func (a admin) BudgetEntriesToBudgets(request *budgetAdmin.BudgetEntriesToBudget
 			budgetEntryIndex[budgetEntryIdx] = &budget.Budget{
 				Month:   budgetEntryDate.Month().String(),
 				Year:    budgetEntryDate.Year(),
-				Summary: make(map[budget.Category]float64),
-				Entries: make(map[budget.Category][]budget.Entry, 0),
+				Summary: make(map[budgetEntry.Category]float64),
+				Entries: make(map[budgetEntry.Category][]budgetEntry.Entry, 0),
 			}
 		}
 		// update entry
-		budgetEntryIndex[budgetEntryIdx].Summary[budgetEntry.Category] = budgetEntryIndex[budgetEntryIdx].Summary[budgetEntry.Category] + budgetEntry.Amount
-		budgetEntryIndex[budgetEntryIdx].Entries[budgetEntry.Category] = append(budgetEntryIndex[budgetEntryIdx].Entries[budgetEntry.Category], budgetEntry)
+		budgetEntryIndex[budgetEntryIdx].Summary[entry.Category] = budgetEntryIndex[budgetEntryIdx].Summary[entry.Category] + entry.Amount
+		budgetEntryIndex[budgetEntryIdx].Entries[entry.Category] = append(budgetEntryIndex[budgetEntryIdx].Entries[entry.Category], entry)
 	}
 
 	budgets := make([]budget.Budget, 0)

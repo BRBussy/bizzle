@@ -1,4 +1,4 @@
-package budget
+package entry
 
 type ErrCouldNotClassify struct {
 	Reason string

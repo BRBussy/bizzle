@@ -2,6 +2,7 @@ package admin
 
 import (
 	"github.com/BRBussy/bizzle/internal/pkg/budget"
+	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	"time"
 )
 
@@ -25,7 +26,7 @@ type XLSXStandardBankStatementToXLSXBudgetsResponse struct {
 }
 
 type BudgetEntriesToBudgetsRequest struct {
-	BudgetEntries []budget.Entry
+	BudgetEntries []budgetEntry.Entry
 }
 
 type BudgetEntriesToBudgetResponse struct {
