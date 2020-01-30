@@ -1,6 +1,7 @@
 package basic
 
 import (
+	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
@@ -49,8 +50,17 @@ func (a admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budgetE
 	return &budgetEntryAdmin.CreateManyResponse{}, nil
 }
 
-func (a admin) DuplicateCheck(*budgetEntryAdmin.DuplicateCheckRequest) (*budgetEntryAdmin.DuplicateCheckResponse, error) {
-	panic("implement me")
+func (a admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) (*budgetEntryAdmin.DuplicateCheckResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	return &budgetEntryAdmin.DuplicateCheckResponse{
+		Uniques:             request.BudgetEntries,
+		ExactDuplicates:     make([]budgetEntry.Entry, 0),
+		SuspectedDuplicates: make([]budgetEntry.Entry, 0),
+	}, nil
 }
 
 func (a admin) XLSXStandardBankStatementToBudgetEntries(request *budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest) (*budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse, error) {
