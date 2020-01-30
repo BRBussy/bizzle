@@ -92,7 +92,7 @@ type DuplicateCheckResponse struct {
 func (a *adaptor) DuplicateCheck(r *http.Request, request *DuplicateCheckRequest, response *DuplicateCheckResponse) error {
 	c, err := claims.ParseClaimsFromContext(r.Context())
 	if err != nil {
-		log.Error().Err(err)
+		log.Error().Err(err).Msg("could not parse claims from context")
 		return exception.ErrUnexpected{}
 	}
 

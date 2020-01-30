@@ -51,6 +51,9 @@ func New(
 	// create chi root router and apply middleware
 	newServer.rootRouter = chi.NewRouter()
 	newServer.rootRouter.Use(preFlightAndCORSHandler)
+	for _, m := range middleware {
+		newServer.rootRouter.Use(m)
+	}
 
 	// create chi api router
 	newServer.apiRouter = chi.NewRouter()
@@ -71,7 +74,7 @@ func preFlightAndCORSHandler(next netHttp.Handler) netHttp.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST")
 		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin")
+		w.Header().Set("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin")
 		w.WriteHeader(netHttp.StatusOK)
 		if r.Method == netHttp.MethodPost {
 			next.ServeHTTP(w, r)

@@ -61,7 +61,7 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 		// look for token in header
 		jwt := r.Header.Get("Authorization")
 		if jwt == "" {
-			log.Error().Err(err).Msg("not token in authentication header")
+			log.Error().Err(err).Msg("no token in authentication header")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -96,7 +96,9 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "Claims", marshalledClaims)))
+		r = r.WithContext(context.WithValue(r.Context(), "Claims", marshalledClaims))
+
+		next.ServeHTTP(w, r)
 	})
 }
 
