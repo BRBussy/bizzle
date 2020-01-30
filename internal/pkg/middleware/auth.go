@@ -96,9 +96,7 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 			return
 		}
 
-		r = r.WithContext(context.WithValue(r.Context(), "Claims", marshalledClaims))
-
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "Claims", marshalledClaims)))
 	})
 }
 
