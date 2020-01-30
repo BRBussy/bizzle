@@ -78,3 +78,34 @@ func (a *adaptor) XLSXStandardBankStatementToBudgetEntries(r *http.Request, requ
 
 	return nil
 }
+
+type DuplicateCheckRequest struct {
+	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
+}
+
+type DuplicateCheckResponse struct {
+	Uniques             []budgetEntry.Entry `json:"uniques"`
+	ExactDuplicates     []budgetEntry.Entry `json:"exactDuplicates"`
+	SuspectedDuplicates []budgetEntry.Entry `json:"suspectedDuplicates"`
+}
+
+func (a *adaptor) DuplicateCheck(r *http.Request, request *DuplicateCheckRequest, response *DuplicateCheckResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err)
+		return exception.ErrUnexpected{}
+	}
+
+	duplicateCheckResponse, err := a.admin.DuplicateCheck(&budgetEntryAdmin.DuplicateCheckRequest{
+		BudgetEntries: request.BudgetEntries,
+		Claims:        c,
+	})
+	if err != nil {
+		return err
+	}
+	response.Uniques = duplicateCheckResponse.Uniques
+	response.ExactDuplicates = duplicateCheckResponse.ExactDuplicates
+	response.SuspectedDuplicates = duplicateCheckResponse.SuspectedDuplicates
+
+	return nil
+}

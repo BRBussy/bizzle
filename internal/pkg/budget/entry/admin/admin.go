@@ -18,16 +18,16 @@ const DuplicateCheckService = ServiceProvider + ".DuplicateCheck"
 const XLSXStandardBankStatementToBudgetEntriesService = ServiceProvider + ".XLSXStandardBankStatementToBudgetEntries"
 
 type CreateManyRequest struct {
-	BudgetEntries []budgetEntry.Entry
-	Claims        claims.Claims `validate:"required"`
+	BudgetEntries []budgetEntry.Entry `validate:"required,gt=1"`
+	Claims        claims.Claims       `validate:"required"`
 }
 
 type CreateManyResponse struct {
 }
 
 type DuplicateCheckRequest struct {
-	BudgetEntries []budgetEntry.Entry
-	Claims        claims.Claims `validate:"required"`
+	BudgetEntries []budgetEntry.Entry `validate:"required,gt=1"`
+	Claims        claims.Claims       `validate:"required"`
 }
 
 type DuplicateCheckResponse struct {
