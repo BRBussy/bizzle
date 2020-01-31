@@ -2,3 +2,4 @@
 prod-config.toml
 firebaseCredentials.json
 **__debug_bin
+.vscode
