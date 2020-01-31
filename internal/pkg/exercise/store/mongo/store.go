@@ -37,7 +37,7 @@ func New(
 	}, nil
 }
 
-func (s store) CreateOne(request *exerciseStore.CreateOneRequest) (*exerciseStore.CreateOneResponse, error) {
+func (s *store) CreateOne(request *exerciseStore.CreateOneRequest) (*exerciseStore.CreateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -49,7 +49,7 @@ func (s store) CreateOne(request *exerciseStore.CreateOneRequest) (*exerciseStor
 	return &exerciseStore.CreateOneResponse{}, nil
 }
 
-func (s store) FindOne(request *exerciseStore.FindOneRequest) (*exerciseStore.FindOneResponse, error) {
+func (s *store) FindOne(request *exerciseStore.FindOneRequest) (*exerciseStore.FindOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -71,7 +71,7 @@ func (s store) FindOne(request *exerciseStore.FindOneRequest) (*exerciseStore.Fi
 	}, nil
 }
 
-func (s store) FindMany(request *exerciseStore.FindManyRequest) (*exerciseStore.FindManyResponse, error) {
+func (s *store) FindMany(request *exerciseStore.FindManyRequest) (*exerciseStore.FindManyResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -93,7 +93,7 @@ func (s store) FindMany(request *exerciseStore.FindManyRequest) (*exerciseStore.
 	}, nil
 }
 
-func (s store) UpdateOne(request *exerciseStore.UpdateOneRequest) (*exerciseStore.UpdateOneResponse, error) {
+func (s *store) UpdateOne(request *exerciseStore.UpdateOneRequest) (*exerciseStore.UpdateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

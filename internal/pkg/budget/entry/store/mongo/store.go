@@ -36,7 +36,7 @@ func New(
 	}, nil
 }
 
-func (s store) CreateOne(request *budgetEntryStore.CreateOneRequest) (*budgetEntryStore.CreateOneResponse, error) {
+func (s *store) CreateOne(request *budgetEntryStore.CreateOneRequest) (*budgetEntryStore.CreateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -48,7 +48,7 @@ func (s store) CreateOne(request *budgetEntryStore.CreateOneRequest) (*budgetEnt
 	return &budgetEntryStore.CreateOneResponse{}, nil
 }
 
-func (s store) CreateMany(request *budgetEntryStore.CreateManyRequest) (*budgetEntryStore.CreateManyResponse, error) {
+func (s *store) CreateMany(request *budgetEntryStore.CreateManyRequest) (*budgetEntryStore.CreateManyResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -66,7 +66,7 @@ func (s store) CreateMany(request *budgetEntryStore.CreateManyRequest) (*budgetE
 	return &budgetEntryStore.CreateManyResponse{}, nil
 }
 
-func (s store) FindOne(request *budgetEntryStore.FindOneRequest) (*budgetEntryStore.FindOneResponse, error) {
+func (s *store) FindOne(request *budgetEntryStore.FindOneRequest) (*budgetEntryStore.FindOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -88,7 +88,7 @@ func (s store) FindOne(request *budgetEntryStore.FindOneRequest) (*budgetEntrySt
 	}, nil
 }
 
-func (s store) FindMany(request *budgetEntryStore.FindManyRequest) (*budgetEntryStore.FindManyResponse, error) {
+func (s *store) FindMany(request *budgetEntryStore.FindManyRequest) (*budgetEntryStore.FindManyResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -110,7 +110,7 @@ func (s store) FindMany(request *budgetEntryStore.FindManyRequest) (*budgetEntry
 	}, nil
 }
 
-func (s store) UpdateOne(request *budgetEntryStore.UpdateOneRequest) (*budgetEntryStore.UpdateOneResponse, error) {
+func (s *store) UpdateOne(request *budgetEntryStore.UpdateOneRequest) (*budgetEntryStore.UpdateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

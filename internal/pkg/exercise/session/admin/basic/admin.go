@@ -25,7 +25,7 @@ func New(
 	}
 }
 
-func (a admin) CreateOne(request *sessionAdmin.CreateOneRequest) (*sessionAdmin.CreateOneResponse, error) {
+func (a *admin) CreateOne(request *sessionAdmin.CreateOneRequest) (*sessionAdmin.CreateOneResponse, error) {
 	if err := a.requestValidator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

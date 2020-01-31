@@ -29,7 +29,7 @@ func New(
 	}
 }
 
-func (a admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budgetEntryAdmin.CreateManyResponse, error) {
+func (a *admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budgetEntryAdmin.CreateManyResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -50,7 +50,7 @@ func (a admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budgetE
 	return &budgetEntryAdmin.CreateManyResponse{}, nil
 }
 
-func (a admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) (*budgetEntryAdmin.DuplicateCheckResponse, error) {
+func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) (*budgetEntryAdmin.DuplicateCheckResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -63,7 +63,7 @@ func (a admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) (
 	}, nil
 }
 
-func (a admin) XLSXStandardBankStatementToBudgetEntries(request *budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest) (*budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse, error) {
+func (a *admin) XLSXStandardBankStatementToBudgetEntries(request *budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest) (*budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

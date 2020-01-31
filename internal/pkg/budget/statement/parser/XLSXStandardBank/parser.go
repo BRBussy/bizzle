@@ -2,7 +2,6 @@ package XLSXStandardBank
 
 import (
 	"fmt"
-	"github.com/BRBussy/bizzle/internal/pkg/budget"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
@@ -142,7 +141,7 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 		parsedBudgetEntries = append(
 			parsedBudgetEntries,
 			budgetEntry.Entry{
-				Date:        entryDate.Format(budget.DateFormat),
+				Date:        entryDate,
 				Description: description,
 				Amount:      amount,
 				Category:    category,
