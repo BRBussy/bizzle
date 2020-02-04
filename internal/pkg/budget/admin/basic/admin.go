@@ -1,8 +1,12 @@
 package basic
 
 import (
+	"fmt"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
+	"github.com/BRBussy/bizzle/pkg/search/criteria"
+	dateTimeCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/dateTime"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 )
@@ -36,6 +40,31 @@ func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRange
 		log.Error().Err(err)
 		return nil, err
 	}
+
+	// retrieve all budget entries in date range
+	findManyBudgetEntriesResponse, err := a.budgetEntryStore.FindMany(&budgetEntryStore.FindManyRequest{
+		Claims: request.Claims,
+		Criteria: criteria.Criteria{
+			dateTimeCriterion.Range{
+				Field: "date",
+				Start: dateTimeCriterion.RangeValue{
+					Date:      request.StartDate,
+					Inclusive: true,
+					Ignore:    false,
+				},
+				End: dateTimeCriterion.RangeValue{
+					Date:      request.EndDate,
+					Inclusive: false,
+				},
+			},
+		},
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("could not retrieve budget entries")
+		return nil, bizzleException.ErrUnexpected{Reasons: []string{"could not retrieve budget entries"}}
+	}
+
+	fmt.Println(findManyBudgetEntriesResponse.Total)
 
 	return &budgetAdmin.GetBudgetForDateRangeResponse{}, nil
 }

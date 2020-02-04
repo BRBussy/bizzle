@@ -21,3 +21,6 @@ const TextListCriterionType Type = "TextList"
 // number criterion types
 const NumberRangeCriterionType Type = "NumberRange"
 const NumberExactCriterionType Type = "NumberExact"
+
+// dateTime criterion types
+const DateTimeRangeCriterionType Type = "DateTimeRange"

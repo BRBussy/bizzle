@@ -2,13 +2,12 @@ package budget
 
 import (
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
+	"time"
 )
 
 type Budget struct {
-	Month   string                                       `json:"month" bson:"month"`
-	Year    int                                          `json:"year" bson:"year"`
-	Summary map[budgetEntry.Category]float64             `json:"summary" bson:"summary"`
-	Entries map[budgetEntry.Category][]budgetEntry.Entry `json:"entries" bson:"entries"`
+	StartDate time.Time                                    `json:"startDate" bson:"startDate"`
+	EndDate   time.Time                                    `json:"endDate" bson:"endDate"`
+	Summary   map[budgetEntry.Category]float64             `json:"summary" bson:"summary"`
+	Entries   map[budgetEntry.Category][]budgetEntry.Entry `json:"entries" bson:"entries"`
 }
-
-const DateFormat = "2006-01-02"
