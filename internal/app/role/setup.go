@@ -1,6 +1,7 @@
 package role
 
 import (
+	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
 	exerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin"
 	sessionAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/session/admin"
@@ -27,6 +28,7 @@ var initialRoles = []securityRole.Role{
 			budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesService,
 			budgetEntryAdmin.DuplicateCheckService,
 			budgetEntryAdmin.CreateManyService,
+			budgetAdmin.GetBudgetForDateRangeService,
 		},
 	},
 	{

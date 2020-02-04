@@ -30,3 +30,12 @@ func (a *admin) GetBudgetForMonthInYear(request *budgetAdmin.GetBudgetForMonthIn
 
 	return &budgetAdmin.GetBudgetForMonthInYearResponse{}, nil
 }
+
+func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRangeRequest) (*budgetAdmin.GetBudgetForDateRangeResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	return &budgetAdmin.GetBudgetForDateRangeResponse{}, nil
+}
