@@ -1,8 +1,9 @@
 package basic
 
 import (
-	"fmt"
+	"github.com/BRBussy/bizzle/internal/pkg/budget"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
+	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
@@ -64,7 +65,17 @@ func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRange
 		return nil, bizzleException.ErrUnexpected{Reasons: []string{"could not retrieve budget entries"}}
 	}
 
-	fmt.Println(findManyBudgetEntriesResponse.Total)
+	// create and populate budget
+	newBudget := budget.Budget{
+		StartDate: request.StartDate,
+		EndDate:   request.EndDate,
+		Summary:   make(map[budgetEntry.Category]float64),
+		Entries:   make(map[budgetEntry.Category][]budgetEntry.Entry),
+	}
+	for _, be := range findManyBudgetEntriesResponse.Records {
+		newBudget.Summary[be.Category] = newBudget.Summary[be.Category] + be.Amount
+		newBudget.Entries[be.Category] = append(newBudget.Entries[be.Category], be)
+	}
 
-	return &budgetAdmin.GetBudgetForDateRangeResponse{}, nil
+	return &budgetAdmin.GetBudgetForDateRangeResponse{Budget: newBudget}, nil
 }
