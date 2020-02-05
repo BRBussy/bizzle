@@ -48,6 +48,27 @@ func (a *admin) CreateOne(request *budgetEntryCategoryRuleAdmin.CreateOneRequest
 	return &budgetEntryCategoryRuleAdmin.CreateOneResponse{CategoryRule: request.CategoryRule}, nil
 }
 
+func (a *admin) UpdateOne(request *budgetEntryCategoryRuleAdmin.UpdateOneRequest) (*budgetEntryCategoryRuleAdmin.UpdateOneResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	findOneRuleResponse, err := a.budgetEntryCategoryRuleStore.FindOne(&budgetEntryCategoryRuleStore.FindOneRequest{
+		Claims:     request.Claims,
+		Identifier: request.CategoryRule.ID,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("could not retrieve budget entry rule to update")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	findOneRuleResponse.CategoryRule.CategoryIdentifiers = request.CategoryRule.CategoryIdentifiers
+	findOneRuleResponse.CategoryRule.Strict = request.CategoryRule.Strict
+
+	return &budgetEntryCategoryRuleAdmin.UpdateOneResponse{}, nil
+}
+
 func (a *admin) CategoriseBudgetEntry(request *budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryRequest) (*budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
