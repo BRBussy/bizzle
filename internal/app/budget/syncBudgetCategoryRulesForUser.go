@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func SyncRolesForUser(
+func SyncBudgetCategoryRulesForUser(
 	userClaims claims.Claims,
 	budgetEntryCategoryRuleAdminImp budgetEntryCategoryRuleAdmin.Admin,
 	budgetEntryCategoryRuleStoreImp budgetEntryCategoryRuleStore.Store,

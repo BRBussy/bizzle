@@ -110,5 +110,4 @@ func main() {
 	); err != nil {
 		log.Fatal().Err(err).Msg("performing exercise setup")
 	}
-
 }
