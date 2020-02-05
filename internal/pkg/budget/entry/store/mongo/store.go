@@ -7,6 +7,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
+	"go.mongodb.org/mongo-driver/bson"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -106,6 +107,73 @@ func (s *store) FindMany(request *budgetEntryStore.FindManyRequest) (*budgetEntr
 
 	return &budgetEntryStore.FindManyResponse{
 		Records: records,
+		Total:   count,
+	}, nil
+}
+
+func (s *store) FindManyComposite(request *budgetEntryStore.FindManyCompositeRequest) (*budgetEntryStore.FindManyCompositeResponse, error) {
+	if err := s.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	var result []budgetEntry.CompositeEntry
+	pipeline := []bson.D{
+		{
+			{
+				Key: "$lookup",
+				Value: bson.M{
+					"from":         "budgetEntryCategoryRule",
+					"localField":   "categoryRuleID",
+					"foreignField": "id",
+					"as":           "categoryRule",
+				},
+			},
+		},
+
+		// $unwind stage
+		// for every categoryRule entity in the entry.categoryRule array created in previous lookup
+		// stage a new document will be output with the category rule entity at user.person
+		// (this assumes that there is only 1 category rule per entry)
+		// result:
+		//
+		// {
+		// 	id: 1234,
+		//  ...otherUserFields,
+		//  categoryRule: { id: 4321, ...otherPersonFields},
+		// }
+		{
+			{
+				Key:   "$unwind",
+				Value: "$categoryRule",
+			},
+		},
+
+		// $match Stage
+		// apply given filter
+		{
+			{
+				Key:   "$match",
+				Value: request.Criteria.ToFilter(),
+			},
+		},
+	}
+
+	count, err := s.collection.Aggregate(
+		pipeline,
+		request.Query,
+		&result,
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("could not find users")
+		return nil, err
+	}
+	if result == nil {
+		result = make([]budgetEntry.CompositeEntry, 0)
+	}
+
+	return &budgetEntryStore.FindManyCompositeResponse{
+		Records: result,
 		Total:   count,
 	}, nil
 }

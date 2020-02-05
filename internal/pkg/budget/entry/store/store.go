@@ -13,6 +13,7 @@ type Store interface {
 	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
 	FindOne(*FindOneRequest) (*FindOneResponse, error)
 	FindMany(*FindManyRequest) (*FindManyResponse, error)
+	FindManyComposite(*FindManyCompositeRequest) (*FindManyCompositeResponse, error)
 	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
 }
 
@@ -21,6 +22,7 @@ const ServiceProvider = "BudgetEntry-Store"
 const CreateOneService = ServiceProvider + ".CreateOne"
 const FindOneService = ServiceProvider + ".FindOne"
 const FindManyService = ServiceProvider + ".FindMany"
+const FindManyCompositeService = ServiceProvider + ".FindManyComposite"
 const UpdateOneService = ServiceProvider + ".UpdateOne"
 
 type CreateOneRequest struct {
@@ -54,6 +56,17 @@ type FindManyRequest struct {
 
 type FindManyResponse struct {
 	Records []budgetEntry.Entry
+	Total   int64
+}
+
+type FindManyCompositeRequest struct {
+	Claims   claims.Claims     `validate:"required"`
+	Criteria criteria.Criteria `validate:"required"`
+	Query    mongo.Query
+}
+
+type FindManyCompositeResponse struct {
+	Records []budgetEntry.CompositeEntry
 	Total   int64
 }
 

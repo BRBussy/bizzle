@@ -156,10 +156,10 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 		parsedBudgetEntries = append(
 			parsedBudgetEntries,
 			budgetEntry.Entry{
-				Date:        entryDate,
-				Description: description,
-				Amount:      amount,
-				CategoryID:  categoryID,
+				Date:           entryDate,
+				Description:    description,
+				Amount:         amount,
+				CategoryRuleID: categoryID,
 			},
 		)
 	}
