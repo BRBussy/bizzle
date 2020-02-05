@@ -25,6 +25,7 @@ func (c CategoryIdentifier) String() string {
 
 type CategoryRule struct {
 	ID                  identifier.ID
+	OwnerID             identifier.ID
 	CategoryIdentifiers []CategoryIdentifier
 	Category            Category
 	Strict              bool

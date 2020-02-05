@@ -5,6 +5,7 @@ import (
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
@@ -44,7 +45,7 @@ func (a *admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budget
 		Entries: request.BudgetEntries,
 	}); err != nil {
 		log.Error().Err(err).Msg("could not create many budget entries")
-		return nil, err
+		return nil, bizzleException.ErrUnexpected{}
 	}
 
 	return &budgetEntryAdmin.CreateManyResponse{}, nil
