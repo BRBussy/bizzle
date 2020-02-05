@@ -1,6 +1,9 @@
-package entry
+package categoryRule
 
-import "strings"
+import (
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	"strings"
+)
 
 type Category string
 
@@ -20,7 +23,8 @@ func (c CategoryIdentifier) String() string {
 	return string(c)
 }
 
-type CategorisationRule struct {
+type CategoryRule struct {
+	ID                  identifier.ID
 	CategoryIdentifiers []CategoryIdentifier
 	Category            Category
 	Strict              bool
@@ -66,7 +70,7 @@ nextCategorisationRule:
 	return "", nil, ErrCouldNotClassify{Reason: "not match"}
 }
 
-var CategorisationRules = []CategorisationRule{
+var CategorisationRules = []CategoryRule{
 	{
 		CategoryIdentifiers: []CategoryIdentifier{
 			"electricity",

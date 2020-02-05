@@ -3,7 +3,11 @@ package XLSXStandardBank
 import (
 	"fmt"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
+	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
+	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	"github.com/tealeg/xlsx"
@@ -12,7 +16,8 @@ import (
 )
 
 type parser struct {
-	validator validationValidator.Validator
+	validator                    validationValidator.Validator
+	budgetEntryCategoryRuleAdmin budgetEntryCategoryRuleAdmin.Admin
 }
 
 func New(
@@ -133,9 +138,19 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 		description := transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DescriptionColumnHeader]].String()
 
 		// try and categorise
-		category, _, err := budgetEntry.Categorise(description)
-		if err != nil {
-			category = budgetEntry.OtherCategory
+		var categoryID identifier.ID
+		categoriseResponse, err := p.budgetEntryCategoryRuleAdmin.CategoriseBudgetEntry(&budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryRequest{
+			Claims:                 request.Claims,
+			BudgetEntryDescription: description,
+		})
+		switch err.(type) {
+		case budgetEntryCategoryRule.ErrCouldNotClassify:
+			// do nothing, use blank category ID
+		case nil:
+			categoryID = categoriseResponse.CategoryID
+		default:
+			log.Error().Err(err).Msg("classifying budget entry")
+			return nil, bizzleException.ErrUnexpected{}
 		}
 
 		parsedBudgetEntries = append(
@@ -144,7 +159,7 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 				Date:        entryDate,
 				Description: description,
 				Amount:      amount,
-				Category:    category,
+				CategoryID:  categoryID,
 			},
 		)
 	}

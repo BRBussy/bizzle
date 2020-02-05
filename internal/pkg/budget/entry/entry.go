@@ -11,5 +11,5 @@ type Entry struct {
 	Date        time.Time     `json:"date" bson:"date"`
 	Description string        `json:"description" bson:"description"`
 	Amount      float64       `json:"amount" bson:"amount"`
-	Category    Category      `json:"category" bson:"category"`
+	CategoryID  identifier.ID `json:"category" bson:"category"`
 }

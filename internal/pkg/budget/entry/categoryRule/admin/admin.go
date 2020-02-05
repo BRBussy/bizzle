@@ -1,0 +1,30 @@
+package admin
+
+import (
+	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
+)
+
+type Admin interface {
+	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
+	CategoriseBudgetEntry(*CategoriseBudgetEntryRequest) (*CategoriseBudgetEntryResponse, error)
+}
+
+type CreateOneRequest struct {
+	Claims       claims.Claims                        `validate:"required"`
+	CategoryRule budgetEntryCategoryRule.CategoryRule `validate:"required"`
+}
+
+type CreateOneResponse struct {
+	CategoryRule budgetEntryCategoryRule.CategoryRule
+}
+
+type CategoriseBudgetEntryRequest struct {
+	Claims                 claims.Claims `validate:"required"`
+	BudgetEntryDescription string        `validate:"required"`
+}
+
+type CategoriseBudgetEntryResponse struct {
+	CategoryID identifier.ID
+}
