@@ -2,9 +2,11 @@ package mongo
 
 import (
 	"context"
+	"github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
+	mongoBSON "go.mongodb.org/mongo-driver/bson"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
@@ -123,4 +125,57 @@ func (c *Collection) UpdateOne(document interface{}, identifier identifier.Ident
 	}
 
 	return nil
+}
+
+type aggregationCountHolder struct {
+	Count int64 `bson:"count"`
+}
+
+func (c *Collection) Aggregate(pipeline mongoDriver.Pipeline, query Query, entities interface{}) (int64, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+
+	// perform aggregation and output count
+	countCursor, err := c.driverCollection.Aggregate(
+		ctx,
+		append(
+			pipeline,
+			mongoBSON.D{{Key: "$count", Value: "count"}},
+		),
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("could not perform count")
+		return -1, err
+	}
+	var countResults []aggregationCountHolder
+	if err := countCursor.All(ctx, &countResults); err != nil {
+		log.Error().Err(err).Msg("could not decode count")
+		return -1, err
+	}
+	var count int64
+	if len(countResults) == 1 {
+		count = countResults[0].Count
+	} else if len(countResults) == 0 {
+		count = 0
+	} else {
+		log.Error().Msg("invalid count result")
+		return -1, exception.ErrUnexpected{}
+	}
+
+	// perform aggregation and output documents with query applied
+	cursor, err := c.driverCollection.Aggregate(
+		ctx,
+		append(pipeline, query.ToPipelineStages()...),
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("Could not create cursor for '" + c.driverCollection.Name() + " collection")
+		return -1, err
+	}
+
+	// decode the results
+	if err := cursor.All(ctx, entities); err != nil {
+		log.Error().Err(err).Msg("decoding documents")
+		return -1, err
+	}
+
+	return count, nil
 }
