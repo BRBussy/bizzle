@@ -139,8 +139,8 @@ func (s *store) FindManyComposite(request *budgetEntryStore.FindManyCompositeReq
 		//
 		// {
 		// 	id: 1234,
-		//  ...otherUserFields,
-		//  categoryRule: { id: 4321, ...otherPersonFields},
+		//  ...otherEntryFields,
+		//  categoryRule: { id: 4321, ...otherCategoryRuleFields},
 		// }
 		{
 			{

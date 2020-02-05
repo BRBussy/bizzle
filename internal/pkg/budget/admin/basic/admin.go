@@ -43,7 +43,7 @@ func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRange
 	}
 
 	// retrieve all budget entries in date range
-	findManyBudgetEntriesResponse, err := a.budgetEntryStore.FindMany(&budgetEntryStore.FindManyRequest{
+	findManyBudgetEntriesResponse, err := a.budgetEntryStore.FindManyComposite(&budgetEntryStore.FindManyCompositeRequest{
 		Claims: request.Claims,
 		Criteria: criteria.Criteria{
 			dateTimeCriterion.Range{
@@ -69,12 +69,12 @@ func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRange
 	newBudget := budget.Budget{
 		StartDate: request.StartDate,
 		EndDate:   request.EndDate,
-		Summary:   make(map[budgetEntry.Category]float64),
-		Entries:   make(map[budgetEntry.Category][]budgetEntry.Entry),
+		Summary:   make(map[string]float64),
+		Entries:   make(map[string][]budgetEntry.Entry),
 	}
 	for _, be := range findManyBudgetEntriesResponse.Records {
-		newBudget.Summary[be.Category] = newBudget.Summary[be.Category] + be.Amount
-		newBudget.Entries[be.Category] = append(newBudget.Entries[be.Category], be)
+		newBudget.Summary[be.CategoryRule.Category] = newBudget.Summary[be.CategoryRule.Category] + be.Amount
+		newBudget.Entries[be.CategoryRule.Category] = append(newBudget.Entries[be.CategoryRule.Category], be.Entry)
 	}
 
 	return &budgetAdmin.GetBudgetForDateRangeResponse{Budget: newBudget}, nil
