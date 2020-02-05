@@ -16,5 +16,4 @@ type Claims interface {
 	Expired() bool            // Returns whether or not the claims are expired
 	ExpiryTime() int64        // Returns expiry time
 	ScopingID() identifier.ID // Returns a service scoping ID
-	System() bool             // Indicates if the user should have system privileges
 }

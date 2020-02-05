@@ -9,7 +9,6 @@ import (
 type Login struct {
 	UserID         identifier.ID `json:"userID"`
 	ExpirationTime int64         `json:"expirationTime"`
-	SystemUser     bool          `json:"systemUser"`
 }
 
 func (l Login) Type() Type {
@@ -38,8 +37,4 @@ func (l Login) ExpiryTime() int64 {
 
 func (l Login) ScopingID() identifier.ID {
 	return l.UserID
-}
-
-func (l Login) System() bool {
-	return l.SystemUser
 }
