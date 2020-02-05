@@ -8,6 +8,7 @@ import (
 
 type Admin interface {
 	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
+	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
 	CategoriseBudgetEntry(*CategoriseBudgetEntryRequest) (*CategoriseBudgetEntryResponse, error)
 }
 
@@ -18,6 +19,14 @@ type CreateOneRequest struct {
 
 type CreateOneResponse struct {
 	CategoryRule budgetEntryCategoryRule.CategoryRule
+}
+
+type UpdateOneRequest struct {
+	Claims       claims.Claims                        `validate:"required"`
+	CategoryRule budgetEntryCategoryRule.CategoryRule `validate:"required"`
+}
+
+type UpdateOneResponse struct {
 }
 
 type CategoriseBudgetEntryRequest struct {

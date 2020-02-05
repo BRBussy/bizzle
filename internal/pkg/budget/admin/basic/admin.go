@@ -73,8 +73,8 @@ func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRange
 		Entries:   make(map[string][]budgetEntry.Entry),
 	}
 	for _, be := range findManyBudgetEntriesResponse.Records {
-		newBudget.Summary[be.CategoryRule.Category] = newBudget.Summary[be.CategoryRule.Category] + be.Amount
-		newBudget.Entries[be.CategoryRule.Category] = append(newBudget.Entries[be.CategoryRule.Category], be.Entry)
+		newBudget.Summary[be.CategoryRule.Name] = newBudget.Summary[be.CategoryRule.Name] + be.Amount
+		newBudget.Entries[be.CategoryRule.Name] = append(newBudget.Entries[be.CategoryRule.Name], be.Entry)
 	}
 
 	return &budgetAdmin.GetBudgetForDateRangeResponse{Budget: newBudget}, nil
