@@ -16,8 +16,10 @@ type Database struct {
 }
 
 func New(
-	hosts []string,
-	connectionString string,
+	mongoDBHosts []string,
+	mongoDBUsername,
+	mongoDBPassword,
+	connectionString,
 	databaseName string,
 ) (*Database, error) {
 
@@ -31,8 +33,8 @@ func New(
 			log.Error().Err(err).Msg("connecting to mongo")
 			return nil, ErrUnexpected{}
 		}
-	} else if len(hosts) != 0 {
-		db, err = NewFromHosts(hosts)
+	} else if len(mongoDBHosts) != 0 {
+		db, err = NewFromHosts(mongoDBHosts, mongoDBUsername, mongoDBPassword)
 		if err != nil {
 			log.Error().Err(err).Msg("connecting to mongo")
 			return nil, ErrUnexpected{}
@@ -49,19 +51,34 @@ func New(
 	return db, nil
 }
 
-func NewFromHosts(hosts []string) (*Database, error) {
+func NewFromHosts(mongoDBHosts []string, mongoDBUsername, mongoDBPassword string) (*Database, error) {
 	log.Info().Msg(fmt.Sprintf(
 		"Connecting to mongo cluster on nodes: [%s]",
-		strings.Join(hosts, ","),
+		strings.Join(mongoDBHosts, ","),
 	))
+
+	// create mongo client options
+	mongoOptions := &options.ClientOptions{
+		Hosts: mongoDBHosts,
+	}
+
+	// if a username is provided set auth on mongo client options
+	if mongoDBUsername != "" {
+		mongoOptions.SetAuth(options.Credential{
+			Username:      mongoDBUsername,
+			Password:      mongoDBPassword,
+			AuthSource:    "admin",
+			PasswordSet:   true,
+			AuthMechanism: "SCRAM-SHA-1",
+		})
+	}
 
 	ctx, cancelFn := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelFn()
 	mongoClient, err := mongoDriver.Connect(
 		ctx,
-		&options.ClientOptions{
-			Hosts: hosts,
-		})
+		mongoOptions,
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("error connecting to mongo")
 		return nil, err
