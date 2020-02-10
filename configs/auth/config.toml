@@ -1,3 +1,5 @@
+MongoDBUsername = "root"
+MongoDBPassword = "password"
 PrivateKeyString = """
 -----BEGIN RSA PRIVATE KEY-----
 MIIJKQIBAAKCAgEAxdCOPL6YMc7PHrlXsO/GR3M4GAogB9gdfs5vKG6v8DNpQ/BV
