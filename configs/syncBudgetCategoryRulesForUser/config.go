@@ -12,14 +12,16 @@ func init() {
 	}
 
 	// set default configuration
-	viper.SetDefault("MongoDbHosts", []string{"localhost:27017"})
-	viper.SetDefault("MongoDbName", "bizzle")
+	viper.SetDefault("MongoDBHosts", []string{"localhost:27017"})
+	viper.SetDefault("MongoDBName", "bizzle")
 }
 
 type Config struct {
 	MongoDBConnectionString string
-	MongoDbHosts            []string
-	MongoDbName             string
+	MongoDBHosts            []string
+	MongoDBName             string
+	MongoDBUsername         string
+	MongoDBPassword         string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {

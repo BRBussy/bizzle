@@ -13,8 +13,8 @@ func init() {
 
 	// set default configuration
 	viper.SetDefault("ServerPort", "8080")
-	viper.SetDefault("MongoDbHosts", []string{"localhost:27017"})
-	viper.SetDefault("MongoDbName", "bizzle")
+	viper.SetDefault("MongoDBHosts", []string{"localhost:27017"})
+	viper.SetDefault("MongoDBName", "bizzle")
 	viper.SetDefault("PreSharedSecret", "1234")
 	viper.SetDefault("RoleURL", "http://localhost:8081/api")
 	viper.SetDefault("UserURL", "http://localhost:8082/api")
@@ -23,8 +23,10 @@ func init() {
 type Config struct {
 	ServerPort              string
 	MongoDBConnectionString string
-	MongoDbHosts            []string
-	MongoDbName             string
+	MongoDBHosts            []string
+	MongoDBName             string
+	MongoDBUsername         string
+	MongoDBPassword         string
 	PreSharedSecret         string
 	RoleURL                 string
 	UserURL                 string

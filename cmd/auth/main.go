@@ -40,7 +40,13 @@ func main() {
 	RequestValidator := requestValidator.New()
 
 	// create new mongo db connection
-	mongoDb, err := mongo.New(config.MongoDbHosts, config.MongoDBConnectionString, config.MongoDbName)
+	mongoDb, err := mongo.New(
+		config.MongoDBHosts,
+		config.MongoDBUsername,
+		config.MongoDBPassword,
+		config.MongoDBConnectionString,
+		config.MongoDBName,
+	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating new mongo db client")
 	}
