@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+
 	setupConfig "github.com/BRBussy/bizzle/configs/setup"
 	"github.com/BRBussy/bizzle/internal/app/exercise"
 	"github.com/BRBussy/bizzle/internal/app/role"
@@ -65,7 +66,10 @@ func main() {
 	//
 	// User
 	//
-	MongoUserStore, err := mongoUserStore.New(mongoDb)
+	MongoUserStore, err := mongoUserStore.New(
+		RequestValidator,
+		mongoDb,
+	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
 	}

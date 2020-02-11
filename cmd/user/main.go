@@ -2,6 +2,10 @@ package main
 
 import (
 	"flag"
+	"net/http"
+	"os"
+	"os/signal"
+
 	userConfig "github.com/BRBussy/bizzle/configs/user"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
@@ -14,9 +18,6 @@ import (
 	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
 	requestValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
-	"net/http"
-	"os"
-	"os/signal"
 )
 
 var configFileName = flag.String("config-file-name", "config", "specify config file")
@@ -52,7 +53,10 @@ func main() {
 	}()
 
 	// create service providers
-	MongoUserStore, err := mongoUserStore.New(mongoDb)
+	MongoUserStore, err := mongoUserStore.New(
+		RequestValidator,
+		mongoDb,
+	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
 	}
