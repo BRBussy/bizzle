@@ -6,9 +6,9 @@ import (
 
 type CategoryRule struct {
 	ID                  identifier.ID `json:"id" bson:"id"`
-	OwnerID             identifier.ID `json:"ownerID" bson:"ownerID"`
-	CategoryIdentifiers []string      `json:"categoryIdentifiers" bson:"categoryIdentifiers"`
-	Name                string        `json:"name" bson:"name"`
+	OwnerID             identifier.ID `validate:"required" json:"ownerID" bson:"ownerID"`
+	CategoryIdentifiers []string      `validate:"required,gt=0" json:"categoryIdentifiers" bson:"categoryIdentifiers"`
+	Name                string        `validate:"required" json:"name" bson:"name"`
 	Strict              bool          `json:"strict" bson:"strict"`
 }
 

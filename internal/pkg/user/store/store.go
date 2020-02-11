@@ -25,7 +25,7 @@ type CreateOneResponse struct {
 }
 
 type FindOneRequest struct {
-	Identifier identifier.Identifier
+	Identifier identifier.Identifier `validate:"required"`
 }
 
 type FindOneResponse struct {

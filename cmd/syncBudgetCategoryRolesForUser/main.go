@@ -8,7 +8,7 @@ import (
 	budgetEntryCategoryRuleMongoStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
-	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	userMongoStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
 	requestValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
 )
@@ -45,6 +45,20 @@ func main() {
 	// create validator
 	RequestValidator := requestValidator.New()
 
+	//
+	// User
+	//
+	UserMongoStore, err := userMongoStore.New(
+		RequestValidator,
+		mongoDb,
+	)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating user mongo store")
+	}
+
+	//
+	// Budget
+	//
 	BudgetEntryCategoryRuleMongoStore, err := budgetEntryCategoryRuleMongoStore.New(
 		RequestValidator,
 		mongoDb,
@@ -59,11 +73,10 @@ func main() {
 	)
 
 	if err := budget.SyncBudgetCategoryRulesForUser(
-		claims.Login{
-			UserID: config.UserID,
-		},
+		config.UserID,
 		BudgetEntryCategoryRuleBasicAdmin,
 		BudgetEntryCategoryRuleMongoStore,
+		UserMongoStore,
 	); err != nil {
 		log.Fatal().Err(err).Msg("running SyncBudgetCategoryRulesForUser")
 	}

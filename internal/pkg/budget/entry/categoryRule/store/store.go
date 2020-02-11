@@ -3,7 +3,6 @@ package store
 import (
 	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
-	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 )
@@ -38,7 +37,6 @@ type CreateManyResponse struct {
 }
 
 type FindOneRequest struct {
-	Claims     claims.Claims         `validate:"required"`
 	Identifier identifier.Identifier `validate:"required"`
 }
 
@@ -47,7 +45,6 @@ type FindOneResponse struct {
 }
 
 type FindManyRequest struct {
-	Claims   claims.Claims     `validate:"required"`
 	Criteria criteria.Criteria `validate:"required"`
 	Query    mongo.Query
 }

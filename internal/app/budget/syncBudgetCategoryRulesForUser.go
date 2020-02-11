@@ -6,18 +6,29 @@ import (
 	budgetEntryCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 )
 
 func SyncBudgetCategoryRulesForUser(
-	userClaims claims.Claims,
+	userID identifier.ID,
 	budgetEntryCategoryRuleAdminImp budgetEntryCategoryRuleAdmin.Admin,
 	budgetEntryCategoryRuleStoreImp budgetEntryCategoryRuleStore.Store,
+	userStoreImp userStore.Store,
 ) error {
+	// retrieve the user
+	findOneUserResponse, err := userStoreImp.FindOne(&userStore.FindOneRequest{
+		Identifier: userID,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("could not retrieve user")
+		return err
+	}
+
 	// retrieve all rules owned by user
 	findManyRulesResponse, err := budgetEntryCategoryRuleStoreImp.FindMany(&budgetEntryCategoryRuleStore.FindManyRequest{
-		Claims:   userClaims,
 		Criteria: make(criteria.Criteria, 0),
 	})
 	if err != nil {
@@ -37,7 +48,7 @@ nextRuleToSync:
 				existingRule.Strict = ruleToSync.Strict
 				existingRule.CategoryIdentifiers = ruleToSync.CategoryIdentifiers
 				if _, err := budgetEntryCategoryRuleAdminImp.UpdateOne(&budgetEntryCategoryRuleAdmin.UpdateOneRequest{
-					Claims:       userClaims,
+					Claims:       claims.Login{UserID: userID},
 					CategoryRule: existingRule,
 				}); err != nil {
 					log.Error().Err(err).Msg("updating budget category rule")
@@ -49,8 +60,9 @@ nextRuleToSync:
 		}
 
 		// if execution reaches here then ruleToSync does not yet exist, create it
+		ruleToSync.OwnerID = findOneUserResponse.User.ID
 		if _, err := budgetEntryCategoryRuleAdminImp.CreateOne(&budgetEntryCategoryRuleAdmin.CreateOneRequest{
-			Claims:       userClaims,
+			Claims:       claims.Login{UserID: userID},
 			CategoryRule: ruleToSync,
 		}); err != nil {
 			log.Error().Err(err).Msg("creating budget category rule")

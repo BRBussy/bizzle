@@ -55,7 +55,6 @@ func (a *admin) UpdateOne(request *budgetEntryCategoryRuleAdmin.UpdateOneRequest
 	}
 
 	findOneRuleResponse, err := a.budgetEntryCategoryRuleStore.FindOne(&budgetEntryCategoryRuleStore.FindOneRequest{
-		Claims:     request.Claims,
 		Identifier: request.CategoryRule.ID,
 	})
 	if err != nil {
@@ -77,7 +76,6 @@ func (a *admin) CategoriseBudgetEntry(request *budgetEntryCategoryRuleAdmin.Cate
 
 	// find all category rules owned by user
 	findManyResponse, err := a.budgetEntryCategoryRuleStore.FindMany(&budgetEntryCategoryRuleStore.FindManyRequest{
-		Claims:   request.Claims,
 		Criteria: make(criteria.Criteria, 0),
 		Query:    mongo.Query{},
 	})
