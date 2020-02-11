@@ -1,6 +1,7 @@
 package budget
 
 import (
+	"fmt"
 	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
 	budgetEntryCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
@@ -18,6 +19,7 @@ func SyncBudgetCategoryRulesForUser(
 	budgetEntryCategoryRuleStoreImp budgetEntryCategoryRuleStore.Store,
 	userStoreImp userStore.Store,
 ) error {
+	log.Info().Msg("Running SyncBudgetCategoryRulesForUser")
 	// retrieve the user
 	findOneUserResponse, err := userStoreImp.FindOne(&userStore.FindOneRequest{
 		Identifier: userID,
@@ -35,31 +37,52 @@ func SyncBudgetCategoryRulesForUser(
 		log.Error().Err(err).Msg("retrieving all budget entry category rules owned by user")
 		return bizzleException.ErrUnexpected{}
 	}
+	log.Info().Msg(fmt.Sprintf("User has %d budget category rules", len(findManyRulesResponse.Records)))
 
 	// for every rule to sync
 nextRuleToSync:
-	for _, ruleToSync := range categoryRulesToSyncForUser {
+	for ruleToSyncIdx, ruleToSync := range categoryRulesToSyncForUser {
+		log.Info().Msg(fmt.Sprintf(
+			"--- [%d/%d] Check Rule to sync %s ---",
+			ruleToSyncIdx+1,
+			len(categoryRulesToSyncForUser),
+			ruleToSync.Name,
+		))
 		// look to see if the rule already exists
 		for _, existingRule := range findManyRulesResponse.Records {
-			// if it already exists (has the same name) AND
-			// it has changed, update it
-			if ruleToSync.Name == existingRule.Name &&
-				!budgetEntryCategoryRule.CompareCategoryRules(ruleToSync, existingRule) {
-				existingRule.Strict = ruleToSync.Strict
-				existingRule.CategoryIdentifiers = ruleToSync.CategoryIdentifiers
-				if _, err := budgetEntryCategoryRuleAdminImp.UpdateOne(&budgetEntryCategoryRuleAdmin.UpdateOneRequest{
-					Claims:       claims.Login{UserID: userID},
-					CategoryRule: existingRule,
-				}); err != nil {
-					log.Error().Err(err).Msg("updating budget category rule")
-					return bizzleException.ErrUnexpected{}
+
+			// check if the rule already exists (has the same name)
+			if ruleToSync.Name == existingRule.Name {
+				log.Info().Msg(fmt.Sprintf("  Rule %s already exists", ruleToSync.Name))
+
+				// set ids to prevent false positive comparisons
+				ruleToSync.ID = existingRule.ID
+				ruleToSync.OwnerID = existingRule.OwnerID
+
+				// if it does exists, check if the rule has changed
+				if budgetEntryCategoryRule.CompareCategoryRules(ruleToSync, existingRule) {
+					log.Info().Msg("  no change")
+				} else {
+					log.Info().Msg(fmt.Sprintf("  Rule %s has changed - Updating", ruleToSync.Name))
+					existingRule.Strict = ruleToSync.Strict
+					existingRule.CategoryIdentifiers = ruleToSync.CategoryIdentifiers
+					if _, err := budgetEntryCategoryRuleAdminImp.UpdateOne(&budgetEntryCategoryRuleAdmin.UpdateOneRequest{
+						Claims:       claims.Login{UserID: userID},
+						CategoryRule: existingRule,
+					}); err != nil {
+						log.Error().Err(err).Msg("  updating budget category rule")
+						return bizzleException.ErrUnexpected{}
+					}
 				}
-				// go to next rule
+				// go to next rule to shnc
 				continue nextRuleToSync
 			}
 		}
 
-		// if execution reaches here then ruleToSync does not yet exist, create it
+		// if execution reaches here then ruleToSync does not yet exist
+		log.Info().Msg(fmt.Sprintf("  Rule %s does not yet exist - Creating it", ruleToSync.Name))
+
+		//create it
 		ruleToSync.OwnerID = findOneUserResponse.User.ID
 		if _, err := budgetEntryCategoryRuleAdminImp.CreateOne(&budgetEntryCategoryRuleAdmin.CreateOneRequest{
 			Claims:       claims.Login{UserID: userID},
@@ -70,6 +93,7 @@ nextRuleToSync:
 		}
 	}
 
+	log.Info().Msg("SyncBudgetCategoryRulesForUser Run Successfully")
 	return nil
 }
 
