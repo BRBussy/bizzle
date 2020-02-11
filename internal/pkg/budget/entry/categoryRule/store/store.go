@@ -3,10 +3,12 @@ package store
 import (
 	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 )
 
+// Store is used to perform crud operations on budget category rules
 type Store interface {
 	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
 	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
@@ -37,6 +39,7 @@ type CreateManyResponse struct {
 }
 
 type FindOneRequest struct {
+	Claims     claims.Claims         `validate:"required"`
 	Identifier identifier.Identifier `validate:"required"`
 }
 
