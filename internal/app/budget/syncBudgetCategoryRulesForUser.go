@@ -6,6 +6,7 @@ import (
 	budgetEntryCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/rs/zerolog/log"
 )
 
@@ -16,10 +17,11 @@ func SyncBudgetCategoryRulesForUser(
 ) error {
 	// retrieve all rules owned by user
 	findManyRulesResponse, err := budgetEntryCategoryRuleStoreImp.FindMany(&budgetEntryCategoryRuleStore.FindManyRequest{
-		Claims: userClaims,
+		Claims:   userClaims,
+		Criteria: make(criteria.Criteria, 0),
 	})
 	if err != nil {
-		log.Error().Err(err).Msg("registering bizzle root user")
+		log.Error().Err(err).Msg("retrieving all budget entry category rules owned by user")
 		return bizzleException.ErrUnexpected{}
 	}
 

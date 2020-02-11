@@ -94,7 +94,7 @@ nextCategorisationRule:
 		if rule.Strict {
 			// all identifiers must be found in description
 			for _, id := range rule.CategoryIdentifiers {
-				if !strings.Contains(description, id.String()) {
+				if !strings.Contains(description, id) {
 					// if any 1 is not found, go to next rule
 					continue nextCategorisationRule
 				}
@@ -103,9 +103,9 @@ nextCategorisationRule:
 			return &budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse{CategoryID: rule.ID}, nil
 		} else {
 			// any identifiers can be found in description
-			matchedIdentifiers := make([]budgetEntryCategoryRule.CategoryIdentifier, 0)
+			matchedIdentifiers := make([]string, 0)
 			for _, id := range rule.CategoryIdentifiers {
-				if strings.Contains(description, id.String()) {
+				if strings.Contains(description, id) {
 					// mark that one was found
 					matchedIdentifiers = append(matchedIdentifiers, id)
 				}

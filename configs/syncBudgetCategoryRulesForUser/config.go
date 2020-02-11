@@ -1,6 +1,7 @@
 package setup
 
 import (
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
@@ -22,6 +23,7 @@ type Config struct {
 	MongoDBName             string
 	MongoDBUsername         string
 	MongoDBPassword         string
+	UserID                  identifier.ID
 }
 
 func GetConfig(configFileName *string) (*Config, error) {
