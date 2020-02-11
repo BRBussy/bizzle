@@ -54,9 +54,9 @@ nextRuleToSync:
 					log.Error().Err(err).Msg("updating budget category rule")
 					return bizzleException.ErrUnexpected{}
 				}
+				// go to next rule
+				continue nextRuleToSync
 			}
-			// go to next rule
-			continue nextRuleToSync
 		}
 
 		// if execution reaches here then ruleToSync does not yet exist, create it
@@ -75,48 +75,48 @@ nextRuleToSync:
 
 var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 	{
+		Name: "Electricity",
 		CategoryIdentifiers: []string{
 			"electricity",
 			"fee",
 		},
-		Name:   "Electricity",
 		Strict: true,
 	},
 	{
+		Name: "CarRepayment",
 		CategoryIdentifiers: []string{
 			"wesbank",
 		},
-		Name: "CarRepayment",
 	},
 	{
+		Name: "CellphoneAirtimeData",
 		CategoryIdentifiers: []string{
 			"vod",
 			"prepaid",
 		},
-		Name:   "CellphoneAirtimeData",
 		Strict: true,
 	},
 	{
+		Name: "Internet",
 		CategoryIdentifiers: []string{
 			"telkommobi",
 		},
-		Name: "Internet",
 	},
 	{
+		Name: "MedicalAid",
 		CategoryIdentifiers: []string{
 			"disc",
 			"prem",
 			"medical",
 		},
-		Name:   "MedicalAid",
 		Strict: true,
 	},
 	{
+		Name: "Salary",
 		CategoryIdentifiers: []string{
 			"salary",
 			"andile",
 		},
-		Name:   "Salary",
 		Strict: true,
 	},
 }
