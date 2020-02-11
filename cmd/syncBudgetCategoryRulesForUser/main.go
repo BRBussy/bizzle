@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+
 	syncBudgetCategoryRulesForUserConfig "github.com/BRBussy/bizzle/configs/syncBudgetCategoryRulesForUser"
 	"github.com/BRBussy/bizzle/internal/app/budget"
 	budgetEntryCategoryRuleBasicAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin/basic"
