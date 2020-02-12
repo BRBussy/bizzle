@@ -8,17 +8,19 @@ import (
 )
 
 // ApplyScopeToCriteria is used to add scope from claims to a search criteria
-func ApplyScopeToCriteria(claimsToApply claims.Claims, criteriaToApplyTo criteria.Criteria) (criteria.Criteria, error) {
+func ApplyScopeToCriteria(claimsToApply claims.Claims, criteriaToScope criteria.Criteria) criteria.Criteria {
 	return append(
-		criteriaToApplyTo,
+		criteriaToScope,
 		text.Exact{
 			Field: "ownerID",
-			Text: claimsToApply.ScopingID().String()
-		}),
-		nil
+			Text:  claimsToApply.ScopingID().String(),
+		})
 }
 
 // ApplyScopeToIdentifier is used to add scope from claims to a search identifier
-func ApplyScopeToIdentifier(claimsToApply claims.Claims, identifierToApplyTo identifier.Identifier) (identifier.Identifier, error) {
-
+func ApplyScopeToIdentifier(claimsToApply claims.Claims, identifierToScope identifier.Identifier) identifier.Identifier {
+	return ScopedIdentifier{
+		IdentifierToScope: identifierToScope,
+		OwnerID:           claimsToApply.ScopingID(),
+	}
 }
