@@ -2,6 +2,9 @@ package XLSXStandardBank
 
 import (
 	"fmt"
+	"strconv"
+	"time"
+
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
@@ -11,8 +14,6 @@ import (
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	"github.com/tealeg/xlsx"
-	"strconv"
-	"time"
 )
 
 type parser struct {
@@ -22,9 +23,11 @@ type parser struct {
 
 func New(
 	validator validationValidator.Validator,
+	budgetEntryCategoryRuleAdmin budgetEntryCategoryRuleAdmin.Admin,
 ) statementParser.Parser {
 	return &parser{
-		validator: validator,
+		validator:                    validator,
+		budgetEntryCategoryRuleAdmin: budgetEntryCategoryRuleAdmin,
 	}
 }
 

@@ -2,6 +2,10 @@ package main
 
 import (
 	"flag"
+	"net/http"
+	"os"
+	"os/signal"
+
 	budgetConfig "github.com/BRBussy/bizzle/configs/budget"
 	jsonRpcHttpServer "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/server/http"
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
@@ -10,6 +14,8 @@ import (
 	basicBudgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin/basic"
 	budgetEntryAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin/adaptor/jsonRPC"
 	basicBudgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin/basic"
+	basicBudgetCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin/basic"
+	mongoBudgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/mongo"
 	mongoBudgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store/mongo"
 	xlsxStandardBankStatementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser/XLSXStandardBank"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
@@ -18,9 +24,6 @@ import (
 	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
 	requestValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
-	"net/http"
-	"os"
-	"os/signal"
 )
 
 var configFileName = flag.String("config-file-name", "config", "specify config file")
@@ -58,8 +61,20 @@ func main() {
 	//
 	// Budget
 	//
+	MongoBudgetCategoryRuleStore, err := mongoBudgetCategoryRuleStore.New(
+		RequestValidator,
+		mongoDb,
+	)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating mongo budget category rule store")
+	}
+	BasicBudgetCategoryRuleAdmin := basicBudgetCategoryRuleAdmin.New(
+		RequestValidator,
+		MongoBudgetCategoryRuleStore,
+	)
 	XLSXStandardBankStatementParser := xlsxStandardBankStatementParser.New(
 		RequestValidator,
+		BasicBudgetCategoryRuleAdmin,
 	)
 	MongoBudgetEntryStore, err := mongoBudgetEntryStore.New(
 		RequestValidator,
