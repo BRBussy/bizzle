@@ -77,8 +77,17 @@ func (s *store) FindOne(request *budgetEntryCategoryRuleStore.FindOneRequest) (*
 		return nil, err
 	}
 
+	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(&scope.ApplyScopeToIdentifierRequest{
+		Claims:            request.Claims,
+		IdentifierToScope: request.Identifier,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("could not apply scope to identifier")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
 	var result budgetEntryCategoryRule.CategoryRule
-	if err := s.collection.FindOne(&result, request.Identifier); err != nil {
+	if err := s.collection.FindOne(&result, applyScopeToIdentifierResponse.ScopedIdentifier); err != nil {
 		switch err.(type) {
 		case mongo.ErrNotFound:
 			return nil, err
