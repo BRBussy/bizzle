@@ -58,10 +58,10 @@ type XLSXStandardBankStatementToBudgetEntriesRequest struct {
 }
 
 type XLSXStandardBankStatementToBudgetEntriesResponse struct {
-	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
+	BudgetCompositeEntries []budgetEntry.CompositeEntry `json:"budgetCompositeEntries"`
 }
 
-func (a *adaptor) XLSXStandardBankStatementToBudgetEntries(r *http.Request, request *XLSXStandardBankStatementToBudgetEntriesRequest, response *XLSXStandardBankStatementToBudgetEntriesResponse) error {
+func (a *adaptor) XLSXStandardBankStatementToBudgetCompositeEntries(r *http.Request, request *XLSXStandardBankStatementToBudgetEntriesRequest, response *XLSXStandardBankStatementToBudgetEntriesResponse) error {
 	c, err := claims.ParseClaimsFromContext(r.Context())
 	if err != nil {
 		log.Error().Err(err)
@@ -75,7 +75,7 @@ func (a *adaptor) XLSXStandardBankStatementToBudgetEntries(r *http.Request, requ
 		return bizzleException.ErrUnexpected{}
 	}
 
-	xlsxStandardBankStatementToBudgetEntriesResponse, err := a.admin.XLSXStandardBankStatementToBudgetEntries(&budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest{
+	xlsxStandardBankStatementToBudgetEntriesResponse, err := a.admin.XLSXStandardBankStatementToBudgetCompositeEntries(&budgetEntryAdmin.XLSXStandardBankStatementToBudgetCompositeEntriesRequest{
 		XLSXStatement: statementFileDataBytes,
 		Claims:        c,
 	})
@@ -83,7 +83,7 @@ func (a *adaptor) XLSXStandardBankStatementToBudgetEntries(r *http.Request, requ
 		return err
 	}
 
-	response.BudgetEntries = xlsxStandardBankStatementToBudgetEntriesResponse.BudgetEntries
+	response.BudgetCompositeEntries = xlsxStandardBankStatementToBudgetEntriesResponse.BudgetCompositeEntries
 
 	return nil
 }

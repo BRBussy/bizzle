@@ -100,7 +100,9 @@ nextCategorisationRule:
 				}
 			}
 			// if execution reaches here then all category identifiers were found
-			return &budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse{CategoryID: rule.ID}, nil
+			return &budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse{
+				CategoryRule: rule,
+			}, nil
 		} else {
 			// any identifiers can be found in description
 			matchedIdentifiers := make([]string, 0)
@@ -111,7 +113,9 @@ nextCategorisationRule:
 				}
 			}
 			if len(matchedIdentifiers) > 0 {
-				return &budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse{CategoryID: rule.ID}, nil
+				return &budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse{
+					CategoryRule: rule,
+				}, nil
 			}
 		}
 	}

@@ -64,14 +64,14 @@ func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) 
 	}, nil
 }
 
-func (a *admin) XLSXStandardBankStatementToBudgetEntries(request *budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest) (*budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse, error) {
+func (a *admin) XLSXStandardBankStatementToBudgetCompositeEntries(request *budgetEntryAdmin.XLSXStandardBankStatementToBudgetCompositeEntriesRequest) (*budgetEntryAdmin.XLSXStandardBankStatementToBudgetCompositeEntriesResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
 	// parse standard bank statement
-	parseStatementToBudgetEntriesResponse, err := a.xlsxStandardBankStatementParser.ParseStatementToBudgetEntries(&statementParser.ParseStatementRequest{
+	parseStatementToBudgetEntriesResponse, err := a.xlsxStandardBankStatementParser.ParseStatementToBudgetCompositeEntries(&statementParser.ParseStatementToBudgetCompositeEntriesRequest{
 		Claims:    request.Claims,
 		Statement: request.XLSXStatement,
 	})
@@ -80,7 +80,7 @@ func (a *admin) XLSXStandardBankStatementToBudgetEntries(request *budgetEntryAdm
 		return nil, err
 	}
 
-	return &budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse{
-		BudgetEntries: parseStatementToBudgetEntriesResponse.Entries,
+	return &budgetEntryAdmin.XLSXStandardBankStatementToBudgetCompositeEntriesResponse{
+		BudgetCompositeEntries: parseStatementToBudgetEntriesResponse.BudgetCompositeEntries,
 	}, nil
 }

@@ -10,7 +10,6 @@ import (
 	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
-	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	"github.com/tealeg/xlsx"
@@ -31,7 +30,7 @@ func New(
 	}
 }
 
-func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStatementRequest) (*statementParser.ParseStatementResponse, error) {
+func (p parser) ParseStatementToBudgetCompositeEntries(request *statementParser.ParseStatementToBudgetCompositeEntriesRequest) (*statementParser.ParseStatementToBudgetCompositeEntriesResponse, error) {
 	if err := p.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -84,7 +83,7 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 	}
 
 	// sheet appears valid, parse the rest
-	parsedBudgetEntries := make([]budgetEntry.Entry, 0)
+	parsedBudgetCompositeEntries := make([]budgetEntry.CompositeEntry, 0)
 	for rowIdx := range transactionsSheet.Rows[2:] {
 		// check if this is a year row and update year if it is
 		potentialYear, err := transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DateColumnHeader]].Int()
@@ -141,7 +140,7 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 		description := transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DescriptionColumnHeader]].String()
 
 		// try and categorise
-		var categoryID identifier.ID
+		var categoryRule budgetEntryCategoryRule.CategoryRule
 		categoriseResponse, err := p.budgetEntryCategoryRuleAdmin.CategoriseBudgetEntry(&budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryRequest{
 			Claims:                 request.Claims,
 			BudgetEntryDescription: description,
@@ -150,19 +149,23 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 		case budgetEntryCategoryRule.ErrCouldNotClassify:
 			// do nothing, use blank category ID
 		case nil:
-			categoryID = categoriseResponse.CategoryID
+			// successfully categorised
+			categoryRule = categoriseResponse.CategoryRule
 		default:
 			log.Error().Err(err).Msg("classifying budget entry")
 			return nil, bizzleException.ErrUnexpected{}
 		}
 
-		parsedBudgetEntries = append(
-			parsedBudgetEntries,
-			budgetEntry.Entry{
-				Date:           entryDate,
-				Description:    description,
-				Amount:         amount,
-				CategoryRuleID: categoryID,
+		parsedBudgetCompositeEntries = append(
+			parsedBudgetCompositeEntries,
+			budgetEntry.CompositeEntry{
+				Entry: budgetEntry.Entry{
+					Date:           entryDate,
+					Description:    description,
+					Amount:         amount,
+					CategoryRuleID: categoryRule.ID,
+				},
+				CategoryRule: categoryRule,
 			},
 		)
 	}
@@ -172,5 +175,5 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 		return nil, ErrSheetInvalid{Reasons: reasonsInvalid}
 	}
 
-	return &statementParser.ParseStatementResponse{Entries: parsedBudgetEntries}, nil
+	return &statementParser.ParseStatementToBudgetCompositeEntriesResponse{BudgetCompositeEntries: parsedBudgetCompositeEntries}, nil
 }

@@ -3,7 +3,6 @@ package admin
 import (
 	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
-	"github.com/BRBussy/bizzle/pkg/search/identifier"
 )
 
 type Admin interface {
@@ -35,5 +34,5 @@ type CategoriseBudgetEntryRequest struct {
 }
 
 type CategoriseBudgetEntryResponse struct {
-	CategoryID identifier.ID
+	CategoryRule budgetEntryCategoryRule.CategoryRule
 }

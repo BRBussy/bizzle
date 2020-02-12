@@ -25,7 +25,7 @@ var initialRoles = []securityRole.Role{
 			sessionStore.FindManyService,
 			sessionStore.FindOneService,
 			sessionAdmin.CreateOneService,
-			budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesService,
+			budgetEntryAdmin.XLSXStandardBankStatementToBudgetCompositeEntriesService,
 			budgetEntryAdmin.DuplicateCheckService,
 			budgetEntryAdmin.CreateManyService,
 			budgetAdmin.GetBudgetForDateRangeService,

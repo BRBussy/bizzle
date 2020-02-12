@@ -8,14 +8,14 @@ import (
 type Admin interface {
 	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
 	DuplicateCheck(*DuplicateCheckRequest) (*DuplicateCheckResponse, error)
-	XLSXStandardBankStatementToBudgetEntries(*XLSXStandardBankStatementToBudgetEntriesRequest) (*XLSXStandardBankStatementToBudgetEntriesResponse, error)
+	XLSXStandardBankStatementToBudgetCompositeEntries(*XLSXStandardBankStatementToBudgetCompositeEntriesRequest) (*XLSXStandardBankStatementToBudgetCompositeEntriesResponse, error)
 }
 
 const ServiceProvider = "BudgetEntry-Admin"
 
 const CreateManyService = ServiceProvider + ".CreateMany"
 const DuplicateCheckService = ServiceProvider + ".DuplicateCheck"
-const XLSXStandardBankStatementToBudgetEntriesService = ServiceProvider + ".XLSXStandardBankStatementToBudgetEntries"
+const XLSXStandardBankStatementToBudgetCompositeEntriesService = ServiceProvider + ".XLSXStandardBankStatementToBudgetCompositeEntries"
 
 type CreateManyRequest struct {
 	BudgetEntries []budgetEntry.Entry `validate:"required,gt=1"`
@@ -36,11 +36,11 @@ type DuplicateCheckResponse struct {
 	SuspectedDuplicates []budgetEntry.Entry
 }
 
-type XLSXStandardBankStatementToBudgetEntriesRequest struct {
+type XLSXStandardBankStatementToBudgetCompositeEntriesRequest struct {
 	Claims        claims.Claims `validate:"required"`
 	XLSXStatement []byte        `validate:"required"`
 }
 
-type XLSXStandardBankStatementToBudgetEntriesResponse struct {
-	BudgetEntries []budgetEntry.Entry
+type XLSXStandardBankStatementToBudgetCompositeEntriesResponse struct {
+	BudgetCompositeEntries []budgetEntry.CompositeEntry
 }
