@@ -4,6 +4,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/security/scope"
 	"github.com/BRBussy/bizzle/pkg/search/criterion/text"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
+	"github.com/rs/zerolog/log"
 )
 
 // Admin is the scope.Admin - used to determine scope
@@ -21,7 +22,12 @@ func New(
 }
 
 // ApplyScopeToCriteria is used to add scope from claims to a search criteria
-func (m *Admin) ApplyScopeToCriteria(request *scope.ApplyScopeToCriteriaRequest) (*scope.ApplyScopeToCriteriaResponse, error) {
+func (a *Admin) ApplyScopeToCriteria(request *scope.ApplyScopeToCriteriaRequest) (*scope.ApplyScopeToCriteriaResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	return &scope.ApplyScopeToCriteriaResponse{
 		ScopedCriteria: append(
 			request.CriteriaToScope,
@@ -33,7 +39,12 @@ func (m *Admin) ApplyScopeToCriteria(request *scope.ApplyScopeToCriteriaRequest)
 }
 
 // ApplyScopeToIdentifier is used to add scope from claims to a search identifier
-func (m *Admin) ApplyScopeToIdentifier(request *scope.ApplyScopeToIdentifierRequest) (*scope.ApplyScopeToIdentifierResponse, error) {
+func (a *Admin) ApplyScopeToIdentifier(request *scope.ApplyScopeToIdentifierRequest) (*scope.ApplyScopeToIdentifierResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
 	return &scope.ApplyScopeToIdentifierResponse{
 		ScopedIdentifier: scope.ScopedIdentifier{
 			IdentifierToScope: request.IdentifierToScope,
