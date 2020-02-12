@@ -1,6 +1,8 @@
 package basic
 
 import (
+	"strings"
+
 	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
 	budgetEntryCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
@@ -11,7 +13,6 @@ import (
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	uuid "github.com/satori/go.uuid"
-	"strings"
 )
 
 type admin struct {
@@ -76,6 +77,7 @@ func (a *admin) CategoriseBudgetEntry(request *budgetEntryCategoryRuleAdmin.Cate
 
 	// find all category rules owned by user
 	findManyResponse, err := a.budgetEntryCategoryRuleStore.FindMany(&budgetEntryCategoryRuleStore.FindManyRequest{
+		Claims:   request.Claims,
 		Criteria: make(criteria.Criteria, 0),
 		Query:    mongo.Query{},
 	})

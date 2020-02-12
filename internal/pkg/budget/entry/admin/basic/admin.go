@@ -72,6 +72,7 @@ func (a *admin) XLSXStandardBankStatementToBudgetEntries(request *budgetEntryAdm
 
 	// parse standard bank statement
 	parseStatementToBudgetEntriesResponse, err := a.xlsxStandardBankStatementParser.ParseStatementToBudgetEntries(&statementParser.ParseStatementRequest{
+		Claims:    request.Claims,
 		Statement: request.XLSXStatement,
 	})
 	if err != nil {

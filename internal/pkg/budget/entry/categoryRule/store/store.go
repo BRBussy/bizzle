@@ -48,6 +48,7 @@ type FindOneResponse struct {
 }
 
 type FindManyRequest struct {
+	Claims   claims.Claims     `validate:"required"`
 	Criteria criteria.Criteria `validate:"required"`
 	Query    mongo.Query
 }

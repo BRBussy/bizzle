@@ -37,7 +37,8 @@ type DuplicateCheckResponse struct {
 }
 
 type XLSXStandardBankStatementToBudgetEntriesRequest struct {
-	XLSXStatement []byte
+	Claims        claims.Claims `validate:"required"`
+	XLSXStatement []byte        `validate:"required"`
 }
 
 type XLSXStandardBankStatementToBudgetEntriesResponse struct {

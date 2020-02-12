@@ -10,8 +10,8 @@ type Parser interface {
 }
 
 type ParseStatementRequest struct {
-	Claims    claims.Claims
-	Statement []byte
+	Claims    claims.Claims `validate:"required"`
+	Statement []byte        `validate:"required"`
 }
 
 type ParseStatementResponse struct {

@@ -2,13 +2,15 @@ package jsonRPC
 
 import (
 	"encoding/base64"
+	"net/http"
+
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
 	"github.com/BRBussy/bizzle/internal/pkg/exception"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/rs/zerolog/log"
-	"net/http"
 )
 
 type adaptor struct {
@@ -38,7 +40,7 @@ func (a *adaptor) CreateMany(r *http.Request, request *CreateManyRequest, respon
 	c, err := claims.ParseClaimsFromContext(r.Context())
 	if err != nil {
 		log.Error().Err(err)
-		return exception.ErrUnexpected{}
+		return bizzleException.ErrUnexpected{}
 	}
 
 	if _, err := a.admin.CreateMany(&budgetEntryAdmin.CreateManyRequest{
@@ -60,15 +62,22 @@ type XLSXStandardBankStatementToBudgetEntriesResponse struct {
 }
 
 func (a *adaptor) XLSXStandardBankStatementToBudgetEntries(r *http.Request, request *XLSXStandardBankStatementToBudgetEntriesRequest, response *XLSXStandardBankStatementToBudgetEntriesResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err)
+		return bizzleException.ErrUnexpected{}
+	}
+
 	// parse xlsx statement to bytes
 	statementFileDataBytes, err := base64.StdEncoding.DecodeString(request.XLSXStatement)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to decode picture data")
-		return err
+		log.Error().Err(err).Msg("failed to decode excel file data")
+		return bizzleException.ErrUnexpected{}
 	}
 
 	xlsxStandardBankStatementToBudgetEntriesResponse, err := a.admin.XLSXStandardBankStatementToBudgetEntries(&budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest{
 		XLSXStatement: statementFileDataBytes,
+		Claims:        c,
 	})
 	if err != nil {
 		return err

@@ -21,6 +21,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	basicScopeAdmin "github.com/BRBussy/bizzle/internal/pkg/security/scope/basic"
 	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
 	requestValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
@@ -59,10 +60,18 @@ func main() {
 	}()
 
 	//
+	// Scope Admin
+	//
+	BasicScopeAdmin := basicScopeAdmin.New(
+		RequestValidator,
+	)
+
+	//
 	// Budget
 	//
 	MongoBudgetCategoryRuleStore, err := mongoBudgetCategoryRuleStore.New(
 		RequestValidator,
+		BasicScopeAdmin,
 		mongoDb,
 	)
 	if err != nil {
