@@ -83,7 +83,7 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 	}
 
 	// sheet appears valid, parse the rest
-	parsedBudgetEntries := make([]budgetEntry.CompositeEntry, 0)
+	parsedBudgetEntries := make([]budgetEntry.Entry, 0)
 	for rowIdx := range transactionsSheet.Rows[2:] {
 		// check if this is a year row and update year if it is
 		potentialYear, err := transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DateColumnHeader]].Int()
@@ -158,14 +158,11 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 
 		parsedBudgetEntries = append(
 			parsedBudgetEntries,
-			budgetEntry.CompositeEntry{
-				Entry: budgetEntry.Entry{
-					Date:           entryDate,
-					Description:    description,
-					Amount:         amount,
-					CategoryRuleID: categoryRule.ID,
-				},
-				CategoryRule: categoryRule,
+			budgetEntry.Entry{
+				Date:           entryDate,
+				Description:    description,
+				Amount:         amount,
+				CategoryRuleID: categoryRule.ID,
 			},
 		)
 	}

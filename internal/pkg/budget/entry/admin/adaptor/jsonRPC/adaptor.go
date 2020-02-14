@@ -58,10 +58,10 @@ type XLSXStandardBankStatementToBudgetEntriesRequest struct {
 }
 
 type XLSXStandardBankStatementToBudgetEntriesResponse struct {
-	BudgetCompositeEntries []budgetEntry.CompositeEntry `json:"budgetCompositeEntries"`
+	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
 }
 
-func (a *adaptor) XLSXStandardBankStatementToBudgetCompositeEntries(r *http.Request, request *XLSXStandardBankStatementToBudgetEntriesRequest, response *XLSXStandardBankStatementToBudgetEntriesResponse) error {
+func (a *adaptor) XLSXStandardBankStatementToBudgetEntries(r *http.Request, request *XLSXStandardBankStatementToBudgetEntriesRequest, response *XLSXStandardBankStatementToBudgetEntriesResponse) error {
 	c, err := claims.ParseClaimsFromContext(r.Context())
 	if err != nil {
 		log.Error().Err(err)
@@ -83,7 +83,7 @@ func (a *adaptor) XLSXStandardBankStatementToBudgetCompositeEntries(r *http.Requ
 		return err
 	}
 
-	response.BudgetCompositeEntries = xlsxStandardBankStatementToBudgetEntriesResponse.BudgetEntries
+	response.BudgetEntries = xlsxStandardBankStatementToBudgetEntriesResponse.BudgetEntries
 
 	return nil
 }
