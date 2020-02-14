@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	basicScopeAdmin "github.com/BRBussy/bizzle/internal/pkg/security/scope/basic"
 
 	syncBudgetCategoryRulesForUserConfig "github.com/BRBussy/bizzle/configs/syncBudgetCategoryRulesForUser"
 	"github.com/BRBussy/bizzle/internal/app/budget"
@@ -46,6 +47,10 @@ func main() {
 	// create validator
 	RequestValidator := requestValidator.New()
 
+	BasicScopeAdmin := basicScopeAdmin.New(
+		RequestValidator,
+	)
+
 	//
 	// User
 	//
@@ -62,6 +67,7 @@ func main() {
 	//
 	BudgetEntryCategoryRuleMongoStore, err := budgetEntryCategoryRuleMongoStore.New(
 		RequestValidator,
+		BasicScopeAdmin,
 		mongoDb,
 	)
 	if err != nil {
