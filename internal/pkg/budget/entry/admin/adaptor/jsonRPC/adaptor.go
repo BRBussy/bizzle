@@ -75,7 +75,7 @@ func (a *adaptor) XLSXStandardBankStatementToBudgetCompositeEntries(r *http.Requ
 		return bizzleException.ErrUnexpected{}
 	}
 
-	xlsxStandardBankStatementToBudgetEntriesResponse, err := a.admin.XLSXStandardBankStatementToBudgetCompositeEntries(&budgetEntryAdmin.XLSXStandardBankStatementToBudgetCompositeEntriesRequest{
+	xlsxStandardBankStatementToBudgetEntriesResponse, err := a.admin.XLSXStandardBankStatementToBudgetEntries(&budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest{
 		XLSXStatement: statementFileDataBytes,
 		Claims:        c,
 	})
@@ -83,7 +83,7 @@ func (a *adaptor) XLSXStandardBankStatementToBudgetCompositeEntries(r *http.Requ
 		return err
 	}
 
-	response.BudgetCompositeEntries = xlsxStandardBankStatementToBudgetEntriesResponse.BudgetCompositeEntries
+	response.BudgetCompositeEntries = xlsxStandardBankStatementToBudgetEntriesResponse.BudgetEntries
 
 	return nil
 }

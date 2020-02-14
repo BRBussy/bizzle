@@ -30,7 +30,7 @@ func New(
 	}
 }
 
-func (p parser) ParseStatementToBudgetCompositeEntries(request *statementParser.ParseStatementToBudgetCompositeEntriesRequest) (*statementParser.ParseStatementToBudgetCompositeEntriesResponse, error) {
+func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStatementToBudgetEntriesRequest) (*statementParser.ParseStatementToBudgetEntriesResponse, error) {
 	if err := p.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -83,7 +83,7 @@ func (p parser) ParseStatementToBudgetCompositeEntries(request *statementParser.
 	}
 
 	// sheet appears valid, parse the rest
-	parsedBudgetCompositeEntries := make([]budgetEntry.CompositeEntry, 0)
+	parsedBudgetEntries := make([]budgetEntry.CompositeEntry, 0)
 	for rowIdx := range transactionsSheet.Rows[2:] {
 		// check if this is a year row and update year if it is
 		potentialYear, err := transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DateColumnHeader]].Int()
@@ -156,8 +156,8 @@ func (p parser) ParseStatementToBudgetCompositeEntries(request *statementParser.
 			return nil, bizzleException.ErrUnexpected{}
 		}
 
-		parsedBudgetCompositeEntries = append(
-			parsedBudgetCompositeEntries,
+		parsedBudgetEntries = append(
+			parsedBudgetEntries,
 			budgetEntry.CompositeEntry{
 				Entry: budgetEntry.Entry{
 					Date:           entryDate,
@@ -175,5 +175,5 @@ func (p parser) ParseStatementToBudgetCompositeEntries(request *statementParser.
 		return nil, ErrSheetInvalid{Reasons: reasonsInvalid}
 	}
 
-	return &statementParser.ParseStatementToBudgetCompositeEntriesResponse{BudgetCompositeEntries: parsedBudgetCompositeEntries}, nil
+	return &statementParser.ParseStatementToBudgetEntriesResponse{BudgetEntries: parsedBudgetEntries}, nil
 }

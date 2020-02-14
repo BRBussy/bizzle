@@ -6,14 +6,14 @@ import (
 )
 
 type Parser interface {
-	ParseStatementToBudgetCompositeEntries(*ParseStatementToBudgetCompositeEntriesRequest) (*ParseStatementToBudgetCompositeEntriesResponse, error)
+	ParseStatementToBudgetEntries(*ParseStatementToBudgetEntriesRequest) (*ParseStatementToBudgetEntriesResponse, error)
 }
 
-type ParseStatementToBudgetCompositeEntriesRequest struct {
+type ParseStatementToBudgetEntriesRequest struct {
 	Claims    claims.Claims `validate:"required"`
 	Statement []byte        `validate:"required"`
 }
 
-type ParseStatementToBudgetCompositeEntriesResponse struct {
-	BudgetCompositeEntries []budgetEntry.CompositeEntry
+type ParseStatementToBudgetEntriesResponse struct {
+	BudgetEntries []budgetEntry.Entry
 }
