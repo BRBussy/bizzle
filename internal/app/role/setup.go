@@ -3,6 +3,7 @@ package role
 import (
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
+	budgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
 	exerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin"
 	sessionAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/session/admin"
 	sessionStore "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store"
@@ -29,6 +30,7 @@ var initialRoles = []securityRole.Role{
 			budgetEntryAdmin.DuplicateCheckService,
 			budgetEntryAdmin.CreateManyService,
 			budgetAdmin.GetBudgetForDateRangeService,
+			budgetCategoryRuleStore.FindManyService,
 		},
 	},
 	{
