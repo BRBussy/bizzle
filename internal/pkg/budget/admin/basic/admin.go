@@ -4,6 +4,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/budget"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
+	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
@@ -73,8 +74,13 @@ func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRange
 		Entries:   make(map[string][]budgetEntry.Entry),
 	}
 	for _, be := range findManyBudgetEntriesResponse.Records {
-		newBudget.Summary[be.CategoryRule.Name] = newBudget.Summary[be.CategoryRule.Name] + be.Amount
-		newBudget.Entries[be.CategoryRule.Name] = append(newBudget.Entries[be.CategoryRule.Name], be.Entry)
+		if be.CategoryRule.Name == "" {
+			newBudget.Summary[budgetEntryCategoryRule.OtherCategoryRuleName] = newBudget.Summary[budgetEntryCategoryRule.OtherCategoryRuleName] + be.Amount
+			newBudget.Entries[budgetEntryCategoryRule.OtherCategoryRuleName] = append(newBudget.Entries[budgetEntryCategoryRule.OtherCategoryRuleName], be.Entry)
+		} else {
+			newBudget.Summary[be.CategoryRule.Name] = newBudget.Summary[be.CategoryRule.Name] + be.Amount
+			newBudget.Entries[be.CategoryRule.Name] = append(newBudget.Entries[be.CategoryRule.Name], be.Entry)
+		}
 	}
 
 	return &budgetAdmin.GetBudgetForDateRangeResponse{Budget: newBudget}, nil

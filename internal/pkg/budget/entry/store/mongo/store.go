@@ -144,8 +144,11 @@ func (s *store) FindManyComposite(request *budgetEntryStore.FindManyCompositeReq
 		// }
 		{
 			{
-				Key:   "$unwind",
-				Value: "$categoryRule",
+				Key: "$unwind",
+				Value: bson.M{
+					"path":                       "$categoryRule",
+					"preserveNullAndEmptyArrays": true,
+				},
 			},
 		},
 
