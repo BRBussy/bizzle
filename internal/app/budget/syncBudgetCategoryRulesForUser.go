@@ -32,6 +32,7 @@ func SyncBudgetCategoryRulesForUser(
 	// retrieve all rules owned by user
 	findManyRulesResponse, err := budgetEntryCategoryRuleStoreImp.FindMany(&budgetEntryCategoryRuleStore.FindManyRequest{
 		Criteria: make(criteria.Criteria, 0),
+		Claims:   claims.Login{UserID: userID},
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("retrieving all budget entry category rules owned by user")
