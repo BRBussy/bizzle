@@ -14,6 +14,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// SyncBudgetCategoryRulesForUser is used to sync budget category rules for a user
 func SyncBudgetCategoryRulesForUser(
 	userID identifier.ID,
 	budgetEntryCategoryRuleAdminImp budgetEntryCategoryRuleAdmin.Admin,
@@ -103,10 +104,11 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 	{
 		Name: "Electricity",
 		CategoryIdentifiers: []string{
+			"pre-paid electricity",
+			"pre paid electricity",
 			"electricity",
-			"fee",
 		},
-		Strict: true,
+		Strict: false,
 	},
 	{
 		Name: "Car Repayment",
@@ -142,6 +144,72 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		CategoryIdentifiers: []string{
 			"salary",
 			"andile",
+		},
+		Strict: true,
+	},
+	{
+		Name: "Petrol",
+		CategoryIdentifiers: []string{
+			"shell",
+			"engen",
+		},
+		Strict: false,
+	},
+	{
+		Name: "Groceries",
+		CategoryIdentifiers: []string{
+			"checkers",
+			"spar",
+			"woolworths",
+			"pnp",
+			"montagu",
+			"superspar",
+		},
+		Strict: false,
+	},
+	{
+		Name: "Eating Out",
+		CategoryIdentifiers: []string{
+			"the living room",
+			"turn n tender",
+			"makaranga",
+		},
+		Strict: false,
+	},
+	{
+		Name: "Medicine",
+		CategoryIdentifiers: []string{
+			"dischem",
+			"linksfield pharmac",
+		},
+		Strict: false,
+	},
+	{
+		Name: "Rent",
+		CategoryIdentifiers: []string{
+			"rentjune",
+		},
+		Strict: false,
+	},
+	{
+		Name: "Rehab",
+		CategoryIdentifiers: []string{
+			"relapse prevention",
+		},
+		Strict: true,
+	},
+	{
+		Name: "Overdraft",
+		CategoryIdentifiers: []string{
+			"overdraft service fee",
+			"overdraft interest",
+		},
+		Strict: false,
+	},
+	{
+		Name: "Bank Account Fee",
+		CategoryIdentifiers: []string{
+			"fixed monthly fee",
 		},
 		Strict: true,
 	},

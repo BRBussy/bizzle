@@ -55,16 +55,27 @@ func (a *admin) UpdateOne(request *budgetEntryCategoryRuleAdmin.UpdateOneRequest
 		return nil, err
 	}
 
+	// retrieve category rule to update
 	findOneRuleResponse, err := a.budgetEntryCategoryRuleStore.FindOne(&budgetEntryCategoryRuleStore.FindOneRequest{
 		Identifier: request.CategoryRule.ID,
+		Claims:     request.Claims,
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("could not retrieve budget entry rule to update")
 		return nil, bizzleException.ErrUnexpected{}
 	}
 
+	// update allowed fields
 	findOneRuleResponse.CategoryRule.CategoryIdentifiers = request.CategoryRule.CategoryIdentifiers
 	findOneRuleResponse.CategoryRule.Strict = request.CategoryRule.Strict
+
+	// perform update
+	if _, err := a.budgetEntryCategoryRuleStore.UpdateOne(&budgetEntryCategoryRuleStore.UpdateOneRequest{
+		CategoryRule: findOneRuleResponse.CategoryRule,
+	}); err != nil {
+		log.Error().Err(err).Msg("could not perform update")
+		return nil, bizzleException.ErrUnexpected{}
+	}
 
 	return &budgetEntryCategoryRuleAdmin.UpdateOneResponse{}, nil
 }
