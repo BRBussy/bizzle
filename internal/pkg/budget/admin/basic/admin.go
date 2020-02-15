@@ -1,6 +1,8 @@
 package basic
 
 import (
+	"math"
+
 	"github.com/BRBussy/bizzle/internal/pkg/budget"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
@@ -81,6 +83,11 @@ func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRange
 			newBudget.Summary[be.CategoryRule.Name] = newBudget.Summary[be.CategoryRule.Name] + be.Amount
 			newBudget.Entries[be.CategoryRule.Name] = append(newBudget.Entries[be.CategoryRule.Name], be.Entry)
 		}
+	}
+
+	// perform rounding on summary
+	for summaryKey, value := range newBudget.Summary {
+		newBudget.Summary[summaryKey] = math.Round(value*100) / 100
 	}
 
 	return &budgetAdmin.GetBudgetForDateRangeResponse{Budget: newBudget}, nil

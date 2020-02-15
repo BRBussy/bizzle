@@ -115,7 +115,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		},
 	},
 	{
-		Name: "Cellphone AirtimeData",
+		Name: "Cellphone Airtime/Data",
 		CategoryIdentifiers: []string{
 			"vod",
 			"prepaid",

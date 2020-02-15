@@ -1,6 +1,8 @@
 package basic
 
 import (
+	"math"
+
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
@@ -18,6 +20,7 @@ type admin struct {
 	xlsxStandardBankStatementParser statementParser.Parser
 }
 
+// New creates a new basic budget entry admin
 func New(
 	validator validationValidator.Validator,
 	budgetEntryStore budgetEntryStore.Store,
@@ -37,8 +40,12 @@ func (a *admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budget
 	}
 
 	for entryIdx := range request.BudgetEntries {
+		// set ID and onwerID
 		request.BudgetEntries[entryIdx].OwnerID = request.Claims.ScopingID()
 		request.BudgetEntries[entryIdx].ID = identifier.ID(uuid.NewV4().String())
+
+		// round off to 2 units
+		request.BudgetEntries[entryIdx].Amount = math.Round(request.BudgetEntries[entryIdx].Amount*100) / 100
 	}
 
 	if _, err := a.budgetEntryStore.CreateMany(&budgetEntryStore.CreateManyRequest{
@@ -64,17 +71,21 @@ func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) 
 	}, nil
 }
 
-func (a *admin) XLSXStandardBankStatementToBudgetEntries(request *budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest) (*budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse, error) {
+func (a *admin) XLSXStandardBankStatementToBudgetEntries(
+	request *budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest,
+) (*budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
 	// parse standard bank statement
-	parseStatementToBudgetEntriesResponse, err := a.xlsxStandardBankStatementParser.ParseStatementToBudgetEntries(&statementParser.ParseStatementToBudgetEntriesRequest{
-		Claims:    request.Claims,
-		Statement: request.XLSXStatement,
-	})
+	parseStatementToBudgetEntriesResponse, err := a.xlsxStandardBankStatementParser.ParseStatementToBudgetEntries(
+		&statementParser.ParseStatementToBudgetEntriesRequest{
+			Claims:    request.Claims,
+			Statement: request.XLSXStatement,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("error parsing statement to budget entries")
 		return nil, err

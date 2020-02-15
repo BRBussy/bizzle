@@ -2,6 +2,7 @@ package XLSXStandardBank
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"time"
 
@@ -131,6 +132,7 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 				reasonsInvalid = append(reasonsInvalid, fmt.Sprintf("could not parse out amount in row %d", rowIdx+3))
 				continue
 			}
+			amount = math.Round(amount*100) / 100
 		} else {
 			// both are set
 			reasonsInvalid = append(reasonsInvalid, fmt.Sprintf("both in and out amount set in row %d", rowIdx+3))
