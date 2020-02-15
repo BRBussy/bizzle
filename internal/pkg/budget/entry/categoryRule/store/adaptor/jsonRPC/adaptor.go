@@ -1,6 +1,8 @@
 package jsonRPC
 
 import (
+	"net/http"
+
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	budgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
@@ -9,7 +11,6 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/rs/zerolog/log"
-	"net/http"
 )
 
 type adaptor struct {
@@ -29,11 +30,13 @@ func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 	return budgetCategoryRuleStore.ServiceProvider
 }
 
+// FindManyRequest is the request object for FindMany method
 type FindManyRequest struct {
 	Criteria criteria.Serialized `json:"criteria"`
 	Query    mongo.Query         `json:"query"`
 }
 
+// FindManyResponse is the response object for the FindMany method
 type FindManyResponse struct {
 	Records []budgetEntryCategoryRule.CategoryRule `json:"records"`
 	Total   int64                                  `json:"total"`

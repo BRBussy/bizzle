@@ -17,6 +17,7 @@ type adaptor struct {
 	admin budgetEntryAdmin.Admin
 }
 
+// New creates a new jsonrpc adaptor for a budget entry admin
 func New(
 	admin budgetEntryAdmin.Admin,
 ) jsonRPCServiceProvider.Provider {
@@ -29,10 +30,12 @@ func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 	return budgetEntryAdmin.ServiceProvider
 }
 
+// CreateManyRequest is the request object for CreateMany method
 type CreateManyRequest struct {
 	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
 }
 
+// CreateManyResponse is the response object for the CreateMany method
 type CreateManyResponse struct {
 }
 
@@ -53,10 +56,12 @@ func (a *adaptor) CreateMany(r *http.Request, request *CreateManyRequest, respon
 	return nil
 }
 
+// XLSXStandardBankStatementToBudgetEntriesRequest is the request object for XLSXStandardBankStatementToBudgetEntries method
 type XLSXStandardBankStatementToBudgetEntriesRequest struct {
 	XLSXStatement string `json:"xlsxStatement"`
 }
 
+// XLSXStandardBankStatementToBudgetEntriesResponse is the response object for the XLSXStandardBankStatementToBudgetEntries method
 type XLSXStandardBankStatementToBudgetEntriesResponse struct {
 	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
 }
@@ -88,10 +93,12 @@ func (a *adaptor) XLSXStandardBankStatementToBudgetEntries(r *http.Request, requ
 	return nil
 }
 
+// DuplicateCheckRequest is the request object for the DuplicateCheck method
 type DuplicateCheckRequest struct {
 	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
 }
 
+// DuplicateCheckResponse is the response object for the DuplicateCheck method
 type DuplicateCheckResponse struct {
 	Uniques             []budgetEntry.Entry `json:"uniques"`
 	ExactDuplicates     []budgetEntry.Entry `json:"exactDuplicates"`
