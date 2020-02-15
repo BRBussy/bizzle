@@ -2,6 +2,7 @@ package budget
 
 import (
 	"fmt"
+
 	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
 	budgetEntryCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
@@ -108,13 +109,13 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		Strict: true,
 	},
 	{
-		Name: "CarRepayment",
+		Name: "Car Repayment",
 		CategoryIdentifiers: []string{
 			"wesbank",
 		},
 	},
 	{
-		Name: "CellphoneAirtimeData",
+		Name: "Cellphone AirtimeData",
 		CategoryIdentifiers: []string{
 			"vod",
 			"prepaid",
@@ -128,7 +129,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		},
 	},
 	{
-		Name: "MedicalAid",
+		Name: "Medical Aid",
 		CategoryIdentifiers: []string{
 			"disc",
 			"prem",
