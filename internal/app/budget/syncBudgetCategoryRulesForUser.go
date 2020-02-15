@@ -152,6 +152,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		CategoryIdentifiers: []string{
 			"shell",
 			"engen",
+			"cotswold energy centre",
 		},
 		Strict: false,
 	},
@@ -173,6 +174,9 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"the living room",
 			"turn n tender",
 			"makaranga",
+			"lexis eatery",
+			"savior cafe",
+			"little india",
 		},
 		Strict: false,
 	},
@@ -188,6 +192,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		Name: "Rent",
 		CategoryIdentifiers: []string{
 			"rentjune",
+			"richardrent",
 		},
 		Strict: false,
 	},
@@ -210,6 +215,20 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		Name: "Bank Account Fee",
 		CategoryIdentifiers: []string{
 			"fixed monthly fee",
+		},
+		Strict: true,
+	},
+	{
+		Name: "Cash Withdrawal",
+		CategoryIdentifiers: []string{
+			"cash withdrawal",
+		},
+		Strict: true,
+	},
+	{
+		Name: "Muay Thai",
+		CategoryIdentifiers: []string{
+			"primal gym",
 		},
 		Strict: true,
 	},
