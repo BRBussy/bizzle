@@ -10,6 +10,8 @@ import (
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
+	"github.com/BRBussy/bizzle/pkg/search/criteria"
+	dateTimeCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/dateTime"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
@@ -83,11 +85,29 @@ func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) 
 		}
 	}
 
-	fmt.Printf(
-		"dates range from %s to %s",
-		earliestDate.Format("Jan 2 2006"),
-		latestDate.Format("Jan 2 2006"),
-	)
+	// search for all budget entries in this date range
+	findManyResponse, err := a.budgetEntryStore.FindMany(&budgetEntryStore.FindManyRequest{
+		Criteria: criteria.Criteria{
+			dateTimeCriterion.Range{
+				Field: "date",
+				Start: dateTimeCriterion.RangeValue{
+					Date:      earliestDate,
+					Inclusive: true,
+				},
+				End: dateTimeCriterion.RangeValue{
+					Date:      latestDate,
+					Inclusive: true,
+				},
+			},
+		},
+		Claims: request.Claims,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("could not search for budget entries for duplicate check")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	fmt.Println(findManyResponse.Total)
 
 	return &budgetEntryAdmin.DuplicateCheckResponse{
 		Uniques:             request.BudgetEntries,
