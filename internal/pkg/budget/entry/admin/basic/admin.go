@@ -1,7 +1,9 @@
 package basic
 
 import (
+	"fmt"
 	"math"
+	"time"
 
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
@@ -63,6 +65,29 @@ func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) 
 		log.Error().Err(err)
 		return nil, err
 	}
+
+	// find range of category entries being checked
+	var earliestDate time.Time = time.Now()
+	var latestDate time.Time = time.Now()
+	// for every that needs to be part of the duplicate check ...
+	for _, entryToCheck := range request.BudgetEntries {
+		// if it is before the listed earliest date
+		if earliestDate.After(entryToCheck.Date) {
+			// update earliest date to this entry's date
+			earliestDate = entryToCheck.Date
+		}
+		// if it is after the latest date
+		if latestDate.Before(entryToCheck.Date) {
+			// update lastest dat to this entry's date
+			latestDate = entryToCheck.Date
+		}
+	}
+
+	fmt.Printf(
+		"dates range from %s to %s",
+		earliestDate.Format("Jan 2 2006"),
+		latestDate.Format("Jan 2 2006"),
+	)
 
 	return &budgetEntryAdmin.DuplicateCheckResponse{
 		Uniques:             request.BudgetEntries,
