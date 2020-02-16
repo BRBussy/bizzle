@@ -32,8 +32,13 @@ type DuplicateCheckRequest struct {
 
 type DuplicateCheckResponse struct {
 	Uniques             []budgetEntry.Entry
-	ExactDuplicates     []budgetEntry.Entry
-	SuspectedDuplicates []budgetEntry.Entry
+	ExactDuplicates     []DuplicateEntries
+	SuspectedDuplicates []DuplicateEntries
+}
+
+type DuplicateEntries struct {
+	Existing budgetEntry.Entry `json:"existing"`
+	New      budgetEntry.Entry `bson:"new"`
 }
 
 type XLSXStandardBankStatementToBudgetEntriesRequest struct {

@@ -100,9 +100,9 @@ type DuplicateCheckRequest struct {
 
 // DuplicateCheckResponse is the response object for the DuplicateCheck method
 type DuplicateCheckResponse struct {
-	Uniques             []budgetEntry.Entry `json:"uniques"`
-	ExactDuplicates     []budgetEntry.Entry `json:"exactDuplicates"`
-	SuspectedDuplicates []budgetEntry.Entry `json:"suspectedDuplicates"`
+	Uniques             []budgetEntry.Entry                 `json:"uniques"`
+	ExactDuplicates     []budgetEntryAdmin.DuplicateEntries `json:"exactDuplicates"`
+	SuspectedDuplicates []budgetEntryAdmin.DuplicateEntries `json:"suspectedDuplicates"`
 }
 
 func (a *adaptor) DuplicateCheck(r *http.Request, request *DuplicateCheckRequest, response *DuplicateCheckResponse) error {

@@ -1,7 +1,6 @@
 package basic
 
 import (
-	"fmt"
 	"math"
 	"time"
 
@@ -107,12 +106,54 @@ func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) 
 		return nil, bizzleException.ErrUnexpected{}
 	}
 
-	fmt.Println(findManyResponse.Total)
+	// exact duplicates are two entries that match exactly
+	exactDuplicates := make([]budgetEntryAdmin.DuplicateEntries, 0)
+	// suspected duplicates are two entries that are on the same date with same amount
+	suspectedDuplicates := make([]budgetEntryAdmin.DuplicateEntries, 0)
+	uniques := make([]budgetEntry.Entry, 0)
+
+	// for every new entry to import...
+nextEntryToImport:
+	for _, entryToImport := range request.BudgetEntries {
+		// check to see if it is either an exact or suspected duplicate of any of the existing items
+		for _, existingEntry := range findManyResponse.Records {
+
+			// if it is an exact duplicate add it to the exacts
+			if existingEntry.ExactDuplicate(entryToImport) {
+				exactDuplicates = append(
+					exactDuplicates,
+					budgetEntryAdmin.DuplicateEntries{
+						Existing: existingEntry,
+						New:      entryToImport,
+					},
+				)
+				// and continue to next entry to import
+				continue nextEntryToImport
+			}
+
+			// otherwise check if it is a suspected duplicate
+			if existingEntry.SuspectedDuplicate(entryToImport) {
+				suspectedDuplicates = append(
+					suspectedDuplicates,
+					budgetEntryAdmin.DuplicateEntries{
+						Existing: existingEntry,
+						New:      entryToImport,
+					},
+				)
+				// and continue to next entry to import
+				continue nextEntryToImport
+			}
+		}
+
+		// if execution reaches here, the entry is neither an exact nor suspcected duplicate
+		// assume it is unique
+		uniques = append(uniques, entryToImport)
+	}
 
 	return &budgetEntryAdmin.DuplicateCheckResponse{
-		Uniques:             request.BudgetEntries,
-		ExactDuplicates:     make([]budgetEntry.Entry, 0),
-		SuspectedDuplicates: make([]budgetEntry.Entry, 0),
+		Uniques:             uniques,
+		ExactDuplicates:     exactDuplicates,
+		SuspectedDuplicates: suspectedDuplicates,
 	}, nil
 }
 
