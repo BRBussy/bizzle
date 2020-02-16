@@ -5,6 +5,7 @@ import (
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	"github.com/BRBussy/bizzle/internal/pkg/security/scope"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,12 +13,15 @@ import (
 )
 
 type store struct {
+	scopeAdmin scope.Admin
 	validator  validationValidator.Validator
 	collection *mongo.Collection
 }
 
+// New creates a new mongo budget entry store
 func New(
 	validator validationValidator.Validator,
+	scopeAdmin scope.Admin,
 	database *mongo.Database,
 ) (budgetEntryStore.Store, error) {
 	// get budgetEntry collection
@@ -34,6 +38,7 @@ func New(
 	return &store{
 		validator:  validator,
 		collection: budgetEntryCollection,
+		scopeAdmin: scopeAdmin,
 	}, nil
 }
 
@@ -95,8 +100,17 @@ func (s *store) FindMany(request *budgetEntryStore.FindManyRequest) (*budgetEntr
 		return nil, err
 	}
 
+	applyScopeToCriteriaResponse, err := s.scopeAdmin.ApplyScopeToCriteria(&scope.ApplyScopeToCriteriaRequest{
+		Claims:          request.Claims,
+		CriteriaToScope: request.Criteria,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("could not apply scope to criteria")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
 	var records []budgetEntry.Entry
-	count, err := s.collection.FindMany(&records, request.Criteria, request.Query)
+	count, err := s.collection.FindMany(&records, applyScopeToCriteriaResponse.ScopedCriteria, request.Query)
 	if err != nil {
 		log.Error().Err(err).Msg("finding exercises")
 		return nil, bizzleException.ErrUnexpected{}

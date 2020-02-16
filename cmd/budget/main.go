@@ -88,6 +88,7 @@ func main() {
 	)
 	MongoBudgetEntryStore, err := mongoBudgetEntryStore.New(
 		RequestValidator,
+		BasicScopeAdmin,
 		mongoDb,
 	)
 	if err != nil {
