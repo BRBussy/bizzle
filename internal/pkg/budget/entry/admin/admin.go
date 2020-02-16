@@ -38,7 +38,7 @@ type DuplicateCheckResponse struct {
 
 type DuplicateEntries struct {
 	Existing budgetEntry.Entry `json:"existing"`
-	New      budgetEntry.Entry `bson:"new"`
+	New      budgetEntry.Entry `json:"new"`
 }
 
 type XLSXStandardBankStatementToBudgetEntriesRequest struct {
