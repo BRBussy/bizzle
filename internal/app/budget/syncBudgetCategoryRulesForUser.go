@@ -204,6 +204,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"mugg and bean",
 			"uber eats",
 			"fego",
+			"we make coffee",
 		},
 		Strict: false,
 	},
