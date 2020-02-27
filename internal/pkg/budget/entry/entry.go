@@ -18,10 +18,10 @@ type Entry struct {
 }
 
 // UpperDuplicateMargin is the amount an entry's value can be above anothers and still be considered a dupilicate
-const UpperDuplicateMargin float64 = 5
+const UpperDuplicateMargin float64 = 2
 
 // LowerDuplicateMargin is the amount an entry's value can be below anothers and still be considered a dupilicate
-const LowerDuplicateMargin float64 = 5
+const LowerDuplicateMargin float64 = 2
 
 // ExactDuplicate is used to compare a budget entry with another to determine if they are exact duplicates
 func (e Entry) ExactDuplicate(be Entry) bool {

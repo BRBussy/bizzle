@@ -79,7 +79,7 @@ func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) 
 		}
 		// if it is after the latest date
 		if latestDate.Before(entryToCheck.Date) {
-			// update lastest dat to this entry's date
+			// update latest date to this entry's date
 			latestDate = entryToCheck.Date
 		}
 	}
@@ -115,10 +115,9 @@ func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) 
 	// for every new entry to import...
 nextEntryToImport:
 	for _, entryToImport := range request.BudgetEntries {
-		// check to see if it is either an exact or suspected duplicate of any of the existing items
-		for _, existingEntry := range findManyResponse.Records {
 
-			// if it is an exact duplicate add it to the exacts
+		// check to see if it is an exact suspected duplicate of any of the existing items
+		for _, existingEntry := range findManyResponse.Records {
 			if existingEntry.ExactDuplicate(entryToImport) {
 				exactDuplicates = append(
 					exactDuplicates,
@@ -127,11 +126,12 @@ nextEntryToImport:
 						New:      entryToImport,
 					},
 				)
-				// and continue to next entry to import
 				continue nextEntryToImport
 			}
+		}
 
-			// otherwise check if it is a suspected duplicate
+		// check to see if it a suspected duplicated of any of the existing items
+		for _, existingEntry := range findManyResponse.Records {
 			if existingEntry.SuspectedDuplicate(entryToImport) {
 				suspectedDuplicates = append(
 					suspectedDuplicates,
@@ -140,12 +140,11 @@ nextEntryToImport:
 						New:      entryToImport,
 					},
 				)
-				// and continue to next entry to import
 				continue nextEntryToImport
 			}
 		}
 
-		// if execution reaches here, the entry is neither an exact nor suspcected duplicate
+		// if execution reaches here, the entry is neither an exact nor suspected duplicate
 		// assume it is unique
 		uniques = append(uniques, entryToImport)
 	}
