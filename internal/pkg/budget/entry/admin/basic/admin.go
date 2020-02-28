@@ -117,8 +117,9 @@ nextEntryToImport:
 	for _, entryToImport := range request.BudgetEntries {
 
 		// check to see if it is an exact suspected duplicate of any of the existing items
-		for _, existingEntry := range findManyResponse.Records {
+		for entryIdx, existingEntry := range findManyResponse.Records {
 			if existingEntry.ExactDuplicate(entryToImport) {
+				// if one is found, add it to list
 				exactDuplicates = append(
 					exactDuplicates,
 					budgetEntryAdmin.DuplicateEntries{
@@ -126,6 +127,8 @@ nextEntryToImport:
 						New:      entryToImport,
 					},
 				)
+				// and remove it from entry records, do not let it take part in future checks
+				removeBudgetEntry(&findManyResponse.Records, entryIdx)
 				continue nextEntryToImport
 			}
 		}
@@ -179,4 +182,9 @@ func (a *admin) XLSXStandardBankStatementToBudgetEntries(
 	return &budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse{
 		BudgetEntries: parseStatementToBudgetEntriesResponse.BudgetEntries,
 	}, nil
+}
+
+func removeBudgetEntry(budgetEntries *[]budgetEntry.Entry, idxToRemove int) {
+	(*budgetEntries)[len(*budgetEntries)-1], (*budgetEntries)[idxToRemove] = (*budgetEntries)[idxToRemove], (*budgetEntries)[len(*budgetEntries)-1]
+	*budgetEntries = (*budgetEntries)[:len(*budgetEntries)-1]
 }
