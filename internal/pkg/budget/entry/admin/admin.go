@@ -5,47 +5,72 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 )
 
+// Admin is the budget entry admin interface
 type Admin interface {
 	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
+	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
 	DuplicateCheck(*DuplicateCheckRequest) (*DuplicateCheckResponse, error)
 	XLSXStandardBankStatementToBudgetEntries(*XLSXStandardBankStatementToBudgetEntriesRequest) (*XLSXStandardBankStatementToBudgetEntriesResponse, error)
 }
 
+// ServiceProvider is the budget entry admin service provider name
 const ServiceProvider = "BudgetEntry-Admin"
 
+// CreateManyService is the service name for CreateMany
 const CreateManyService = ServiceProvider + ".CreateMany"
+
+// DuplicateCheckService is the service name for DuplicateCheck
 const DuplicateCheckService = ServiceProvider + ".DuplicateCheck"
+
+// XLSXStandardBankStatementToBudgetCompositeEntriesService is the service name for XLSXStandardBankStatementToBudgetCompositeEntries
 const XLSXStandardBankStatementToBudgetCompositeEntriesService = ServiceProvider + ".XLSXStandardBankStatementToBudgetEntries"
 
+// CreateManyRequest is the request object for the CreateMany service
 type CreateManyRequest struct {
 	BudgetEntries []budgetEntry.Entry `validate:"required,gt=1"`
 	Claims        claims.Claims       `validate:"required"`
 }
 
+// CreateManyResponse is the response object for the CreateMany service
 type CreateManyResponse struct {
 }
 
+// DuplicateCheckRequest is the request object for the DuplicateCheck service
 type DuplicateCheckRequest struct {
 	BudgetEntries []budgetEntry.Entry `validate:"required,gt=1"`
 	Claims        claims.Claims       `validate:"required"`
 }
 
+// DuplicateCheckResponse is the response object for the DuplicateCheck service
 type DuplicateCheckResponse struct {
 	Uniques             []budgetEntry.Entry
 	ExactDuplicates     []DuplicateEntries
 	SuspectedDuplicates []DuplicateEntries
 }
 
+// DuplicateEntries is used to hold an duplicate check result pair
 type DuplicateEntries struct {
 	Existing budgetEntry.Entry `json:"existing"`
 	New      budgetEntry.Entry `json:"new"`
 }
 
+// XLSXStandardBankStatementToBudgetEntriesRequest is the XLSXStandardBankStatementToBudgetEntries service request object
 type XLSXStandardBankStatementToBudgetEntriesRequest struct {
 	Claims        claims.Claims `validate:"required"`
 	XLSXStatement []byte        `validate:"required"`
 }
 
+// XLSXStandardBankStatementToBudgetEntriesResponse is the XLSXStandardBankStatementToBudgetEntries service response object
 type XLSXStandardBankStatementToBudgetEntriesResponse struct {
 	BudgetEntries []budgetEntry.Entry
+}
+
+// UpdateOneRequest is the request object for the UpdateOne service
+type UpdateOneRequest struct {
+	Claims      claims.Claims `validate:"required"`
+	BudgetEntry budgetEntry.Entry
+}
+
+// UpdateOneResponse is the response object for the UpdateOneService
+type UpdateOneResponse struct {
 }
