@@ -34,7 +34,7 @@ const XLSXStandardBankStatementToBudgetCompositeEntriesService = ServiceProvider
 
 // CreateManyRequest is the request object for the CreateMany service
 type CreateManyRequest struct {
-	BudgetEntries []budgetEntry.Entry `validate:"required,gt=1"`
+	BudgetEntries []budgetEntry.Entry `validate:"required,gt=0"`
 	Claims        claims.Claims       `validate:"required"`
 }
 
