@@ -53,6 +53,23 @@ func (a *admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budget
 
 		// round off to 2 units
 		request.BudgetEntries[entryIdx].Amount = math.Round(request.BudgetEntries[entryIdx].Amount*100) / 100
+
+		// validate the entry for create
+		validateForUpdateResponse, err := a.budgetEntryValidator.ValidateForCreate(&budgetEntryValidator.ValidateForCreateRequest{
+			Claims:      request.Claims,
+			BudgetEntry: request.BudgetEntries[entryIdx],
+		})
+		if err != nil {
+			log.Error().Err(err).Msg("error validating entry for create")
+			return nil, bizzleException.ErrUnexpected{}
+		}
+
+		// check if there are any reasons that the entry is invalid
+		if len(validateForUpdateResponse.ReasonsInvalid) > 0 {
+			return nil, budgetEntry.ErrInvalidEntry{
+				ReasonsInvalid: validateForUpdateResponse.ReasonsInvalid,
+			}
+		}
 	}
 
 	if _, err := a.budgetEntryStore.CreateMany(&budgetEntryStore.CreateManyRequest{
@@ -211,7 +228,9 @@ func (a *admin) UpdateOne(request *budgetEntryAdmin.UpdateOneRequest) (*budgetEn
 
 	// check if there are any reasons that the entry is invalid
 	if len(validateForUpdateResponse.ReasonsInvalid) > 0 {
-		return nil, budgetEntry.ErrInvalidEntry{ReasonsInvalid: validateForUpdateResponse.ReasonsInvalid}
+		return nil, budgetEntry.ErrInvalidEntry{
+			ReasonsInvalid: validateForUpdateResponse.ReasonsInvalid,
+		}
 	}
 
 	return &budgetEntryAdmin.UpdateOneResponse{}, nil
