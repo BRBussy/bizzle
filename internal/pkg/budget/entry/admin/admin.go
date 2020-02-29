@@ -9,6 +9,7 @@ import (
 type Admin interface {
 	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
 	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
+	UpdateMany(*UpdateManyRequest) (*UpdateManyResponse, error)
 	DuplicateCheck(*DuplicateCheckRequest) (*DuplicateCheckResponse, error)
 	XLSXStandardBankStatementToBudgetEntries(*XLSXStandardBankStatementToBudgetEntriesRequest) (*XLSXStandardBankStatementToBudgetEntriesResponse, error)
 }
@@ -73,4 +74,14 @@ type UpdateOneRequest struct {
 
 // UpdateOneResponse is the response object for the UpdateOneService
 type UpdateOneResponse struct {
+}
+
+// UpdateManyRequest is the request object for the UpdateMany service
+type UpdateManyRequest struct {
+	Claims        claims.Claims `validate:"required"`
+	BudgetEntries []budgetEntry.Entry
+}
+
+// UpdateManyResponse is the response object for the UpdateMany service
+type UpdateManyResponse struct {
 }

@@ -257,3 +257,57 @@ func (a *admin) UpdateOne(request *budgetEntryAdmin.UpdateOneRequest) (*budgetEn
 
 	return &budgetEntryAdmin.UpdateOneResponse{}, nil
 }
+
+func (a *admin) UpdateMany(request *budgetEntryAdmin.UpdateManyRequest) (*budgetEntryAdmin.UpdateManyResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	// validate and confirm retrieval of every entry being updated
+	for entryToUpdateIdx := range request.BudgetEntries {
+		// validate the entry for update
+		validateForUpdateResponse, err := a.budgetEntryValidator.ValidateForUpdate(&budgetEntryValidator.ValidateForUpdateRequest{
+			Claims:      request.Claims,
+			BudgetEntry: request.BudgetEntries[entryToUpdateIdx],
+		})
+		if err != nil {
+			log.Error().Err(err).Msg("error validating entry for update")
+			return nil, bizzleException.ErrUnexpected{}
+		}
+
+		// check if there are any reasons that the entry is invalid
+		if len(validateForUpdateResponse.ReasonsInvalid) > 0 {
+			return nil, budgetEntry.ErrInvalidEntry{
+				ReasonsInvalid: validateForUpdateResponse.ReasonsInvalid,
+			}
+		}
+
+		// retrieve the entry that needs to be updated
+		findOneEntryResponse, err := a.budgetEntryStore.FindOne(&budgetEntryStore.FindOneRequest{
+			Claims:     request.Claims,
+			Identifier: request.BudgetEntries[entryToUpdateIdx].ID,
+		})
+		if err != nil {
+			log.Error().Err(err).Msg("could not retrieve budget entry to be updated")
+			return nil, bizzleException.ErrUnexpected{}
+		}
+
+		// set fields that are not allowed to be updated
+		request.BudgetEntries[entryToUpdateIdx].OwnerID = findOneEntryResponse.Entry.OwnerID
+	}
+
+	// perform updates
+	for _, entryToUpdate := range request.BudgetEntries {
+		// perform update
+		if _, err := a.budgetEntryStore.UpdateOne(&budgetEntryStore.UpdateOneRequest{
+			Claims: request.Claims,
+			Entry:  entryToUpdate,
+		}); err != nil {
+			log.Error().Err(err).Msg("could not update budget entry")
+			return nil, bizzleException.ErrUnexpected{}
+		}
+	}
+
+	return &budgetEntryAdmin.UpdateManyResponse{}, nil
+}
