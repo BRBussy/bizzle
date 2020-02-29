@@ -125,3 +125,55 @@ func (a *adaptor) DuplicateCheck(r *http.Request, request *DuplicateCheckRequest
 
 	return nil
 }
+
+// UpdateOneRequest is the request object for UpdateOne method
+type UpdateOneRequest struct {
+	BudgetEntry budgetEntry.Entry `json:"budgetEntry"`
+}
+
+// UpdateOneResponse is the response object for the update one method
+type UpdateOneResponse struct {
+}
+
+func (a *adaptor) UpdateOne(r *http.Request, request *UpdateOneRequest, response *UpdateOneResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not parse claims from context")
+		return exception.ErrUnexpected{}
+	}
+
+	if _, err := a.admin.UpdateOne(&budgetEntryAdmin.UpdateOneRequest{
+		Claims:      c,
+		BudgetEntry: request.BudgetEntry,
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateManyRequest is the request object for UpdateMany method
+type UpdateManyRequest struct {
+	BudgetEntries []budgetEntry.Entry `json:"budgetEntry"`
+}
+
+// UpdateManyResponse is the response object for the UpdateMany method
+type UpdateManyResponse struct {
+}
+
+func (a *adaptor) UpdateMany(r *http.Request, request *UpdateManyRequest, response *UpdateManyResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not parse claims from context")
+		return exception.ErrUnexpected{}
+	}
+
+	if _, err := a.admin.UpdateMany(&budgetEntryAdmin.UpdateManyRequest{
+		Claims:        c,
+		BudgetEntries: request.BudgetEntries,
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
