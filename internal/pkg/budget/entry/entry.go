@@ -11,7 +11,7 @@ import (
 type Entry struct {
 	ID             identifier.ID `json:"id" bson:"id"`
 	OwnerID        identifier.ID `validate:"required" json:"ownerID" bson:"ownerID"`
-	Date           time.Time     `validate:"required,date" json:"date" bson:"date"`
+	Date           time.Time     `validate:"required" json:"date" bson:"date"`
 	Description    string        `validate:"required" json:"description" bson:"description"`
 	Amount         float64       `validate:"required" json:"amount" bson:"amount"`
 	CategoryRuleID identifier.ID `json:"categoryRuleID" bson:"categoryRuleID"`
