@@ -20,6 +20,7 @@ type admin struct {
 	budgetEntryStore budgetEntryStore.Store
 }
 
+// New creates a new basic budget admin
 func New(
 	validator validationValidator.Validator,
 	budgetEntryStore budgetEntryStore.Store,

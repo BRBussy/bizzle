@@ -14,17 +14,17 @@ type validator struct {
 
 // New creates a new basic budget entry validator
 func New(
-	validator validationValidator.Validator,
+	validationValidator validationValidator.Validator,
 	budgetEntryCategoryRuleStore budgetEntryCategoryRuleStore.Store,
 ) budgetEntryValidator.Validator {
 	return &validator{
-		validator:                    validator,
+		validator:                    validationValidator,
 		budgetEntryCategoryRuleStore: budgetEntryCategoryRuleStore,
 	}
 }
 
 func (v *validator) ValidateForCreate(request *budgetEntryValidator.ValidateForCreateRequest) (*budgetEntryValidator.ValidateForCreateResponse, error) {
-	if err := a.validator.Validate(request); err != nil {
+	if err := v.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (v *validator) ValidateForCreate(request *budgetEntryValidator.ValidateForC
 }
 
 func (v *validator) ValidateForUpdate(request *budgetEntryValidator.ValidateForUpdateRequest) (*budgetEntryValidator.ValidateForUpdateResponse, error) {
-	if err := a.validator.Validate(request); err != nil {
+	if err := v.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}

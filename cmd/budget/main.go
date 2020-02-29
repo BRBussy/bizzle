@@ -95,19 +95,19 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo budget entry store")
 	}
-	BasicBudgetEntryAdmin := basicBudgetEntryAdmin.New(
-		RequestValidator,
-		MongoBudgetEntryStore,
-		XLSXStandardBankStatementParser,
-	)
 	BasicBudgetEntryValidator := basicBudgetEntryValidator.New(
 		RequestValidator,
 		MongoBudgetCategoryRuleStore,
 	)
-	BasicBudgetAdmin := basicBudgetAdmin.New(
+	BasicBudgetEntryAdmin := basicBudgetEntryAdmin.New(
 		RequestValidator,
 		MongoBudgetEntryStore,
 		BasicBudgetEntryValidator,
+		XLSXStandardBankStatementParser,
+	)
+	BasicBudgetAdmin := basicBudgetAdmin.New(
+		RequestValidator,
+		MongoBudgetEntryStore,
 	)
 
 	//
