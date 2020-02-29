@@ -29,6 +29,8 @@ var initialRoles = []securityRole.Role{
 			budgetEntryAdmin.XLSXStandardBankStatementToBudgetCompositeEntriesService,
 			budgetEntryAdmin.DuplicateCheckService,
 			budgetEntryAdmin.CreateManyService,
+			budgetEntryAdmin.UpdateOneService,
+			budgetEntryAdmin.UpdateManyService,
 			budgetAdmin.GetBudgetForDateRangeService,
 			budgetCategoryRuleStore.FindManyService,
 		},
