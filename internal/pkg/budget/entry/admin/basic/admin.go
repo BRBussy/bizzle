@@ -199,5 +199,20 @@ func (a *admin) UpdateOne(request *budgetEntryAdmin.UpdateOneRequest) (*budgetEn
 		return nil, err
 	}
 
+	// validate the entry for update
+	validateForUpdateResponse, err := a.budgetEntryValidator.ValidateForUpdate(&budgetEntryValidator.ValidateForUpdateRequest{
+		Claims:      request.Claims,
+		BudgetEntry: request.BudgetEntry,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("error validating entry for update")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	// check if there are any reasons that the entry is invalid
+	if len(validateForUpdateResponse.ReasonsInvalid) > 0 {
+		return nil, budgetEntry.ErrInvalidEntry{ReasonsInvalid: validateForUpdateResponse.ReasonsInvalid}
+	}
+
 	return &budgetEntryAdmin.UpdateOneResponse{}, nil
 }

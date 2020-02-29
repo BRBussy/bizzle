@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// ReasonInvalid is a reason that an entity is invalid
 type ReasonInvalid struct {
 	Field string      `json:"field"`
 	Type  Type        `json:"type"`
@@ -16,6 +17,7 @@ func (r ReasonInvalid) String() string {
 	return fmt.Sprintf("%s - %s", r.Field, r.Type)
 }
 
+// ReasonsInvalid is list of reasons why an entity is invalid
 type ReasonsInvalid []ReasonInvalid
 
 func (r ReasonsInvalid) String() string {
