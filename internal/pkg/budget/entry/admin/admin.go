@@ -24,7 +24,7 @@ const CreateManyService = ServiceProvider + ".CreateMany"
 const UpdateOneService = ServiceProvider + ".UpdateOne"
 
 // UpdateManyService is the service name for UpdateMany
-const UpdateManyService = ServiceProvider + ".Many"
+const UpdateManyService = ServiceProvider + ".UpdateMany"
 
 // DuplicateCheckService is the service name for DuplicateCheck
 const DuplicateCheckService = ServiceProvider + ".DuplicateCheck"

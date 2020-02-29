@@ -154,7 +154,7 @@ func (a *adaptor) UpdateOne(r *http.Request, request *UpdateOneRequest, response
 
 // UpdateManyRequest is the request object for UpdateMany method
 type UpdateManyRequest struct {
-	BudgetEntries []budgetEntry.Entry `json:"budgetEntry"`
+	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
 }
 
 // UpdateManyResponse is the response object for the UpdateMany method
