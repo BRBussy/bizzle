@@ -192,3 +192,12 @@ func removeBudgetEntry(budgetEntries *[]budgetEntry.Entry, idxToRemove int) {
 	(*budgetEntries)[len(*budgetEntries)-1], (*budgetEntries)[idxToRemove] = (*budgetEntries)[idxToRemove], (*budgetEntries)[len(*budgetEntries)-1]
 	*budgetEntries = (*budgetEntries)[:len(*budgetEntries)-1]
 }
+
+func (a *admin) UpdateOne(request *budgetEntryAdmin.UpdateOneRequest) (*budgetEntryAdmin.UpdateOneResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	return &budgetEntryAdmin.UpdateOneResponse{}, nil
+}
