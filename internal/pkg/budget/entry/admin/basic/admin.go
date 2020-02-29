@@ -7,6 +7,7 @@ import (
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
+	budgetEntryValidator "github.com/BRBussy/bizzle/internal/pkg/budget/entry/validator"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
@@ -20,6 +21,7 @@ import (
 type admin struct {
 	validator                       validationValidator.Validator
 	budgetEntryStore                budgetEntryStore.Store
+	budgetEntryValidator            budgetEntryValidator.Validator
 	xlsxStandardBankStatementParser statementParser.Parser
 }
 
@@ -27,11 +29,13 @@ type admin struct {
 func New(
 	validator validationValidator.Validator,
 	budgetEntryStore budgetEntryStore.Store,
+	budgetEntryValidator budgetEntryValidator.Validator,
 	xlsxStandardBankStatementParser statementParser.Parser,
 ) budgetEntryAdmin.Admin {
 	return &admin{
 		budgetEntryStore:                budgetEntryStore,
 		validator:                       validator,
+		budgetEntryValidator:            budgetEntryValidator,
 		xlsxStandardBankStatementParser: xlsxStandardBankStatementParser,
 	}
 }

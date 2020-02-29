@@ -18,6 +18,7 @@ import (
 	budgetCategoryRuleStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/adaptor/jsonRPC"
 	mongoBudgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/mongo"
 	mongoBudgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store/mongo"
+	basicBudgetEntryValidator "github.com/BRBussy/bizzle/internal/pkg/budget/entry/validator/basic"
 	xlsxStandardBankStatementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser/XLSXStandardBank"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
@@ -99,9 +100,14 @@ func main() {
 		MongoBudgetEntryStore,
 		XLSXStandardBankStatementParser,
 	)
+	BasicBudgetEntryValidator := basicBudgetEntryValidator.New(
+		RequestValidator,
+		MongoBudgetCategoryRuleStore,
+	)
 	BasicBudgetAdmin := basicBudgetAdmin.New(
 		RequestValidator,
 		MongoBudgetEntryStore,
+		BasicBudgetEntryValidator,
 	)
 
 	//
