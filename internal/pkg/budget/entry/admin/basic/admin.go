@@ -233,5 +233,27 @@ func (a *admin) UpdateOne(request *budgetEntryAdmin.UpdateOneRequest) (*budgetEn
 		}
 	}
 
+	// retrieve the entry that needs to be updated
+	findOneEntryResponse, err := a.budgetEntryStore.FindOne(&budgetEntryStore.FindOneRequest{
+		Claims:     request.Claims,
+		Identifier: request.BudgetEntry.ID,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("could not retrieve budget entry to be updated")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	// set fields that are not allowed to be updated
+	request.BudgetEntry.OwnerID = findOneEntryResponse.Entry.OwnerID
+
+	// perform update
+	if _, err := a.budgetEntryStore.UpdateOne(&budgetEntryStore.UpdateOneRequest{
+		Claims: request.Claims,
+		Entry:  request.BudgetEntry,
+	}); err != nil {
+		log.Error().Err(err).Msg("could not update budget entry")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
 	return &budgetEntryAdmin.UpdateOneResponse{}, nil
 }

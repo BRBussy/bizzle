@@ -71,7 +71,8 @@ type FindManyCompositeResponse struct {
 }
 
 type UpdateOneRequest struct {
-	Entry budgetEntry.Entry
+	Entry  budgetEntry.Entry
+	Claims claims.Claims `validate:"required"`
 }
 
 type UpdateOneResponse struct {

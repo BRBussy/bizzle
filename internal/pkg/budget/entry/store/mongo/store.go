@@ -78,8 +78,17 @@ func (s *store) FindOne(request *budgetEntryStore.FindOneRequest) (*budgetEntryS
 		return nil, err
 	}
 
+	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(&scope.ApplyScopeToIdentifierRequest{
+		Claims:            request.Claims,
+		IdentifierToScope: request.Identifier,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("could not apply scope to identifier")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
 	var result budgetEntry.Entry
-	if err := s.collection.FindOne(&result, request.Identifier); err != nil {
+	if err := s.collection.FindOne(&result, applyScopeToIdentifierResponse.ScopedIdentifier); err != nil {
 		switch err.(type) {
 		case mongo.ErrNotFound:
 			return nil, err
@@ -201,7 +210,16 @@ func (s *store) UpdateOne(request *budgetEntryStore.UpdateOneRequest) (*budgetEn
 		return nil, err
 	}
 
-	if err := s.collection.UpdateOne(request.Entry, request.Entry.ID); err != nil {
+	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(&scope.ApplyScopeToIdentifierRequest{
+		Claims:            request.Claims,
+		IdentifierToScope: request.Entry.ID,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("could not apply scope to identifier")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	if err := s.collection.UpdateOne(request.Entry, applyScopeToIdentifierResponse.ScopedIdentifier); err != nil {
 		log.Error().Err(err).Msg("updating budgetEntry")
 		return nil, err
 	}

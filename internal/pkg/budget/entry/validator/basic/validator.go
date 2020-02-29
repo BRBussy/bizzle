@@ -67,5 +67,31 @@ func (v *validator) ValidateForUpdate(request *budgetEntryValidator.ValidateForU
 		return nil, err
 	}
 
+	reasonsInvalid := make(reasonInvalid.ReasonsInvalid, 0)
+
+	if request.BudgetEntry.CategoryRuleID != "" {
+		// if category rule ID is not blank, this user should be able to retrieve it
+		if _, err := v.budgetEntryCategoryRuleStore.FindOne(&budgetEntryCategoryRuleStore.FindOneRequest{
+			Claims:     request.Claims,
+			Identifier: request.BudgetEntry.CategoryRuleID,
+		}); err != nil {
+			switch err.(type) {
+			case mongo.ErrNotFound:
+				reasonsInvalid = append(
+					reasonsInvalid,
+					reasonInvalid.ReasonInvalid{
+						Field: "categoryRuleID",
+						Type:  reasonInvalid.DoesntExist,
+						Help:  "must exist",
+						Data:  request.BudgetEntry.CategoryRuleID,
+					},
+				)
+			default:
+				log.Error().Err(err).Msg("unable to retrieve budget category rule")
+				return nil, bizzleException.ErrUnexpected{}
+			}
+		}
+	}
+
 	return &budgetEntryValidator.ValidateForUpdateResponse{}, nil
 }
