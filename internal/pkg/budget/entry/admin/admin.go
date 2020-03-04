@@ -7,6 +7,7 @@ import (
 
 // Admin is the budget entry admin interface
 type Admin interface {
+	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
 	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
 	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
 	UpdateMany(*UpdateManyRequest) (*UpdateManyResponse, error)
@@ -80,6 +81,17 @@ type UpdateOneRequest struct {
 
 // UpdateOneResponse is the response object for the UpdateOneService
 type UpdateOneResponse struct {
+}
+
+// CreateOneRequest is the request object for the CreateOne service
+type CreateOneRequest struct {
+	Claims      claims.Claims `validate:"required"`
+	BudgetEntry budgetEntry.Entry
+}
+
+// CreateOneResponse is the response object for the CreateOneService
+type CreateOneResponse struct {
+	BudgetEntry budgetEntry.Entry
 }
 
 // UpdateManyRequest is the request object for the UpdateMany service

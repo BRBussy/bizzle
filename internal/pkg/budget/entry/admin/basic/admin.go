@@ -40,6 +40,42 @@ func New(
 	}
 }
 
+func (a *admin) CreateOne(request *budgetEntryAdmin.CreateOneRequest) (*budgetEntryAdmin.CreateOneResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	request.BudgetEntry.OwnerID = request.Claims.ScopingID()
+	request.BudgetEntry.ID = identifier.ID(uuid.NewV4().String())
+
+	// round off to 2 units
+	request.BudgetEntry.Amount = math.Round(request.BudgetEntry.Amount*100) / 100
+
+	// validate the entry for create
+	validateForCreateResponse, err := a.budgetEntryValidator.ValidateForCreate(&budgetEntryValidator.ValidateForCreateRequest{
+		Claims:      request.Claims,
+		BudgetEntry: request.BudgetEntry,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("error validating entry for create")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+	if len(validateForCreateResponse.ReasonsInvalid) > 0 {
+		return nil, budgetEntry.ErrInvalidEntry{ReasonsInvalid: validateForCreateResponse.ReasonsInvalid}
+	}
+
+	// perform creation
+	if _, err := a.budgetEntryStore.CreateOne(&budgetEntryStore.CreateOneRequest{
+		Entry: request.BudgetEntry,
+	}); err != nil {
+		log.Error().Err(err).Msg("error creating budget entry")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	return &budgetEntryAdmin.CreateOneResponse{BudgetEntry: request.BudgetEntry}, nil
+}
+
 func (a *admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budgetEntryAdmin.CreateManyResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
@@ -47,7 +83,7 @@ func (a *admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budget
 	}
 
 	for entryIdx := range request.BudgetEntries {
-		// set ID and onwerID
+		// set ID and ownerID
 		request.BudgetEntries[entryIdx].OwnerID = request.Claims.ScopingID()
 		request.BudgetEntries[entryIdx].ID = identifier.ID(uuid.NewV4().String())
 
