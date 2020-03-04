@@ -269,4 +269,11 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		},
 		Strict: true,
 	},
+	{
+		Name: "Saving",
+		CategoryIdentifiers: []string{
+			"puresave",
+		},
+		Strict: false,
+	},
 }
