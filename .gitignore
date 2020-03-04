@@ -4,3 +4,4 @@ firebaseCredentials.json
 **__debug_bin
 .vscode
 **/scripts
+*.DS_Store
