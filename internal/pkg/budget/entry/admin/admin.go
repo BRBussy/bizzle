@@ -21,6 +21,9 @@ const ServiceProvider = "BudgetEntry-Admin"
 // CreateManyService is the service name for CreateMany
 const CreateManyService = ServiceProvider + ".CreateMany"
 
+// CreateOneService is the service name for CreateMany
+const CreateOneService = ServiceProvider + ".CreateOne"
+
 // UpdateOneService is the service name for UpdateOne
 const UpdateOneService = ServiceProvider + ".UpdateOne"
 
