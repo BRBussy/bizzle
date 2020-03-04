@@ -1,12 +1,15 @@
-package jsonRpc
+package jsonrpc
 
 import (
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -79,8 +82,15 @@ type FindManyResponse struct {
 }
 
 func (a *adaptor) FindMany(r *http.Request, request *FindManyRequest, response *FindManyResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not parse claims from context")
+		return bizzleException.ErrUnexpected{}
+	}
+
 	findOneResponse, err := a.store.FindMany(
 		&budgetEntryStore.FindManyRequest{
+			Claims:   c,
 			Criteria: request.Criteria.Criteria,
 			Query:    request.Query,
 		},

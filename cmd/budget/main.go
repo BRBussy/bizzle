@@ -17,6 +17,7 @@ import (
 	basicBudgetCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin/basic"
 	budgetCategoryRuleStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/adaptor/jsonRPC"
 	mongoBudgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/mongo"
+	budgetEntryStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store/adaptor/jsonrpc"
 	mongoBudgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store/mongo"
 	basicBudgetEntryValidator "github.com/BRBussy/bizzle/internal/pkg/budget/entry/validator/basic"
 	xlsxStandardBankStatementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser/XLSXStandardBank"
@@ -137,6 +138,7 @@ func main() {
 			authenticationMiddleware.Apply,
 		},
 		[]jsonRPCServiceProvider.Provider{
+			budgetEntryStoreJSONRPCAdaptor.New(MongoBudgetEntryStore),
 			budgetEntryAdminJSONRPCAdaptor.New(BasicBudgetEntryAdmin),
 			budgetAdminJSONRPCAdaptor.New(BasicBudgetAdmin),
 			budgetCategoryRuleStoreJSONRPCAdaptor.New(MongoBudgetCategoryRuleStore),
