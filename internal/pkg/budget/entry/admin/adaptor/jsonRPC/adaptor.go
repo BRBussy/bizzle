@@ -152,6 +152,36 @@ func (a *adaptor) UpdateOne(r *http.Request, request *UpdateOneRequest, response
 	return nil
 }
 
+// CreateOneRequest is the request object for CreateOne method
+type CreateOneRequest struct {
+	BudgetEntry budgetEntry.Entry `json:"budgetEntry"`
+}
+
+// CreateOneResponse is the response object for the CreateOne method
+type CreateOneResponse struct {
+	BudgetEntry budgetEntry.Entry `json:"budgetEntry"`
+}
+
+func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not parse claims from context")
+		return exception.ErrUnexpected{}
+	}
+
+	createOneResponse, err := a.admin.CreateOne(&budgetEntryAdmin.CreateOneRequest{
+		Claims:      c,
+		BudgetEntry: request.BudgetEntry,
+	})
+	if err != nil {
+		return err
+	}
+
+	response.BudgetEntry = createOneResponse.BudgetEntry
+
+	return nil
+}
+
 // UpdateManyRequest is the request object for UpdateMany method
 type UpdateManyRequest struct {
 	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
