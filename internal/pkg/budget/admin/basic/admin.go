@@ -47,7 +47,7 @@ func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRange
 	}
 
 	// retrieve all budget entries in date range
-	findManyBudgetEntriesResponse, err := a.budgetEntryStore.FindManyComposite(&budgetEntryStore.FindManyCompositeRequest{
+	findManyBudgetEntriesResponse, err := a.budgetEntryStore.FindManyComposite(budgetEntryStore.FindManyCompositeRequest{
 		Claims: request.Claims,
 		Criteria: criteria.Criteria{
 			dateTimeCriterion.Range{

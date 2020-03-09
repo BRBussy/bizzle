@@ -3,16 +3,18 @@ package admin
 import (
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 )
 
 // Admin is the budget entry admin interface
 type Admin interface {
-	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
-	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
-	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
-	UpdateMany(*UpdateManyRequest) (*UpdateManyResponse, error)
-	DuplicateCheck(*DuplicateCheckRequest) (*DuplicateCheckResponse, error)
-	XLSXStandardBankStatementToBudgetEntries(*XLSXStandardBankStatementToBudgetEntriesRequest) (*XLSXStandardBankStatementToBudgetEntriesResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	CreateMany(CreateManyRequest) (*CreateManyResponse, error)
+	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
+	UpdateMany(UpdateManyRequest) (*UpdateManyResponse, error)
+	DuplicateCheck(DuplicateCheckRequest) (*DuplicateCheckResponse, error)
+	XLSXStandardBankStatementToBudgetEntries(XLSXStandardBankStatementToBudgetEntriesRequest) (*XLSXStandardBankStatementToBudgetEntriesResponse, error)
+	DeleteOne(DeleteOneRequest) (*DeleteOneResponse, error)
 }
 
 // ServiceProvider is the budget entry admin service provider name
@@ -105,4 +107,14 @@ type UpdateManyRequest struct {
 
 // UpdateManyResponse is the response object for the UpdateMany service
 type UpdateManyResponse struct {
+}
+
+// DeleteOneRequest is the request object for the DeleteOne service
+type DeleteOneRequest struct {
+	Claims     claims.Claims         `validate:"required"`
+	Identifier identifier.Identifier `validate:"required"`
+}
+
+// DeleteOneResponse is the response object for the the DeleteOne service
+type DeleteOneResponse struct {
 }

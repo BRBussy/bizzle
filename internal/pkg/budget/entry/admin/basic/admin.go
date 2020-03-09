@@ -40,7 +40,7 @@ func New(
 	}
 }
 
-func (a *admin) CreateOne(request *budgetEntryAdmin.CreateOneRequest) (*budgetEntryAdmin.CreateOneResponse, error) {
+func (a *admin) CreateOne(request budgetEntryAdmin.CreateOneRequest) (*budgetEntryAdmin.CreateOneResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -66,7 +66,7 @@ func (a *admin) CreateOne(request *budgetEntryAdmin.CreateOneRequest) (*budgetEn
 	}
 
 	// perform creation
-	if _, err := a.budgetEntryStore.CreateOne(&budgetEntryStore.CreateOneRequest{
+	if _, err := a.budgetEntryStore.CreateOne(budgetEntryStore.CreateOneRequest{
 		Entry: request.BudgetEntry,
 	}); err != nil {
 		log.Error().Err(err).Msg("error creating budget entry")
@@ -76,7 +76,7 @@ func (a *admin) CreateOne(request *budgetEntryAdmin.CreateOneRequest) (*budgetEn
 	return &budgetEntryAdmin.CreateOneResponse{BudgetEntry: request.BudgetEntry}, nil
 }
 
-func (a *admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budgetEntryAdmin.CreateManyResponse, error) {
+func (a *admin) CreateMany(request budgetEntryAdmin.CreateManyRequest) (*budgetEntryAdmin.CreateManyResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -108,7 +108,7 @@ func (a *admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budget
 		}
 	}
 
-	if _, err := a.budgetEntryStore.CreateMany(&budgetEntryStore.CreateManyRequest{
+	if _, err := a.budgetEntryStore.CreateMany(budgetEntryStore.CreateManyRequest{
 		Entries: request.BudgetEntries,
 	}); err != nil {
 		log.Error().Err(err).Msg("could not create many budget entries")
@@ -118,7 +118,7 @@ func (a *admin) CreateMany(request *budgetEntryAdmin.CreateManyRequest) (*budget
 	return &budgetEntryAdmin.CreateManyResponse{}, nil
 }
 
-func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) (*budgetEntryAdmin.DuplicateCheckResponse, error) {
+func (a *admin) DuplicateCheck(request budgetEntryAdmin.DuplicateCheckRequest) (*budgetEntryAdmin.DuplicateCheckResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -142,7 +142,7 @@ func (a *admin) DuplicateCheck(request *budgetEntryAdmin.DuplicateCheckRequest) 
 	}
 
 	// search for all budget entries in this date range
-	findManyResponse, err := a.budgetEntryStore.FindMany(&budgetEntryStore.FindManyRequest{
+	findManyResponse, err := a.budgetEntryStore.FindMany(budgetEntryStore.FindManyRequest{
 		Criteria: criteria.Criteria{
 			dateTimeCriterion.Range{
 				Field: "date",
@@ -217,7 +217,7 @@ nextEntryToImport:
 }
 
 func (a *admin) XLSXStandardBankStatementToBudgetEntries(
-	request *budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest,
+	request budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest,
 ) (*budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
@@ -246,7 +246,7 @@ func removeBudgetEntry(budgetEntries *[]budgetEntry.Entry, idxToRemove int) {
 	*budgetEntries = (*budgetEntries)[:len(*budgetEntries)-1]
 }
 
-func (a *admin) UpdateOne(request *budgetEntryAdmin.UpdateOneRequest) (*budgetEntryAdmin.UpdateOneResponse, error) {
+func (a *admin) UpdateOne(request budgetEntryAdmin.UpdateOneRequest) (*budgetEntryAdmin.UpdateOneResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -270,7 +270,7 @@ func (a *admin) UpdateOne(request *budgetEntryAdmin.UpdateOneRequest) (*budgetEn
 	}
 
 	// retrieve the entry that needs to be updated
-	findOneEntryResponse, err := a.budgetEntryStore.FindOne(&budgetEntryStore.FindOneRequest{
+	findOneEntryResponse, err := a.budgetEntryStore.FindOne(budgetEntryStore.FindOneRequest{
 		Claims:     request.Claims,
 		Identifier: request.BudgetEntry.ID,
 	})
@@ -283,7 +283,7 @@ func (a *admin) UpdateOne(request *budgetEntryAdmin.UpdateOneRequest) (*budgetEn
 	request.BudgetEntry.OwnerID = findOneEntryResponse.Entry.OwnerID
 
 	// perform update
-	if _, err := a.budgetEntryStore.UpdateOne(&budgetEntryStore.UpdateOneRequest{
+	if _, err := a.budgetEntryStore.UpdateOne(budgetEntryStore.UpdateOneRequest{
 		Claims: request.Claims,
 		Entry:  request.BudgetEntry,
 	}); err != nil {
@@ -294,7 +294,7 @@ func (a *admin) UpdateOne(request *budgetEntryAdmin.UpdateOneRequest) (*budgetEn
 	return &budgetEntryAdmin.UpdateOneResponse{}, nil
 }
 
-func (a *admin) UpdateMany(request *budgetEntryAdmin.UpdateManyRequest) (*budgetEntryAdmin.UpdateManyResponse, error) {
+func (a *admin) UpdateMany(request budgetEntryAdmin.UpdateManyRequest) (*budgetEntryAdmin.UpdateManyResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -320,7 +320,7 @@ func (a *admin) UpdateMany(request *budgetEntryAdmin.UpdateManyRequest) (*budget
 		}
 
 		// retrieve the entry that needs to be updated
-		findOneEntryResponse, err := a.budgetEntryStore.FindOne(&budgetEntryStore.FindOneRequest{
+		findOneEntryResponse, err := a.budgetEntryStore.FindOne(budgetEntryStore.FindOneRequest{
 			Claims:     request.Claims,
 			Identifier: request.BudgetEntries[entryToUpdateIdx].ID,
 		})
@@ -336,7 +336,7 @@ func (a *admin) UpdateMany(request *budgetEntryAdmin.UpdateManyRequest) (*budget
 	// perform updates
 	for _, entryToUpdate := range request.BudgetEntries {
 		// perform update
-		if _, err := a.budgetEntryStore.UpdateOne(&budgetEntryStore.UpdateOneRequest{
+		if _, err := a.budgetEntryStore.UpdateOne(budgetEntryStore.UpdateOneRequest{
 			Claims: request.Claims,
 			Entry:  entryToUpdate,
 		}); err != nil {
@@ -346,4 +346,23 @@ func (a *admin) UpdateMany(request *budgetEntryAdmin.UpdateManyRequest) (*budget
 	}
 
 	return &budgetEntryAdmin.UpdateManyResponse{}, nil
+}
+
+func (a *admin) DeleteOne(request budgetEntryAdmin.DeleteOneRequest) (*budgetEntryAdmin.DeleteOneResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	if _, err := a.budgetEntryStore.DeleteOne(
+		budgetEntryStore.DeleteOneRequest{
+			Claims:     request.Claims,
+			Identifier: request.Identifier,
+		},
+	); err != nil {
+		log.Error().Err(err).Msg("could not delete budget entry")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	return &budgetEntryAdmin.DeleteOneResponse{}, nil
 }

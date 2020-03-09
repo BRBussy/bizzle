@@ -2,15 +2,17 @@ package mongo
 
 import (
 	"context"
-	"github.com/BRBussy/bizzle/internal/pkg/exception"
+	"time"
+
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 	mongoBSON "go.mongodb.org/mongo-driver/bson"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
+// Collection is a mongodb client wrapper exposing mongo collection services to bizzle
 type Collection struct {
 	driverCollection *mongoDriver.Collection
 }
@@ -43,6 +45,20 @@ func (c *Collection) CreateMany(documents []interface{}) error {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	_, err := c.driverCollection.InsertMany(ctx, documents)
 	return err
+}
+
+func (c *Collection) DeleteOne(identifier identifier.Identifier) error {
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	if _, err := c.driverCollection.DeleteOne(ctx, identifier.ToFilter()); err != nil {
+		switch err {
+		case mongoDriver.ErrNoDocuments:
+			return ErrNotFound{}
+		default:
+			log.Error().Err(err).Msg("delete one")
+			return err
+		}
+	}
+	return nil
 }
 
 func (c *Collection) FindOne(document interface{}, identifier identifier.Identifier) error {
@@ -158,7 +174,7 @@ func (c *Collection) Aggregate(pipeline mongoDriver.Pipeline, query Query, entit
 		count = 0
 	} else {
 		log.Error().Msg("invalid count result")
-		return -1, exception.ErrUnexpected{}
+		return -1, bizzleException.ErrUnexpected{}
 	}
 
 	// perform aggregation and output documents with query applied

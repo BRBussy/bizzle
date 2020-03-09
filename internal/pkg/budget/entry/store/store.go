@@ -9,12 +9,13 @@ import (
 )
 
 type Store interface {
-	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
-	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
-	FindOne(*FindOneRequest) (*FindOneResponse, error)
-	FindMany(*FindManyRequest) (*FindManyResponse, error)
-	FindManyComposite(*FindManyCompositeRequest) (*FindManyCompositeResponse, error)
-	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	CreateMany(CreateManyRequest) (*CreateManyResponse, error)
+	FindOne(FindOneRequest) (*FindOneResponse, error)
+	FindMany(FindManyRequest) (*FindManyResponse, error)
+	FindManyComposite(FindManyCompositeRequest) (*FindManyCompositeResponse, error)
+	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
+	DeleteOne(DeleteOneRequest) (*DeleteOneResponse, error)
 }
 
 const ServiceProvider = "BudgetEntry-Store"
@@ -24,6 +25,7 @@ const FindOneService = ServiceProvider + ".FindOne"
 const FindManyService = ServiceProvider + ".FindMany"
 const FindManyCompositeService = ServiceProvider + ".FindManyComposite"
 const UpdateOneService = ServiceProvider + ".UpdateOne"
+const DelteOneService = ServiceProvider + ".DeleteOne"
 
 type CreateOneRequest struct {
 	Entry budgetEntry.Entry
@@ -76,4 +78,12 @@ type UpdateOneRequest struct {
 }
 
 type UpdateOneResponse struct {
+}
+
+type DeleteOneRequest struct {
+	Claims     claims.Claims         `validate:"required"`
+	Identifier identifier.Identifier `validate:"required"`
+}
+
+type DeleteOneResponse struct {
 }

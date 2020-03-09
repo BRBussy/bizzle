@@ -42,7 +42,7 @@ func New(
 	}, nil
 }
 
-func (s *store) CreateOne(request *budgetEntryStore.CreateOneRequest) (*budgetEntryStore.CreateOneResponse, error) {
+func (s *store) CreateOne(request budgetEntryStore.CreateOneRequest) (*budgetEntryStore.CreateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -54,7 +54,7 @@ func (s *store) CreateOne(request *budgetEntryStore.CreateOneRequest) (*budgetEn
 	return &budgetEntryStore.CreateOneResponse{}, nil
 }
 
-func (s *store) CreateMany(request *budgetEntryStore.CreateManyRequest) (*budgetEntryStore.CreateManyResponse, error) {
+func (s *store) CreateMany(request budgetEntryStore.CreateManyRequest) (*budgetEntryStore.CreateManyResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -72,7 +72,7 @@ func (s *store) CreateMany(request *budgetEntryStore.CreateManyRequest) (*budget
 	return &budgetEntryStore.CreateManyResponse{}, nil
 }
 
-func (s *store) FindOne(request *budgetEntryStore.FindOneRequest) (*budgetEntryStore.FindOneResponse, error) {
+func (s *store) FindOne(request budgetEntryStore.FindOneRequest) (*budgetEntryStore.FindOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -103,7 +103,7 @@ func (s *store) FindOne(request *budgetEntryStore.FindOneRequest) (*budgetEntryS
 	}, nil
 }
 
-func (s *store) FindMany(request *budgetEntryStore.FindManyRequest) (*budgetEntryStore.FindManyResponse, error) {
+func (s *store) FindMany(request budgetEntryStore.FindManyRequest) (*budgetEntryStore.FindManyResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -134,7 +134,7 @@ func (s *store) FindMany(request *budgetEntryStore.FindManyRequest) (*budgetEntr
 	}, nil
 }
 
-func (s *store) FindManyComposite(request *budgetEntryStore.FindManyCompositeRequest) (*budgetEntryStore.FindManyCompositeResponse, error) {
+func (s *store) FindManyComposite(request budgetEntryStore.FindManyCompositeRequest) (*budgetEntryStore.FindManyCompositeResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -204,7 +204,7 @@ func (s *store) FindManyComposite(request *budgetEntryStore.FindManyCompositeReq
 	}, nil
 }
 
-func (s *store) UpdateOne(request *budgetEntryStore.UpdateOneRequest) (*budgetEntryStore.UpdateOneResponse, error) {
+func (s *store) UpdateOne(request budgetEntryStore.UpdateOneRequest) (*budgetEntryStore.UpdateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -225,4 +225,29 @@ func (s *store) UpdateOne(request *budgetEntryStore.UpdateOneRequest) (*budgetEn
 	}
 
 	return &budgetEntryStore.UpdateOneResponse{}, nil
+}
+
+func (s *store) DeleteOne(request budgetEntryStore.DeleteOneRequest) (*budgetEntryStore.DeleteOneResponse, error) {
+	if err := s.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(
+		&scope.ApplyScopeToIdentifierRequest{
+			Claims:            request.Claims,
+			IdentifierToScope: request.Identifier,
+		},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("could not apply scope to identifier")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	if err := s.collection.DeleteOne(applyScopeToIdentifierResponse.ScopedIdentifier); err != nil {
+		log.Error().Err(err).Msg("updating budgetEntry")
+		return nil, err
+	}
+
+	return &budgetEntryStore.DeleteOneResponse{}, nil
 }

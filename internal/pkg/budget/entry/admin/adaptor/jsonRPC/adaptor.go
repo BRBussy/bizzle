@@ -46,7 +46,7 @@ func (a *adaptor) CreateMany(r *http.Request, request *CreateManyRequest, respon
 		return bizzleException.ErrUnexpected{}
 	}
 
-	if _, err := a.admin.CreateMany(&budgetEntryAdmin.CreateManyRequest{
+	if _, err := a.admin.CreateMany(budgetEntryAdmin.CreateManyRequest{
 		BudgetEntries: request.BudgetEntries,
 		Claims:        c,
 	}); err != nil {
@@ -80,7 +80,7 @@ func (a *adaptor) XLSXStandardBankStatementToBudgetEntries(r *http.Request, requ
 		return bizzleException.ErrUnexpected{}
 	}
 
-	xlsxStandardBankStatementToBudgetEntriesResponse, err := a.admin.XLSXStandardBankStatementToBudgetEntries(&budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest{
+	xlsxStandardBankStatementToBudgetEntriesResponse, err := a.admin.XLSXStandardBankStatementToBudgetEntries(budgetEntryAdmin.XLSXStandardBankStatementToBudgetEntriesRequest{
 		XLSXStatement: statementFileDataBytes,
 		Claims:        c,
 	})
@@ -112,7 +112,7 @@ func (a *adaptor) DuplicateCheck(r *http.Request, request *DuplicateCheckRequest
 		return exception.ErrUnexpected{}
 	}
 
-	duplicateCheckResponse, err := a.admin.DuplicateCheck(&budgetEntryAdmin.DuplicateCheckRequest{
+	duplicateCheckResponse, err := a.admin.DuplicateCheck(budgetEntryAdmin.DuplicateCheckRequest{
 		BudgetEntries: request.BudgetEntries,
 		Claims:        c,
 	})
@@ -142,7 +142,7 @@ func (a *adaptor) UpdateOne(r *http.Request, request *UpdateOneRequest, response
 		return exception.ErrUnexpected{}
 	}
 
-	if _, err := a.admin.UpdateOne(&budgetEntryAdmin.UpdateOneRequest{
+	if _, err := a.admin.UpdateOne(budgetEntryAdmin.UpdateOneRequest{
 		Claims:      c,
 		BudgetEntry: request.BudgetEntry,
 	}); err != nil {
@@ -169,7 +169,7 @@ func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response
 		return exception.ErrUnexpected{}
 	}
 
-	createOneResponse, err := a.admin.CreateOne(&budgetEntryAdmin.CreateOneRequest{
+	createOneResponse, err := a.admin.CreateOne(budgetEntryAdmin.CreateOneRequest{
 		Claims:      c,
 		BudgetEntry: request.BudgetEntry,
 	})
@@ -198,7 +198,7 @@ func (a *adaptor) UpdateMany(r *http.Request, request *UpdateManyRequest, respon
 		return exception.ErrUnexpected{}
 	}
 
-	if _, err := a.admin.UpdateMany(&budgetEntryAdmin.UpdateManyRequest{
+	if _, err := a.admin.UpdateMany(budgetEntryAdmin.UpdateManyRequest{
 		Claims:        c,
 		BudgetEntries: request.BudgetEntries,
 	}); err != nil {

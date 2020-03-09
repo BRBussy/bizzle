@@ -1,6 +1,8 @@
 package jsonrpc
 
 import (
+	"net/http"
+
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
@@ -10,7 +12,6 @@ import (
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
-	"net/http"
 )
 
 type adaptor struct {
@@ -38,7 +39,7 @@ type CreateOneResponse struct {
 
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
 	if _, err := a.store.CreateOne(
-		&budgetEntryStore.CreateOneRequest{
+		budgetEntryStore.CreateOneRequest{
 			Entry: request.Entry,
 		},
 	); err != nil {
@@ -58,7 +59,7 @@ type FindOneResponse struct {
 
 func (a *adaptor) FindOne(r *http.Request, request *FindOneRequest, response *FindOneResponse) error {
 	findOneResponse, err := a.store.FindOne(
-		&budgetEntryStore.FindOneRequest{
+		budgetEntryStore.FindOneRequest{
 			Identifier: request.Identifier.Identifier,
 		},
 	)
@@ -89,7 +90,7 @@ func (a *adaptor) FindMany(r *http.Request, request *FindManyRequest, response *
 	}
 
 	findOneResponse, err := a.store.FindMany(
-		&budgetEntryStore.FindManyRequest{
+		budgetEntryStore.FindManyRequest{
 			Claims:   c,
 			Criteria: request.Criteria.Criteria,
 			Query:    request.Query,
@@ -114,7 +115,7 @@ type UpdateOneResponse struct {
 
 func (a *adaptor) UpdateOne(r *http.Request, request *UpdateOneRequest, response *UpdateOneResponse) error {
 	if _, err := a.store.UpdateOne(
-		&budgetEntryStore.UpdateOneRequest{
+		budgetEntryStore.UpdateOneRequest{
 			Entry: request.Entry,
 		},
 	); err != nil {
