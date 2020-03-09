@@ -10,6 +10,7 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/exception"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 )
 
@@ -201,6 +202,32 @@ func (a *adaptor) UpdateMany(r *http.Request, request *UpdateManyRequest, respon
 	if _, err := a.admin.UpdateMany(budgetEntryAdmin.UpdateManyRequest{
 		Claims:        c,
 		BudgetEntries: request.BudgetEntries,
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteOneRequest is the request object for DeleteOne method
+type DeleteOneRequest struct {
+	Identifier identifier.Serialized `json:"identifier"`
+}
+
+// DeleteOneResponse is the response object for the update one method
+type DeleteOneResponse struct {
+}
+
+func (a *adaptor) DeleteOne(r *http.Request, request *DeleteOneRequest, response *DeleteOneResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not parse claims from context")
+		return exception.ErrUnexpected{}
+	}
+
+	if _, err := a.admin.DeleteOne(budgetEntryAdmin.DeleteOneRequest{
+		Claims:     c,
+		Identifier: request.Identifier.Identifier,
 	}); err != nil {
 		return err
 	}
