@@ -38,6 +38,9 @@ const DuplicateCheckService = ServiceProvider + ".DuplicateCheck"
 // XLSXStandardBankStatementToBudgetCompositeEntriesService is the service name for XLSXStandardBankStatementToBudgetCompositeEntries
 const XLSXStandardBankStatementToBudgetCompositeEntriesService = ServiceProvider + ".XLSXStandardBankStatementToBudgetEntries"
 
+// DeleteOneService is the service name for DeleteOne
+const DeleteOneService = ServiceProvider + ".DeleteOne"
+
 // CreateManyRequest is the request object for the CreateMany service
 type CreateManyRequest struct {
 	BudgetEntries []budgetEntry.Entry `validate:"required,gt=0"`

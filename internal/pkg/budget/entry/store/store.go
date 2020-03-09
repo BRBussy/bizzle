@@ -25,7 +25,6 @@ const FindOneService = ServiceProvider + ".FindOne"
 const FindManyService = ServiceProvider + ".FindMany"
 const FindManyCompositeService = ServiceProvider + ".FindManyComposite"
 const UpdateOneService = ServiceProvider + ".UpdateOne"
-const DelteOneService = ServiceProvider + ".DeleteOne"
 
 type CreateOneRequest struct {
 	Entry budgetEntry.Entry

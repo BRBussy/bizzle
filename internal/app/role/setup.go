@@ -33,6 +33,7 @@ var initialRoles = []securityRole.Role{
 			budgetEntryAdmin.CreateManyService,
 			budgetEntryAdmin.UpdateOneService,
 			budgetEntryAdmin.UpdateManyService,
+			budgetEntryAdmin.DeleteOneService,
 			budgetEntryStore.FindManyService,
 			budgetAdmin.GetBudgetForDateRangeService,
 			budgetCategoryRuleStore.FindManyService,
