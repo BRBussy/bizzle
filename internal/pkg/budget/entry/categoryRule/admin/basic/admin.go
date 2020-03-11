@@ -68,6 +68,8 @@ func (a *admin) UpdateOne(request *budgetEntryCategoryRuleAdmin.UpdateOneRequest
 	// update allowed fields
 	findOneRuleResponse.CategoryRule.CategoryIdentifiers = request.CategoryRule.CategoryIdentifiers
 	findOneRuleResponse.CategoryRule.Strict = request.CategoryRule.Strict
+	findOneRuleResponse.CategoryRule.IdealAmount = request.CategoryRule.IdealAmount
+	findOneRuleResponse.CategoryRule.IdealAmountPeriod = request.CategoryRule.IdealAmountPeriod
 
 	// perform update
 	if _, err := a.budgetEntryCategoryRuleStore.UpdateOne(&budgetEntryCategoryRuleStore.UpdateOneRequest{

@@ -71,7 +71,7 @@ nextRuleToSync:
 					existingRule.CategoryIdentifiers = ruleToSync.CategoryIdentifiers
 					if _, err := budgetEntryCategoryRuleAdminImp.UpdateOne(&budgetEntryCategoryRuleAdmin.UpdateOneRequest{
 						Claims:       claims.Login{UserID: userID},
-						CategoryRule: existingRule,
+						CategoryRule: ruleToSync,
 					}); err != nil {
 						log.Error().Err(err).Msg("  updating budget category rule")
 						return bizzleException.ErrUnexpected{}
@@ -102,19 +102,23 @@ nextRuleToSync:
 
 var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 	{
-		Name: "Electricity",
 		CategoryIdentifiers: []string{
 			"pre-paid electricity",
 			"pre paid electricity",
 			"electricity",
 		},
-		Strict: false,
+		Name:              "Electricity",
+		Strict:            false,
+		IdealAmount:       -400,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Car Repayment",
 		CategoryIdentifiers: []string{
 			"wesbank",
 		},
+		IdealAmount:       -3200,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Cellphone Airtime/Data",
@@ -122,13 +126,17 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"vod",
 			"prepaid",
 		},
-		Strict: true,
+		Strict:            true,
+		IdealAmount:       -200,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Internet",
 		CategoryIdentifiers: []string{
 			"telkommobi",
 		},
+		IdealAmount:       -455,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Medical Aid",
@@ -137,7 +145,9 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"prem",
 			"medical",
 		},
-		Strict: true,
+		Strict:            true,
+		IdealAmount:       -2895,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Salary",
@@ -145,7 +155,9 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"salary",
 			"andile",
 		},
-		Strict: true,
+		Strict:            true,
+		IdealAmount:       24614.11,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Petrol",
@@ -158,7 +170,9 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"oostermoed garage",
 			"bp hillcrest",
 		},
-		Strict: false,
+		Strict:            false,
+		IdealAmount:       -800,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Groceries",
@@ -174,7 +188,9 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"252 pine avn",
 			"the flower & nut marke",
 		},
-		Strict: false,
+		Strict:            false,
+		IdealAmount:       -800,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Eating Out",
@@ -206,7 +222,9 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"fego",
 			"we make coffee",
 		},
-		Strict: false,
+		Strict:            false,
+		IdealAmount:       -500,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Medicine",
@@ -215,7 +233,9 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"linksfield pharmac",
 			"ferngate pharmacy",
 		},
-		Strict: false,
+		Strict:            false,
+		IdealAmount:       -3000,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Rent",
@@ -223,14 +243,18 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"rentjune",
 			"richardrent",
 		},
-		Strict: false,
+		Strict:            false,
+		IdealAmount:       -5500,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Rehab",
 		CategoryIdentifiers: []string{
 			"relapse prevention",
 		},
-		Strict: true,
+		Strict:            true,
+		IdealAmount:       -1000,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Overdraft",
@@ -238,14 +262,18 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"overdraft service fee",
 			"overdraft interest",
 		},
-		Strict: false,
+		Strict:            false,
+		IdealAmount:       0,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Bank Account Fee",
 		CategoryIdentifiers: []string{
 			"fixed monthly fee",
 		},
-		Strict: true,
+		Strict:            true,
+		IdealAmount:       -110,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Cash Withdrawal",
@@ -253,27 +281,35 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"cash withdrawal",
 			"cash withd",
 		},
-		Strict: false,
+		Strict:            false,
+		IdealAmount:       0,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Muay Thai",
 		CategoryIdentifiers: []string{
 			"primal gym",
 		},
-		Strict: true,
+		Strict:            true,
+		IdealAmount:       -900,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Hiking",
 		CategoryIdentifiers: []string{
 			"jhb hiking club",
 		},
-		Strict: true,
+		Strict:            true,
+		IdealAmount:       -1000,
+		IdealAmountPeriod: 31,
 	},
 	{
 		Name: "Saving",
 		CategoryIdentifiers: []string{
 			"puresave",
 		},
-		Strict: false,
+		Strict:            false,
+		IdealAmount:       -1000,
+		IdealAmountPeriod: 31,
 	},
 }
