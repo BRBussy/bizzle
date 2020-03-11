@@ -10,6 +10,8 @@ type CategoryRule struct {
 	CategoryIdentifiers []string      `validate:"required,gt=0" json:"categoryIdentifiers" bson:"categoryIdentifiers"`
 	Name                string        `validate:"required" json:"name" bson:"name"`
 	Strict              bool          `json:"strict" bson:"strict"`
+	IdealAmount         float32       `json:"idealAmount" bson:"idealAmount"`
+	IdealAmountPeriod   int           `json:"idealAmountPeriod" bson:"idealAmountPeriod"`
 }
 
 func CompareCategoryRules(c1, c2 CategoryRule) bool {
@@ -23,6 +25,12 @@ func CompareCategoryRules(c1, c2 CategoryRule) bool {
 		return false
 	}
 	if c1.Strict != c2.Strict {
+		return false
+	}
+	if c1.IdealAmount != c2.IdealAmount {
+		return false
+	}
+	if c1.IdealAmountPeriod != c2.IdealAmountPeriod {
 		return false
 	}
 	if len(c1.CategoryIdentifiers) != len(c2.CategoryIdentifiers) {
