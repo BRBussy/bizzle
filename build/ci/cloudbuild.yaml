@@ -61,37 +61,6 @@ steps:
     args: ['beta', 'run', 'deploy', 'budget', '--image', 'gcr.io/$PROJECT_ID/budget', '--region', 'us-central1','--platform', 'managed', '--quiet']
     waitFor: ['build budget image']
 
-  # ------------------------------------------ build, push and deploy exercise ------------------------------------------
-  # Step #6: decrypt exercise config file
-  - name: gcr.io/cloud-builders/gcloud
-    id: 'decrypt exercise config file'
-    args:
-      - kms
-      - decrypt
-      - --ciphertext-file=configs/exercise/config.toml.enc
-      - --plaintext-file=configs/exercise/config.toml
-      - --location=global
-      - --keyring=bizzle
-      - --key=cryptographer
-    waitFor: ['-']
-
-  # Step #7: build exercise image
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'build exercise image'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        docker build -f build/package/exercise/Dockerfile -t gcr.io/$PROJECT_ID/exercise .
-        docker push gcr.io/$PROJECT_ID/exercise
-    waitFor: ['decrypt exercise config file']
-
-  # Step #8: deploy exercise image
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'deploy exercise'
-    args: ['beta', 'run', 'deploy', 'exercise', '--image', 'gcr.io/$PROJECT_ID/exercise', '--region', 'us-central1','--platform', 'managed', '--quiet']
-    waitFor: ['build exercise image']
-
   # ------------------------------------------ build, push and deploy role ------------------------------------------
   # Step #9: decrypt role config file
   - name: gcr.io/cloud-builders/gcloud
