@@ -4,6 +4,7 @@ import (
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	budgetConfigAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/config/admin"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
+	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
 	budgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
 	exerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin"
@@ -38,6 +39,7 @@ var initialRoles = []securityRole.Role{
 			budgetEntryStore.FindManyService,
 			budgetAdmin.GetBudgetForDateRangeService,
 			budgetCategoryRuleStore.FindManyService,
+			budgetEntryCategoryRuleAdmin.UpdateOneService,
 			budgetConfigAdmin.GetMyConfigService,
 			budgetConfigAdmin.SetMyConfigService,
 		},

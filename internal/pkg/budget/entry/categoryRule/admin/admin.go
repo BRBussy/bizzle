@@ -11,6 +11,11 @@ type Admin interface {
 	CategoriseBudgetEntry(CategoriseBudgetEntryRequest) (*CategoriseBudgetEntryResponse, error)
 }
 
+// ServiceProvider is the budget entry admin service provider name
+const ServiceProvider = "BudgetEntryCategoryRule-Admin"
+
+const UpdateOneService = ServiceProvider + ".UpdateOne"
+
 type CreateOneRequest struct {
 	Claims       claims.Claims                        `validate:"required"`
 	CategoryRule budgetEntryCategoryRule.CategoryRule `validate:"required"`

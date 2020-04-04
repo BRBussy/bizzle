@@ -18,8 +18,9 @@ import (
 	basicBudgetConfigValidator "github.com/BRBussy/bizzle/internal/pkg/budget/config/validator/basic"
 	budgetEntryAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin/adaptor/jsonRPC"
 	basicBudgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin/basic"
+	budgetEntryCategoryRuleAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin/adaptor/jsonRPC"
 	basicBudgetCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin/basic"
-	budgetCategoryRuleStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/adaptor/jsonRPC"
+	budgetEntryCategoryRuleStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/adaptor/jsonRPC"
 	mongoBudgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/mongo"
 	budgetEntryStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store/adaptor/jsonrpc"
 	mongoBudgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store/mongo"
@@ -161,7 +162,8 @@ func main() {
 			budgetEntryAdminJSONRPCAdaptor.New(BasicBudgetEntryAdmin),
 			budgetAdminJSONRPCAdaptor.New(BasicBudgetAdmin),
 			budgetConfigAdminJSONRPCAdaptor.New(BasicBudgetConfigAdmin),
-			budgetCategoryRuleStoreJSONRPCAdaptor.New(MongoBudgetCategoryRuleStore),
+			budgetEntryCategoryRuleStoreJSONRPCAdaptor.New(MongoBudgetCategoryRuleStore),
+			budgetEntryCategoryRuleAdminJSONRPCAdaptor.New(BasicBudgetCategoryRuleAdmin),
 		},
 	)
 
