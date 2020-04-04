@@ -11,6 +11,10 @@ type Admin interface {
 	SetMyConfig(SetMyConfigRequest) (*SetMyConfigResponse, error)
 }
 
+const ServiceProvider = "Config-Store"
+
+const GetMyConfigService = ServiceProvider + ".GetMyConfig"
+
 type GetMyConfigRequest struct {
 	Claims claims.Claims `validate:"required"`
 }

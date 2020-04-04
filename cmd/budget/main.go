@@ -12,6 +12,10 @@ import (
 	bizzleJSONRPCAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator/jsonRPC"
 	budgetAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/admin/adaptor/jsonRPC"
 	basicBudgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin/basic"
+	budgetConfigAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/config/admin/adaptor/jsonrpc"
+	basicBudgetConfigAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/config/admin/basic"
+	mongoBudgetConfigStore "github.com/BRBussy/bizzle/internal/pkg/budget/config/store/mongo"
+	basicBudgetConfigValidator "github.com/BRBussy/bizzle/internal/pkg/budget/config/validator/basic"
 	budgetEntryAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin/adaptor/jsonRPC"
 	basicBudgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin/basic"
 	basicBudgetCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin/basic"
@@ -110,6 +114,20 @@ func main() {
 		RequestValidator,
 		MongoBudgetEntryStore,
 	)
+	MongoBudgetConfigStore, err := mongoBudgetConfigStore.New(
+		RequestValidator,
+		BasicScopeAdmin,
+		mongoDb,
+	)
+	BasicBudgetConfigValidator := basicBudgetConfigValidator.New(
+		RequestValidator,
+		MongoBudgetCategoryRuleStore,
+	)
+	BasicBudgetConfigAdmin := basicBudgetConfigAdmin.New(
+		RequestValidator,
+		MongoBudgetConfigStore,
+		BasicBudgetConfigValidator,
+	)
 
 	//
 	// Authentication
@@ -141,6 +159,7 @@ func main() {
 			budgetEntryStoreJSONRPCAdaptor.New(MongoBudgetEntryStore),
 			budgetEntryAdminJSONRPCAdaptor.New(BasicBudgetEntryAdmin),
 			budgetAdminJSONRPCAdaptor.New(BasicBudgetAdmin),
+			budgetConfigAdminJSONRPCAdaptor.New(BasicBudgetConfigAdmin),
 			budgetCategoryRuleStoreJSONRPCAdaptor.New(MongoBudgetCategoryRuleStore),
 		},
 	)
