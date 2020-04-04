@@ -5,3 +5,4 @@ firebaseCredentials.json
 .vscode
 **/scripts
 *.DS_Store
+config.toml

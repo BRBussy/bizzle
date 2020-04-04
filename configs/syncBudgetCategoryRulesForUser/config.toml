@@ -1,1 +1,3 @@
-UserID = "749bbe75-da33-4d12-9fd5-ca19561acea5"
+MongoDBUsername = "root"
+MongoDBPassword = "password"
+UserID = "f9e443b6-3cdb-4206-816e-9036a61169fe"
