@@ -39,9 +39,11 @@ func Setup(
 				},
 			)
 		}
-		roleFindResponse, err := roleStoreImp.FindMany(roleStore.FindManyRequest{
-			Criteria: roleFindCriteria,
-		})
+		roleFindResponse, err := roleStoreImp.FindMany(
+			roleStore.FindManyRequest{
+				Criteria: roleFindCriteria,
+			},
+		)
 		if err != nil {
 			log.Error().Err(err).Msg("finding root user roles")
 			return bizzleException.ErrUnexpected{}
@@ -53,23 +55,29 @@ func Setup(
 	}
 
 	// try and retrieve root user's user
-	findRootUserResponse, err := userStoreImp.FindOne(&userStore.FindOneRequest{
-		Identifier: identifier.Email(rootUserToCreate.Email),
-	})
+	findRootUserResponse, err := userStoreImp.FindOne(
+		userStore.FindOneRequest{
+			Identifier: identifier.Email(rootUserToCreate.Email),
+		},
+	)
 	if err != nil {
 		switch err.(type) {
 		case mongo.ErrNotFound:
 			// root user not found, create it
-			createResponse, err := userAdminImp.CreateOne(&userAdmin.CreateOneRequest{User: rootUserToCreate})
+			createResponse, err := userAdminImp.CreateOne(
+				userAdmin.CreateOneRequest{User: rootUserToCreate},
+			)
 			if err != nil {
 				log.Error().Err(err).Msg("creating bizzle root user")
 				return bizzleException.ErrUnexpected{}
 			}
 			// register it
-			if _, err := userAdminImp.RegisterOne(&userAdmin.RegisterOneRequest{
-				Identifier: createResponse.User.ID,
-				Password:   rootPassword,
-			}); err != nil {
+			if _, err := userAdminImp.RegisterOne(
+				userAdmin.RegisterOneRequest{
+					Identifier: createResponse.User.ID,
+					Password:   rootPassword,
+				},
+			); err != nil {
 				log.Error().Err(err).Msg("registering bizzle root user")
 				return bizzleException.ErrUnexpected{}
 			}

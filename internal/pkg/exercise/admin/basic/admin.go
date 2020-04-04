@@ -24,7 +24,7 @@ func New(
 	}
 }
 
-func (a *admin) CreateOne(request *exerciseAdmin.CreateOneRequest) (*exerciseAdmin.CreateOneResponse, error) {
+func (a *admin) CreateOne(request exerciseAdmin.CreateOneRequest) (*exerciseAdmin.CreateOneResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -32,9 +32,11 @@ func (a *admin) CreateOne(request *exerciseAdmin.CreateOneRequest) (*exerciseAdm
 
 	request.Exercise.ID = identifier.ID(uuid.NewV4().String())
 
-	if _, err := a.exerciseStore.CreateOne(&exerciseStore.CreateOneRequest{
-		Exercise: request.Exercise,
-	}); err != nil {
+	if _, err := a.exerciseStore.CreateOne(
+		exerciseStore.CreateOneRequest{
+			Exercise: request.Exercise,
+		},
+	); err != nil {
 		log.Error().Err(err).Msg("creating exercise")
 		return nil, err
 	}
@@ -42,15 +44,17 @@ func (a *admin) CreateOne(request *exerciseAdmin.CreateOneRequest) (*exerciseAdm
 	return &exerciseAdmin.CreateOneResponse{Exercise: request.Exercise}, nil
 }
 
-func (a *admin) UpdateOne(request *exerciseAdmin.UpdateOneRequest) (*exerciseAdmin.UpdateOneResponse, error) {
+func (a *admin) UpdateOne(request exerciseAdmin.UpdateOneRequest) (*exerciseAdmin.UpdateOneResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
-	findOneResponse, err := a.exerciseStore.FindOne(&exerciseStore.FindOneRequest{
-		Identifier: request.Exercise.ID,
-	})
+	findOneResponse, err := a.exerciseStore.FindOne(
+		exerciseStore.FindOneRequest{
+			Identifier: request.Exercise.ID,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("finding exercise")
 		return nil, err
@@ -61,9 +65,11 @@ func (a *admin) UpdateOne(request *exerciseAdmin.UpdateOneRequest) (*exerciseAdm
 	findOneResponse.Exercise.Description = request.Exercise.Description
 	findOneResponse.Exercise.MuscleGroup = request.Exercise.MuscleGroup
 
-	if _, err := a.exerciseStore.UpdateOne(&exerciseStore.UpdateOneRequest{
-		Exercise: findOneResponse.Exercise,
-	}); err != nil {
+	if _, err := a.exerciseStore.UpdateOne(
+		exerciseStore.UpdateOneRequest{
+			Exercise: findOneResponse.Exercise,
+		},
+	); err != nil {
 		log.Error().Err(err).Msg("updating exercise")
 		return nil, err
 	}

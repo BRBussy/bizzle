@@ -20,7 +20,7 @@ func New(
 	}
 }
 
-func (a *admin) CreateOne(request *roleAdmin.CreateOneRequest) (*roleAdmin.CreateOneResponse, error) {
+func (a *admin) CreateOne(request roleAdmin.CreateOneRequest) (*roleAdmin.CreateOneResponse, error) {
 	request.Role.ID = identifier.ID(uuid.NewV4().String())
 
 	if _, err := a.roleStore.CreateOne(roleStore.CreateOneRequest{Role: request.Role}); err != nil {
@@ -31,7 +31,7 @@ func (a *admin) CreateOne(request *roleAdmin.CreateOneRequest) (*roleAdmin.Creat
 	return &roleAdmin.CreateOneResponse{Role: request.Role}, nil
 }
 
-func (a *admin) UpdateOne(request *roleAdmin.UpdateOneRequest) (*roleAdmin.UpdateOneResponse, error) {
+func (a *admin) UpdateOne(request roleAdmin.UpdateOneRequest) (*roleAdmin.UpdateOneResponse, error) {
 	// try and retrieve the role to be updated
 	findOneResponse, err := a.roleStore.FindOne(roleStore.FindOneRequest{Identifier: identifier.ID(request.Role.ID)})
 	if err != nil {

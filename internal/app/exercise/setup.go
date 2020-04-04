@@ -96,7 +96,7 @@ func Setup(
 
 		// try and retrieve the exercise
 		findOneResponse, err := exerciseStoreImp.FindOne(
-			&exerciseStore.FindOneRequest{
+			exerciseStore.FindOneRequest{
 				Identifier: identifier.NameVariant{
 					Name:    initialExercises[i].Name,
 					Variant: initialExercises[i].Variant,
@@ -108,7 +108,7 @@ func Setup(
 			// not found, create
 			log.Info().Msg("--> create")
 			if _, err := exerciseAdminImp.CreateOne(
-				&exerciseAdmin.CreateOneRequest{
+				exerciseAdmin.CreateOneRequest{
 					Exercise: initialExercises[i],
 				},
 			); err != nil {
@@ -122,7 +122,7 @@ func Setup(
 			if findOneResponse.Exercise != initialExercises[i] {
 				log.Info().Msg("--> update")
 				if _, err := exerciseAdminImp.UpdateOne(
-					&exerciseAdmin.UpdateOneRequest{
+					exerciseAdmin.UpdateOneRequest{
 						Exercise: initialExercises[i],
 					},
 				); err != nil {
