@@ -56,6 +56,23 @@ func (s *Serialized) UnmarshalJSON(data []byte) error {
 		}
 		unmarshalledIdentifier = idIdentifier
 
+	case OwnerIDIdentifierType:
+		// try and get ownerID field
+		marshalledID, found := s.Serialized["ownerID"]
+		if !found {
+			err := ErrInvalidSerializedIdentifier{Reasons: []string{"no ownerID field"}}
+			log.Error().Err(err)
+			return err
+		}
+		// unmarshal OwnerID identifier
+		var ownerIDIdentifier OwnerID
+		if err := json.Unmarshal(marshalledID, &ownerIDIdentifier); err != nil {
+			err = ErrUnmarshal{Reasons: []string{err.Error()}}
+			log.Error().Err(err)
+			return err
+		}
+		unmarshalledIdentifier = ownerIDIdentifier
+
 	case NameIdentifierType:
 		// try and get name field
 		marshalledID, found := s.Serialized["name"]
