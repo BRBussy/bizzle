@@ -23,9 +23,11 @@ func SyncBudgetCategoryRulesForUser(
 ) error {
 	log.Info().Msg("Running SyncBudgetCategoryRulesForUser")
 	// retrieve the user
-	findOneUserResponse, err := userStoreImp.FindOne(&userStore.FindOneRequest{
-		Identifier: userID,
-	})
+	findOneUserResponse, err := userStoreImp.FindOne(
+		userStore.FindOneRequest{
+			Identifier: userID,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("could not retrieve user")
 		return err
@@ -110,6 +112,12 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		Name:                 "Electricity",
 		Strict:               false,
 		ExpectedAmount:       -400,
+		ExpectedAmountPeriod: 31,
+	},
+	{
+		Name:                 "Other",
+		CategoryIdentifiers:  []string{},
+		ExpectedAmount:       -3200,
 		ExpectedAmountPeriod: 31,
 	},
 	{
