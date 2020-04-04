@@ -2,9 +2,9 @@ package basic
 
 import (
 	budgetConfigAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/config/admin"
+	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	"strings"
 
-	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
 	budgetEntryCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
@@ -126,8 +126,10 @@ func (a *admin) CategoriseBudgetEntry(request budgetEntryCategoryRuleAdmin.Categ
 	}
 
 	// confirm that default other rule is among those retrieved
+	var otherCategoryRule budgetEntryCategoryRule.CategoryRule
 	for i, bcr := range findManyBudgetCategoryRulesResponse.Records {
 		if bcr.ID == getMyConfigResponse.BudgetConfig.OtherCategoryRuleID {
+			otherCategoryRule = bcr
 			break
 		}
 		if i == len(findManyBudgetCategoryRulesResponse.Records)-1 {
@@ -171,5 +173,8 @@ nextCategorisationRule:
 		}
 	}
 
-	return nil, budgetEntryCategoryRule.ErrCouldNotClassify{Reason: "not match"}
+	// if execution reaches here then the entry cannot be categorised it will be labelled other
+	return &budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse{
+		CategoryRule: otherCategoryRule,
+	}, nil
 }
