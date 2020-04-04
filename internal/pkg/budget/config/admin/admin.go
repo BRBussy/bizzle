@@ -11,21 +11,22 @@ type Admin interface {
 	SetMyConfig(SetMyConfigRequest) (*SetMyConfigResponse, error)
 }
 
-const ServiceProvider = "Config-Store"
+const ServiceProvider = "BudgetConfig-Store"
 
 const GetMyConfigService = ServiceProvider + ".GetMyConfig"
+const SetMyConfigService = ServiceProvider + ".SetMyConfig"
 
 type GetMyConfigRequest struct {
 	Claims claims.Claims `validate:"required"`
 }
 
 type GetMyConfigResponse struct {
-	Config budgetConfig.Config
+	BudgetConfig budgetConfig.Config
 }
 
 type SetMyConfigRequest struct {
-	Claims claims.Claims `validate:"required"`
-	Config budgetConfig.Config
+	Claims       claims.Claims `validate:"required"`
+	BudgetConfig budgetConfig.Config
 }
 
 type SetMyConfigResponse struct {

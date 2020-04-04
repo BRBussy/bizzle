@@ -2,6 +2,7 @@ package role
 
 import (
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
+	budgetConfigAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/config/admin"
 	budgetEntryAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/admin"
 	budgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
@@ -37,6 +38,8 @@ var initialRoles = []securityRole.Role{
 			budgetEntryStore.FindManyService,
 			budgetAdmin.GetBudgetForDateRangeService,
 			budgetCategoryRuleStore.FindManyService,
+			budgetConfigAdmin.GetMyConfigService,
+			budgetConfigAdmin.SetMyConfigService,
 		},
 	},
 	{
@@ -57,16 +60,22 @@ func Setup(
 	// retrieve root role
 	var rootRole securityRole.Role
 	var rootRoleCopy securityRole.Role
-	findOneResponse, err := store.FindOne(roleStore.FindOneRequest{Identifier: identifier.Name("root")})
+	findOneResponse, err := store.FindOne(
+		roleStore.FindOneRequest{
+			Identifier: identifier.Name("root"),
+		},
+	)
 	switch err.(type) {
 	case mongo.ErrNotFound:
 		// root role not found, it should be created
 		log.Info().Msg("creating root role")
-		createOneResponse, err := admin.CreateOne(&roleAdmin.CreateOneRequest{
-			Role: securityRole.Role{
-				Name: "root",
+		createOneResponse, err := admin.CreateOne(
+			roleAdmin.CreateOneRequest{
+				Role: securityRole.Role{
+					Name: "root",
+				},
 			},
-		})
+		)
 		if err != nil {
 			log.Error().Err(err).Msg("creating root role")
 			return err
@@ -101,12 +110,12 @@ func Setup(
 			switch err.(type) {
 			case mongo.ErrNotFound:
 				// role was not found, create it and move on to next role
-				createResponse, err := admin.CreateOne(&roleAdmin.CreateOneRequest{Role: initialRoles[i]})
+				createResponse, err := admin.CreateOne(roleAdmin.CreateOneRequest{Role: initialRoles[i]})
 				if err != nil {
 					log.Error().Err(err).Msg("creating role")
 					return err
 				}
-				findOneResponse = roleStore.FindOneResponse{Role: createResponse.Role}
+				findOneResponse = &roleStore.FindOneResponse{Role: createResponse.Role}
 				continue
 
 			default:
@@ -122,7 +131,7 @@ func Setup(
 		if !securityRole.CompareRoles(initialRoles[i], findOneResponse.Role) {
 			// update as required
 			log.Info().Msg("updating role " + initialRoles[i].Name)
-			if _, err := admin.UpdateOne(&roleAdmin.UpdateOneRequest{Role: initialRoles[i]}); err != nil {
+			if _, err := admin.UpdateOne(roleAdmin.UpdateOneRequest{Role: initialRoles[i]}); err != nil {
 				log.Error().Err(err).Msg("updating role")
 				return err
 			}
@@ -131,7 +140,7 @@ func Setup(
 
 	// check if root role should be updated
 	if !securityRole.CompareRoles(rootRole, rootRoleCopy) {
-		if _, err := admin.UpdateOne(&roleAdmin.UpdateOneRequest{Role: rootRole}); err != nil {
+		if _, err := admin.UpdateOne(roleAdmin.UpdateOneRequest{Role: rootRole}); err != nil {
 			log.Error().Err(err).Msg("updating root role")
 			return err
 		}

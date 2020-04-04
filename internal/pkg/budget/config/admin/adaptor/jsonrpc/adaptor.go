@@ -31,7 +31,7 @@ type GetMyConfigRequest struct {
 }
 
 type GetMyConfigResponse struct {
-	Config budgetConfig.Config `json:"config"`
+	BudgetConfig budgetConfig.Config `json:"budgetConfig"`
 }
 
 func (a *adaptor) GetMyConfig(r *http.Request, request *GetMyConfigRequest, response *GetMyConfigResponse) error {
@@ -50,7 +50,33 @@ func (a *adaptor) GetMyConfig(r *http.Request, request *GetMyConfigRequest, resp
 		return err
 	}
 
-	response.Config = getMyConfigResponse.Config
+	response.BudgetConfig = getMyConfigResponse.BudgetConfig
+
+	return nil
+}
+
+type SetMyConfigRequest struct {
+	BudgetConfig budgetConfig.Config `json:"budgetConfig"`
+}
+
+type SetMyConfigResponse struct {
+}
+
+func (a *adaptor) SetMyConfig(r *http.Request, request *SetMyConfigRequest, response *SetMyConfigResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err)
+		return bizzleException.ErrUnexpected{}
+	}
+
+	if _, err := a.admin.SetMyConfig(
+		budgetConfigAdmin.SetMyConfigRequest{
+			Claims:       c,
+			BudgetConfig: request.BudgetConfig,
+		},
+	); err != nil {
+		return err
+	}
 
 	return nil
 }

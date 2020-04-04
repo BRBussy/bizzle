@@ -47,7 +47,7 @@ func (a *admin) GetMyConfig(request budgetConfigAdmin.GetMyConfigRequest) (*budg
 	switch err.(type) {
 	case nil:
 		// budget config exists for user, return it
-		return &budgetConfigAdmin.GetMyConfigResponse{Config: findOneBudgetConfigResponse.Config}, nil
+		return &budgetConfigAdmin.GetMyConfigResponse{BudgetConfig: findOneBudgetConfigResponse.Config}, nil
 
 	case mongo.ErrNotFound:
 		// budget config doesn't exist yet, create a new blank one and return it
@@ -63,7 +63,7 @@ func (a *admin) GetMyConfig(request budgetConfigAdmin.GetMyConfigRequest) (*budg
 			log.Error().Err(err).Msg("could not create budget config")
 			return nil, bizzleException.ErrUnexpected{}
 		}
-		return &budgetConfigAdmin.GetMyConfigResponse{Config: newConfig}, nil
+		return &budgetConfigAdmin.GetMyConfigResponse{BudgetConfig: newConfig}, nil
 
 	default:
 		// some other retrieval error occurred
@@ -89,14 +89,14 @@ func (a *admin) SetMyConfig(request budgetConfigAdmin.SetMyConfigRequest) (*budg
 	case mongo.ErrNotFound:
 		// config not yet set for user
 		// set default fields on the given config
-		request.Config.ID = identifier.ID(uuid.NewV4().String())
-		request.Config.OwnerID = request.Claims.ScopingID()
+		request.BudgetConfig.ID = identifier.ID(uuid.NewV4().String())
+		request.BudgetConfig.OwnerID = request.Claims.ScopingID()
 
 		// validate for creation
 		validateForCreateResponse, err := a.budgetConfigValidator.ValidateForCreate(
 			budgetConfigValidator.ValidateForCreateRequest{
 				Claims:       request.Claims,
-				BudgetConfig: request.Config,
+				BudgetConfig: request.BudgetConfig,
 			},
 		)
 		if err != nil {
@@ -110,7 +110,7 @@ func (a *admin) SetMyConfig(request budgetConfigAdmin.SetMyConfigRequest) (*budg
 		// create it
 		if _, err := a.budgetConfigStore.CreateOne(
 			budgetConfigStore.CreateOneRequest{
-				Config: request.Config,
+				Config: request.BudgetConfig,
 			},
 		); err != nil {
 			log.Error().Err(err).Msg("could not create budget config")
@@ -121,14 +121,14 @@ func (a *admin) SetMyConfig(request budgetConfigAdmin.SetMyConfigRequest) (*budg
 	case nil:
 		// config already exists for user
 		// set default fields on given config
-		request.Config.ID = findOneBudgetConfigResponse.Config.ID
-		request.Config.OwnerID = findOneBudgetConfigResponse.Config.OwnerID
+		request.BudgetConfig.ID = findOneBudgetConfigResponse.Config.ID
+		request.BudgetConfig.OwnerID = findOneBudgetConfigResponse.Config.OwnerID
 
 		// validate for update
 		validateForUpdateResponse, err := a.budgetConfigValidator.ValidateForUpdate(
 			budgetConfigValidator.ValidateForUpdateRequest{
 				Claims:       request.Claims,
-				BudgetConfig: request.Config,
+				BudgetConfig: request.BudgetConfig,
 			},
 		)
 		if err != nil {
