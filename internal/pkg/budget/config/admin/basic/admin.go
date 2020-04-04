@@ -138,6 +138,16 @@ func (a *admin) SetMyConfig(request budgetConfigAdmin.SetMyConfigRequest) (*budg
 		if len(validateForUpdateResponse.ReasonsInvalid) > 0 {
 			return nil, budgetConfig.ErrInvalidConfig{ReasonsInvalid: validateForUpdateResponse.ReasonsInvalid}
 		}
+		// update budget config
+		if _, err := a.budgetConfigStore.UpdateOne(
+			budgetConfigStore.UpdateOneRequest{
+				Config: request.BudgetConfig,
+				Claims: request.Claims,
+			},
+		); err != nil {
+			log.Error().Err(err).Msg("unable to update budget config")
+			return nil, bizzleException.ErrUnexpected{}
+		}
 		return &budgetConfigAdmin.SetMyConfigResponse{}, nil
 
 	default:

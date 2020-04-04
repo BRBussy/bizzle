@@ -11,7 +11,7 @@ type Admin interface {
 	SetMyConfig(SetMyConfigRequest) (*SetMyConfigResponse, error)
 }
 
-const ServiceProvider = "BudgetConfig-Store"
+const ServiceProvider = "BudgetConfig-Admin"
 
 const GetMyConfigService = ServiceProvider + ".GetMyConfig"
 const SetMyConfigService = ServiceProvider + ".SetMyConfig"
