@@ -84,9 +84,24 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo budget category rule store")
 	}
+	MongoBudgetConfigStore, err := mongoBudgetConfigStore.New(
+		RequestValidator,
+		BasicScopeAdmin,
+		mongoDb,
+	)
+	BasicBudgetConfigValidator := basicBudgetConfigValidator.New(
+		RequestValidator,
+		MongoBudgetCategoryRuleStore,
+	)
+	BasicBudgetConfigAdmin := basicBudgetConfigAdmin.New(
+		RequestValidator,
+		MongoBudgetConfigStore,
+		BasicBudgetConfigValidator,
+	)
 	BasicBudgetCategoryRuleAdmin := basicBudgetCategoryRuleAdmin.New(
 		RequestValidator,
 		MongoBudgetCategoryRuleStore,
+		BasicBudgetConfigAdmin,
 	)
 	XLSXStandardBankStatementParser := xlsxStandardBankStatementParser.New(
 		RequestValidator,
@@ -113,20 +128,6 @@ func main() {
 	BasicBudgetAdmin := basicBudgetAdmin.New(
 		RequestValidator,
 		MongoBudgetEntryStore,
-	)
-	MongoBudgetConfigStore, err := mongoBudgetConfigStore.New(
-		RequestValidator,
-		BasicScopeAdmin,
-		mongoDb,
-	)
-	BasicBudgetConfigValidator := basicBudgetConfigValidator.New(
-		RequestValidator,
-		MongoBudgetCategoryRuleStore,
-	)
-	BasicBudgetConfigAdmin := basicBudgetConfigAdmin.New(
-		RequestValidator,
-		MongoBudgetConfigStore,
-		BasicBudgetConfigValidator,
 	)
 
 	//

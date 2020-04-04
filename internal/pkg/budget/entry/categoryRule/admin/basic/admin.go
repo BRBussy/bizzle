@@ -1,6 +1,7 @@
 package basic
 
 import (
+	budgetConfigAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/config/admin"
 	"strings"
 
 	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
@@ -18,15 +19,18 @@ import (
 type admin struct {
 	validator                    validationValidator.Validator
 	budgetEntryCategoryRuleStore budgetEntryCategoryRuleStore.Store
+	budgetConfigAdmin            budgetConfigAdmin.Admin
 }
 
 func New(
 	validator validationValidator.Validator,
 	budgetEntryCategoryRuleStore budgetEntryCategoryRuleStore.Store,
+	budgetConfigAdmin budgetConfigAdmin.Admin,
 ) budgetEntryCategoryRuleAdmin.Admin {
 	return &admin{
 		validator:                    validator,
 		budgetEntryCategoryRuleStore: budgetEntryCategoryRuleStore,
+		budgetConfigAdmin:            budgetConfigAdmin,
 	}
 }
 
@@ -92,8 +96,24 @@ func (a *admin) CategoriseBudgetEntry(request budgetEntryCategoryRuleAdmin.Categ
 		return nil, err
 	}
 
+	// get users budget config to find their default other rule
+	getMyConfigResponse, err := a.budgetConfigAdmin.GetMyConfig(
+		budgetConfigAdmin.GetMyConfigRequest{
+			Claims: request.Claims,
+		},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("unable to get budget config for user")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	// confirm that the default other rule has been set
+	if getMyConfigResponse.BudgetConfig.OtherCategoryRuleID == "" {
+		return nil, budgetEntryCategoryRuleAdmin.ErrDefaultOtherBudgetEntryCategoryRuleNotSet{}
+	}
+
 	// find all category rules owned by user
-	findManyResponse, err := a.budgetEntryCategoryRuleStore.FindMany(
+	findManyBudgetCategoryRulesResponse, err := a.budgetEntryCategoryRuleStore.FindMany(
 		budgetEntryCategoryRuleStore.FindManyRequest{
 			Claims:   request.Claims,
 			Criteria: make(criteria.Criteria, 0),
@@ -105,11 +125,23 @@ func (a *admin) CategoriseBudgetEntry(request budgetEntryCategoryRuleAdmin.Categ
 		return nil, bizzleException.ErrUnexpected{}
 	}
 
+	// confirm that default other rule is among those retrieved
+	for i, bcr := range findManyBudgetCategoryRulesResponse.Records {
+		if bcr.ID == getMyConfigResponse.BudgetConfig.OtherCategoryRuleID {
+			break
+		}
+		if i == len(findManyBudgetCategoryRulesResponse.Records)-1 {
+			// if execution reaches here then the default other rule is not found
+			log.Error().Msg("other category rule not among found rules")
+			return nil, bizzleException.ErrUnexpected{}
+		}
+	}
+
 	// minimise and strip description
 	description := strings.ToLower(strings.Trim(request.BudgetEntryDescription, " "))
 
 nextCategorisationRule:
-	for _, rule := range findManyResponse.Records {
+	for _, rule := range findManyBudgetCategoryRulesResponse.Records {
 		if rule.Strict {
 			// all identifiers must be found in description
 			for _, id := range rule.CategoryIdentifiers {
