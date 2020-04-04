@@ -74,14 +74,14 @@ func (a *admin) GetBudgetForDateRange(request budgetAdmin.GetBudgetForDateRangeR
 	newBudget := budget.Budget{
 		StartDate: request.StartDate,
 		EndDate:   request.EndDate,
-		Summary:   make(map[string]budget.CompareTotal),
+		Summary:   make(map[string]budget.CategoryTotal),
 		Entries:   make(map[string][]budgetEntry.Entry),
 	}
 	for _, be := range findManyBudgetEntriesResponse.Records {
 		// sum amounts of all the entries with the same category rule
-		newBudget.Summary[be.CategoryRule.Name] = budget.CompareTotal{
-			Expected: be.CategoryRule.ExpectedAmount,
-			Actual:   newBudget.Summary[be.CategoryRule.Name].Actual + be.Amount,
+		newBudget.Summary[be.CategoryRule.Name] = budget.CategoryTotal{
+			BudgetEntryCategoryRule: be.CategoryRule,
+			Amount:                  newBudget.Summary[be.CategoryRule.Name].Amount + be.Amount,
 		}
 
 		// put together all entries with the same category rule
@@ -90,14 +90,14 @@ func (a *admin) GetBudgetForDateRange(request budgetAdmin.GetBudgetForDateRangeR
 
 	// perform rounding on summary
 	for summaryKey, value := range newBudget.Summary {
-		if value.Actual > 0 {
-			newBudget.TotalIn.Actual += value.Actual
+		if value.Amount > 0 {
+			newBudget.TotalIn.Actual += value.Amount
 		} else {
-			newBudget.TotalOut.Actual -= value.Actual
+			newBudget.TotalOut.Actual -= value.Amount
 		}
-		newBudget.Summary[summaryKey] = budget.CompareTotal{
-			Expected: value.Expected,
-			Actual:   math.Round(value.Actual*100) / 100,
+		newBudget.Summary[summaryKey] = budget.CategoryTotal{
+			BudgetEntryCategoryRule: value.BudgetEntryCategoryRule,
+			Amount:                  math.Round(value.Amount*100) / 100,
 		}
 	}
 	newBudget.Net = newBudget.TotalIn.Actual - newBudget.TotalOut.Actual
