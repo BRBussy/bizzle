@@ -89,10 +89,12 @@ nextRuleToSync:
 
 		//create it
 		ruleToSync.OwnerID = findOneUserResponse.User.ID
-		if _, err := budgetEntryCategoryRuleAdminImp.CreateOne(budgetEntryCategoryRuleAdmin.CreateOneRequest{
-			Claims:       claims.Login{UserID: userID},
-			CategoryRule: ruleToSync,
-		}); err != nil {
+		if _, err := budgetEntryCategoryRuleAdminImp.CreateOne(
+			budgetEntryCategoryRuleAdmin.CreateOneRequest{
+				Claims:       claims.Login{UserID: userID},
+				CategoryRule: ruleToSync,
+			},
+		); err != nil {
 			log.Error().Err(err).Msg("creating budget category rule")
 			return bizzleException.ErrUnexpected{}
 		}
@@ -104,6 +106,14 @@ nextRuleToSync:
 
 var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 	{
+		Name: "Other",
+		CategoryIdentifiers: []string{
+			"other",
+		},
+		ExpectedAmount:       -3200,
+		ExpectedAmountPeriod: 31,
+	},
+	{
 		CategoryIdentifiers: []string{
 			"pre-paid electricity",
 			"pre paid electricity",
@@ -112,12 +122,6 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		Name:                 "Electricity",
 		Strict:               false,
 		ExpectedAmount:       -400,
-		ExpectedAmountPeriod: 31,
-	},
-	{
-		Name:                 "Other",
-		CategoryIdentifiers:  []string{},
-		ExpectedAmount:       -3200,
 		ExpectedAmountPeriod: 31,
 	},
 	{
