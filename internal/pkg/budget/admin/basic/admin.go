@@ -6,7 +6,6 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/budget"
 	budgetAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/admin"
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
-	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
@@ -79,19 +78,26 @@ func (a *admin) GetBudgetForDateRange(request budgetAdmin.GetBudgetForDateRangeR
 		Entries:   make(map[string][]budgetEntry.Entry),
 	}
 	for _, be := range findManyBudgetEntriesResponse.Records {
-		if be.CategoryRule.Name == "" {
-			newBudget.Summary[budgetEntryCategoryRule.OtherCategoryRuleName] = newBudget.Summary[budgetEntryCategoryRule.OtherCategoryRuleName] + be.Amount
-			newBudget.Entries[budgetEntryCategoryRule.OtherCategoryRuleName] = append(newBudget.Entries[budgetEntryCategoryRule.OtherCategoryRuleName], be.Entry)
-		} else {
-			newBudget.Summary[be.CategoryRule.Name] = newBudget.Summary[be.CategoryRule.Name] + be.Amount
-			newBudget.Entries[be.CategoryRule.Name] = append(newBudget.Entries[be.CategoryRule.Name], be.Entry)
-		}
+		// sum amounts of all the entries with the same category rule
+		newBudget.Summary[be.CategoryRule.Name] = newBudget.Summary[be.CategoryRule.Name] + be.Amount
+
+		// put together all entries with the same category rule
+		newBudget.Entries[be.CategoryRule.Name] = append(newBudget.Entries[be.CategoryRule.Name], be.Entry)
 	}
 
 	// perform rounding on summary
 	for summaryKey, value := range newBudget.Summary {
+		if value > 0 {
+			newBudget.TotalIn.Actual += value
+		} else {
+			newBudget.TotalOut.Actual -= value
+		}
 		newBudget.Summary[summaryKey] = math.Round(value*100) / 100
 	}
+	newBudget.Net = newBudget.TotalIn.Actual - newBudget.TotalOut.Actual
+	newBudget.Net = math.Round(newBudget.Net*100) / 100
+	newBudget.TotalIn.Actual = math.Round(newBudget.TotalIn.Actual*100) / 100
+	newBudget.TotalOut.Actual = math.Round(newBudget.TotalOut.Actual*100) / 100
 
 	return &budgetAdmin.GetBudgetForDateRangeResponse{Budget: newBudget}, nil
 }

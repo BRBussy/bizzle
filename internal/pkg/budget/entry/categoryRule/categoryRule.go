@@ -52,5 +52,3 @@ nextC1Cat:
 	// if execution reaches here then every cat in c1 was found in c2
 	return true
 }
-
-const OtherCategoryRuleName = "Other"
