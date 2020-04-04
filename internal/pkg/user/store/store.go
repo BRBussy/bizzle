@@ -6,9 +6,9 @@ import (
 )
 
 type Store interface {
-	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
-	FindOne(*FindOneRequest) (*FindOneResponse, error)
-	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	FindOne(FindOneRequest) (*FindOneResponse, error)
+	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
 }
 
 const ServiceProvider = "User-Store"

@@ -8,8 +8,8 @@ import (
 
 // Admin is a service provider that provides scoping using claims
 type Admin interface {
-	ApplyScopeToCriteria(*ApplyScopeToCriteriaRequest) (*ApplyScopeToCriteriaResponse, error)
-	ApplyScopeToIdentifier(*ApplyScopeToIdentifierRequest) (*ApplyScopeToIdentifierResponse, error)
+	ApplyScopeToCriteria(ApplyScopeToCriteriaRequest) (*ApplyScopeToCriteriaResponse, error)
+	ApplyScopeToIdentifier(ApplyScopeToIdentifierRequest) (*ApplyScopeToIdentifierResponse, error)
 }
 
 // ApplyScopeToCriteriaRequest is the request object for the ApplyScopeToCriteria Service

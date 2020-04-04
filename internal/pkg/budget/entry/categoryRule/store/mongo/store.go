@@ -41,7 +41,7 @@ func New(
 	}, nil
 }
 
-func (s *store) CreateOne(request *budgetEntryCategoryRuleStore.CreateOneRequest) (*budgetEntryCategoryRuleStore.CreateOneResponse, error) {
+func (s *store) CreateOne(request budgetEntryCategoryRuleStore.CreateOneRequest) (*budgetEntryCategoryRuleStore.CreateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -53,7 +53,7 @@ func (s *store) CreateOne(request *budgetEntryCategoryRuleStore.CreateOneRequest
 	return &budgetEntryCategoryRuleStore.CreateOneResponse{}, nil
 }
 
-func (s *store) CreateMany(request *budgetEntryCategoryRuleStore.CreateManyRequest) (*budgetEntryCategoryRuleStore.CreateManyResponse, error) {
+func (s *store) CreateMany(request budgetEntryCategoryRuleStore.CreateManyRequest) (*budgetEntryCategoryRuleStore.CreateManyResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -71,16 +71,18 @@ func (s *store) CreateMany(request *budgetEntryCategoryRuleStore.CreateManyReque
 	return &budgetEntryCategoryRuleStore.CreateManyResponse{}, nil
 }
 
-func (s *store) FindOne(request *budgetEntryCategoryRuleStore.FindOneRequest) (*budgetEntryCategoryRuleStore.FindOneResponse, error) {
+func (s *store) FindOne(request budgetEntryCategoryRuleStore.FindOneRequest) (*budgetEntryCategoryRuleStore.FindOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
-	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(&scope.ApplyScopeToIdentifierRequest{
-		Claims:            request.Claims,
-		IdentifierToScope: request.Identifier,
-	})
+	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(
+		scope.ApplyScopeToIdentifierRequest{
+			Claims:            request.Claims,
+			IdentifierToScope: request.Identifier,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("could not apply scope to identifier")
 		return nil, bizzleException.ErrUnexpected{}
@@ -102,16 +104,18 @@ func (s *store) FindOne(request *budgetEntryCategoryRuleStore.FindOneRequest) (*
 	}, nil
 }
 
-func (s *store) FindMany(request *budgetEntryCategoryRuleStore.FindManyRequest) (*budgetEntryCategoryRuleStore.FindManyResponse, error) {
+func (s *store) FindMany(request budgetEntryCategoryRuleStore.FindManyRequest) (*budgetEntryCategoryRuleStore.FindManyResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
-	applyScopeToCriteriaResponse, err := s.scopeAdmin.ApplyScopeToCriteria(&scope.ApplyScopeToCriteriaRequest{
-		Claims:          request.Claims,
-		CriteriaToScope: request.Criteria,
-	})
+	applyScopeToCriteriaResponse, err := s.scopeAdmin.ApplyScopeToCriteria(
+		scope.ApplyScopeToCriteriaRequest{
+			Claims:          request.Claims,
+			CriteriaToScope: request.Criteria,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("could not apply scope to criteria")
 		return nil, bizzleException.ErrUnexpected{}
@@ -133,7 +137,7 @@ func (s *store) FindMany(request *budgetEntryCategoryRuleStore.FindManyRequest) 
 	}, nil
 }
 
-func (s *store) UpdateOne(request *budgetEntryCategoryRuleStore.UpdateOneRequest) (*budgetEntryCategoryRuleStore.UpdateOneResponse, error) {
+func (s *store) UpdateOne(request budgetEntryCategoryRuleStore.UpdateOneRequest) (*budgetEntryCategoryRuleStore.UpdateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

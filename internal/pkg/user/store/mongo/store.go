@@ -36,7 +36,7 @@ func New(
 	}, nil
 }
 
-func (s *store) CreateOne(request *userStore.CreateOneRequest) (*userStore.CreateOneResponse, error) {
+func (s *store) CreateOne(request userStore.CreateOneRequest) (*userStore.CreateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -48,7 +48,7 @@ func (s *store) CreateOne(request *userStore.CreateOneRequest) (*userStore.Creat
 	return &userStore.CreateOneResponse{}, nil
 }
 
-func (s *store) FindOne(request *userStore.FindOneRequest) (*userStore.FindOneResponse, error) {
+func (s *store) FindOne(request userStore.FindOneRequest) (*userStore.FindOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -66,7 +66,7 @@ func (s *store) FindOne(request *userStore.FindOneRequest) (*userStore.FindOneRe
 	return &userStore.FindOneResponse{User: result}, nil
 }
 
-func (s *store) UpdateOne(request *userStore.UpdateOneRequest) (*userStore.UpdateOneResponse, error) {
+func (s *store) UpdateOne(request userStore.UpdateOneRequest) (*userStore.UpdateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

@@ -6,9 +6,9 @@ import (
 )
 
 type Admin interface {
-	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
-	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
-	RegisterOne(*RegisterOneRequest) (*RegisterOneResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
+	RegisterOne(RegisterOneRequest) (*RegisterOneResponse, error)
 }
 
 const ServiceProvider = "User-Store"

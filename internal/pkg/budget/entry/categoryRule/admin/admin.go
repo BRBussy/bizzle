@@ -6,9 +6,9 @@ import (
 )
 
 type Admin interface {
-	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
-	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
-	CategoriseBudgetEntry(*CategoriseBudgetEntryRequest) (*CategoriseBudgetEntryResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
+	CategoriseBudgetEntry(CategoriseBudgetEntryRequest) (*CategoriseBudgetEntryResponse, error)
 }
 
 type CreateOneRequest struct {

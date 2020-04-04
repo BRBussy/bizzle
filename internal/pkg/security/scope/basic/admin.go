@@ -22,7 +22,7 @@ func New(
 }
 
 // ApplyScopeToCriteria is used to add scope from claims to a search criteria
-func (a *Admin) ApplyScopeToCriteria(request *scope.ApplyScopeToCriteriaRequest) (*scope.ApplyScopeToCriteriaResponse, error) {
+func (a *Admin) ApplyScopeToCriteria(request scope.ApplyScopeToCriteriaRequest) (*scope.ApplyScopeToCriteriaResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -39,7 +39,7 @@ func (a *Admin) ApplyScopeToCriteria(request *scope.ApplyScopeToCriteriaRequest)
 }
 
 // ApplyScopeToIdentifier is used to add scope from claims to a search identifier
-func (a *Admin) ApplyScopeToIdentifier(request *scope.ApplyScopeToIdentifierRequest) (*scope.ApplyScopeToIdentifierResponse, error) {
+func (a *Admin) ApplyScopeToIdentifier(request scope.ApplyScopeToIdentifierRequest) (*scope.ApplyScopeToIdentifierResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

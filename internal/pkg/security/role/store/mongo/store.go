@@ -37,7 +37,7 @@ func New(
 	}, nil
 }
 
-func (s *store) CreateOne(request *roleStore.CreateOneRequest) (*roleStore.CreateOneResponse, error) {
+func (s *store) CreateOne(request roleStore.CreateOneRequest) (*roleStore.CreateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -50,7 +50,7 @@ func (s *store) CreateOne(request *roleStore.CreateOneRequest) (*roleStore.Creat
 	return &roleStore.CreateOneResponse{}, nil
 }
 
-func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {
+func (s *store) FindOne(request roleStore.FindOneRequest) (*roleStore.FindOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -69,7 +69,7 @@ func (s *store) FindOne(request *roleStore.FindOneRequest) (*roleStore.FindOneRe
 	return &roleStore.FindOneResponse{Role: result}, nil
 }
 
-func (s *store) FindMany(request *roleStore.FindManyRequest) (*roleStore.FindManyResponse, error) {
+func (s *store) FindMany(request roleStore.FindManyRequest) (*roleStore.FindManyResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -91,7 +91,7 @@ func (s *store) FindMany(request *roleStore.FindManyRequest) (*roleStore.FindMan
 	}, nil
 }
 
-func (s *store) UpdateOne(request *roleStore.UpdateOneRequest) (*roleStore.UpdateOneResponse, error) {
+func (s *store) UpdateOne(request roleStore.UpdateOneRequest) (*roleStore.UpdateOneResponse, error) {
 	if err := s.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

@@ -7,8 +7,8 @@ import (
 )
 
 type Admin interface {
-	GetBudgetForMonthInYear(*GetBudgetForMonthInYearRequest) (*GetBudgetForMonthInYearResponse, error)
-	GetBudgetForDateRange(*GetBudgetForDateRangeRequest) (*GetBudgetForDateRangeResponse, error)
+	GetBudgetForMonthInYear(GetBudgetForMonthInYearRequest) (*GetBudgetForMonthInYearResponse, error)
+	GetBudgetForDateRange(GetBudgetForDateRangeRequest) (*GetBudgetForDateRangeResponse, error)
 }
 
 const ServiceProvider = "Budget-Admin"

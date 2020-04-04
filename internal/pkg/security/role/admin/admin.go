@@ -5,8 +5,8 @@ import (
 )
 
 type Admin interface {
-	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
-	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
 }
 
 const ServiceProvider = "Role-Admin"

@@ -10,11 +10,11 @@ import (
 
 // Store is used to perform crud operations on budget category rules
 type Store interface {
-	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
-	CreateMany(*CreateManyRequest) (*CreateManyResponse, error)
-	FindOne(*FindOneRequest) (*FindOneResponse, error)
-	FindMany(*FindManyRequest) (*FindManyResponse, error)
-	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	CreateMany(CreateManyRequest) (*CreateManyResponse, error)
+	FindOne(FindOneRequest) (*FindOneResponse, error)
+	FindMany(FindManyRequest) (*FindManyResponse, error)
+	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
 }
 
 const ServiceProvider = "BudgetEntryCategoryRule-Store"

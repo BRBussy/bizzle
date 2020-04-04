@@ -3,8 +3,8 @@ package authenticator
 import "github.com/BRBussy/bizzle/internal/pkg/security/claims"
 
 type Authenticator interface {
-	Login(*LoginRequest) (*LoginResponse, error)
-	AuthenticateService(request *AuthenticateServiceRequest) (*AuthenticateServiceResponse, error)
+	Login(LoginRequest) (*LoginResponse, error)
+	AuthenticateService(request AuthenticateServiceRequest) (*AuthenticateServiceResponse, error)
 }
 
 const ServiceProvider = "Authenticator"

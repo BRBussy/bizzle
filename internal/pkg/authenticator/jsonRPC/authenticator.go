@@ -27,11 +27,11 @@ func New(
 	}
 }
 
-func (a *authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
+func (a *authenticator) Login(request bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
 	return nil, bizzleException.ErrUnexpected{Reasons: []string{"not implemented"}}
 }
 
-func (a *authenticator) AuthenticateService(request *bizzleAuthenticator.AuthenticateServiceRequest) (*bizzleAuthenticator.AuthenticateServiceResponse, error) {
+func (a *authenticator) AuthenticateService(request bizzleAuthenticator.AuthenticateServiceRequest) (*bizzleAuthenticator.AuthenticateServiceResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

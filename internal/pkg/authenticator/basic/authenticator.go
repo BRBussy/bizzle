@@ -37,16 +37,18 @@ func New(
 	}
 }
 
-func (a *authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
+func (a *authenticator) Login(request bizzleAuthenticator.LoginRequest) (*bizzleAuthenticator.LoginResponse, error) {
 	if err := a.requestValidator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
 	// try and retrieve user by email address
-	retrieveResponse, err := a.userStore.FindOne(&userStore.FindOneRequest{
-		Identifier: identifier.Email(request.Email),
-	})
+	retrieveResponse, err := a.userStore.FindOne(
+		userStore.FindOneRequest{
+			Identifier: identifier.Email(request.Email),
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("retrieving user for log in")
 		return nil, err
@@ -54,6 +56,7 @@ func (a *authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzl
 
 	// check password is correct
 	if err := bcrypt.CompareHashAndPassword(retrieveResponse.User.Password, []byte(request.Password)); err != nil {
+		log.Error().Err(err).Msg("invalid password login")
 		return nil, err
 	}
 
@@ -76,7 +79,7 @@ func (a *authenticator) Login(request *bizzleAuthenticator.LoginRequest) (*bizzl
 	}, nil
 }
 
-func (a *authenticator) AuthenticateService(request *bizzleAuthenticator.AuthenticateServiceRequest) (*bizzleAuthenticator.AuthenticateServiceResponse, error) {
+func (a *authenticator) AuthenticateService(request bizzleAuthenticator.AuthenticateServiceRequest) (*bizzleAuthenticator.AuthenticateServiceResponse, error) {
 	if err := a.requestValidator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -86,7 +89,7 @@ func (a *authenticator) AuthenticateService(request *bizzleAuthenticator.Authent
 	case claims.Login:
 		// try and retrieve user that owns claims
 		findOneUserResponse, err := a.userStore.FindOne(
-			&userStore.FindOneRequest{
+			userStore.FindOneRequest{
 				Identifier: typedClaims.UserID,
 			},
 		)
@@ -103,7 +106,7 @@ func (a *authenticator) AuthenticateService(request *bizzleAuthenticator.Authent
 			roleCriteria.List = append(roleCriteria.List, roleID.String())
 		}
 		roleFindManyResponse, err := a.roleStore.FindMany(
-			&roleStore.FindManyRequest{
+			roleStore.FindManyRequest{
 				Criteria: []criterion.Criterion{
 					roleCriteria,
 					text.Exact{

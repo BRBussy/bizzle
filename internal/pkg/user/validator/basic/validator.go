@@ -49,7 +49,7 @@ func (v validator) genericValidation(userToValidate user.User) ([]reasonInvalid.
 	} else {
 		// all roles must exist
 		for i := range userToValidate.RoleIDs {
-			if _, err := v.roleStore.FindOne(&roleStore.FindOneRequest{
+			if _, err := v.roleStore.FindOne(roleStore.FindOneRequest{
 				Identifier: userToValidate.RoleIDs[i],
 			}); err != nil {
 				switch err.(type) {

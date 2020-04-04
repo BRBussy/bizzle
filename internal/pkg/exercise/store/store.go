@@ -8,10 +8,10 @@ import (
 )
 
 type Store interface {
-	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
-	FindOne(*FindOneRequest) (*FindOneResponse, error)
-	FindMany(*FindManyRequest) (*FindManyResponse, error)
-	UpdateOne(*UpdateOneRequest) (*UpdateOneResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	FindOne(FindOneRequest) (*FindOneResponse, error)
+	FindMany(FindManyRequest) (*FindManyResponse, error)
+	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
 }
 
 const ServiceProvider = "Exercise-Store"

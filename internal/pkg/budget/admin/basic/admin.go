@@ -31,7 +31,7 @@ func New(
 	}
 }
 
-func (a *admin) GetBudgetForMonthInYear(request *budgetAdmin.GetBudgetForMonthInYearRequest) (*budgetAdmin.GetBudgetForMonthInYearResponse, error) {
+func (a *admin) GetBudgetForMonthInYear(request budgetAdmin.GetBudgetForMonthInYearRequest) (*budgetAdmin.GetBudgetForMonthInYearResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -40,30 +40,32 @@ func (a *admin) GetBudgetForMonthInYear(request *budgetAdmin.GetBudgetForMonthIn
 	return &budgetAdmin.GetBudgetForMonthInYearResponse{}, nil
 }
 
-func (a *admin) GetBudgetForDateRange(request *budgetAdmin.GetBudgetForDateRangeRequest) (*budgetAdmin.GetBudgetForDateRangeResponse, error) {
+func (a *admin) GetBudgetForDateRange(request budgetAdmin.GetBudgetForDateRangeRequest) (*budgetAdmin.GetBudgetForDateRangeResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
 	// retrieve all budget entries in date range
-	findManyBudgetEntriesResponse, err := a.budgetEntryStore.FindManyComposite(budgetEntryStore.FindManyCompositeRequest{
-		Claims: request.Claims,
-		Criteria: criteria.Criteria{
-			dateTimeCriterion.Range{
-				Field: "date",
-				Start: dateTimeCriterion.RangeValue{
-					Date:      request.StartDate,
-					Inclusive: true,
-					Ignore:    false,
-				},
-				End: dateTimeCriterion.RangeValue{
-					Date:      request.EndDate,
-					Inclusive: false,
+	findManyBudgetEntriesResponse, err := a.budgetEntryStore.FindManyComposite(
+		budgetEntryStore.FindManyCompositeRequest{
+			Claims: request.Claims,
+			Criteria: criteria.Criteria{
+				dateTimeCriterion.Range{
+					Field: "date",
+					Start: dateTimeCriterion.RangeValue{
+						Date:      request.StartDate,
+						Inclusive: true,
+						Ignore:    false,
+					},
+					End: dateTimeCriterion.RangeValue{
+						Date:      request.EndDate,
+						Inclusive: false,
+					},
 				},
 			},
 		},
-	})
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("could not retrieve budget entries")
 		return nil, bizzleException.ErrUnexpected{Reasons: []string{"could not retrieve budget entries"}}

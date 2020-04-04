@@ -34,7 +34,7 @@ type SignUpResponse struct {
 
 func (a *adaptor) Login(r *http.Request, request *SignUpRequest, response *SignUpResponse) error {
 	loginResponse, err := a.authenticator.Login(
-		&bizzleAuthenticator.LoginRequest{
+		bizzleAuthenticator.LoginRequest{
 			Email:    request.Email,
 			Password: request.Password,
 		},
@@ -58,7 +58,7 @@ type AuthenticateServiceResponse struct {
 
 func (a *adaptor) AuthenticateService(r *http.Request, request *AuthenticateServiceRequest, response *AuthenticateServiceResponse) error {
 	if _, err := a.authenticator.AuthenticateService(
-		&bizzleAuthenticator.AuthenticateServiceRequest{
+		bizzleAuthenticator.AuthenticateServiceRequest{
 			Claims:  request.Claims.Claims,
 			Service: request.Service,
 		},

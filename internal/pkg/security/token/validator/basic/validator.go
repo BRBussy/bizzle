@@ -26,7 +26,7 @@ func New(
 	}
 }
 
-func (v *validator) Validate(request *tokenValidator.ValidateRequest) (*tokenValidator.ValidateResponse, error) {
+func (v *validator) Validate(request tokenValidator.ValidateRequest) (*tokenValidator.ValidateResponse, error) {
 	if err := v.requestValidator.Validate(request); err != nil {
 		return nil, err
 	}

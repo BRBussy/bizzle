@@ -23,7 +23,7 @@ func New(
 func (a *admin) CreateOne(request *roleAdmin.CreateOneRequest) (*roleAdmin.CreateOneResponse, error) {
 	request.Role.ID = identifier.ID(uuid.NewV4().String())
 
-	if _, err := a.roleStore.CreateOne(&roleStore.CreateOneRequest{Role: request.Role}); err != nil {
+	if _, err := a.roleStore.CreateOne(roleStore.CreateOneRequest{Role: request.Role}); err != nil {
 		log.Error().Err(err).Msg("creating role")
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (a *admin) CreateOne(request *roleAdmin.CreateOneRequest) (*roleAdmin.Creat
 
 func (a *admin) UpdateOne(request *roleAdmin.UpdateOneRequest) (*roleAdmin.UpdateOneResponse, error) {
 	// try and retrieve the role to be updated
-	findOneResponse, err := a.roleStore.FindOne(&roleStore.FindOneRequest{Identifier: identifier.ID(request.Role.ID)})
+	findOneResponse, err := a.roleStore.FindOne(roleStore.FindOneRequest{Identifier: identifier.ID(request.Role.ID)})
 	if err != nil {
 		log.Error().Err(err).Msg("finding role to update")
 		return nil, err
@@ -43,7 +43,7 @@ func (a *admin) UpdateOne(request *roleAdmin.UpdateOneRequest) (*roleAdmin.Updat
 	findOneResponse.Role.Permissions = request.Role.Permissions
 
 	// update role record
-	if _, err := a.roleStore.UpdateOne(&roleStore.UpdateOneRequest{Role: findOneResponse.Role}); err != nil {
+	if _, err := a.roleStore.UpdateOne(roleStore.UpdateOneRequest{Role: findOneResponse.Role}); err != nil {
 		log.Error().Err(err).Msg("updating role record")
 		return nil, err
 	}

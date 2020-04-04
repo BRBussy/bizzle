@@ -57,7 +57,7 @@ func Setup(
 	// retrieve root role
 	var rootRole securityRole.Role
 	var rootRoleCopy securityRole.Role
-	findOneResponse, err := store.FindOne(&roleStore.FindOneRequest{Identifier: identifier.Name("root")})
+	findOneResponse, err := store.FindOne(roleStore.FindOneRequest{Identifier: identifier.Name("root")})
 	switch err.(type) {
 	case mongo.ErrNotFound:
 		// root role not found, it should be created
@@ -96,7 +96,7 @@ func Setup(
 		}
 
 		// try and retrieve the role
-		findOneResponse, err := store.FindOne(&roleStore.FindOneRequest{Identifier: identifier.Name(initialRoles[i].Name)})
+		findOneResponse, err := store.FindOne(roleStore.FindOneRequest{Identifier: identifier.Name(initialRoles[i].Name)})
 		if err != nil {
 			switch err.(type) {
 			case mongo.ErrNotFound:
@@ -106,7 +106,7 @@ func Setup(
 					log.Error().Err(err).Msg("creating role")
 					return err
 				}
-				findOneResponse = &roleStore.FindOneResponse{Role: createResponse.Role}
+				findOneResponse = roleStore.FindOneResponse{Role: createResponse.Role}
 				continue
 
 			default:

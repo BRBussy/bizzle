@@ -143,10 +143,12 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 
 		// try and categorise
 		var categoryRule budgetEntryCategoryRule.CategoryRule
-		categoriseResponse, err := p.budgetEntryCategoryRuleAdmin.CategoriseBudgetEntry(&budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryRequest{
-			Claims:                 request.Claims,
-			BudgetEntryDescription: description,
-		})
+		categoriseResponse, err := p.budgetEntryCategoryRuleAdmin.CategoriseBudgetEntry(
+			budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryRequest{
+				Claims:                 request.Claims,
+				BudgetEntryDescription: description,
+			},
+		)
 		switch err.(type) {
 		case budgetEntryCategoryRule.ErrCouldNotClassify:
 			// do nothing, use blank category ID

@@ -31,7 +31,7 @@ type ValidateResponse struct {
 
 func (a *adaptor) Validate(r *http.Request, request *ValidateRequest, response *ValidateResponse) error {
 	validateResponse, err := a.validator.Validate(
-		&tokenValidator.ValidateRequest{
+		tokenValidator.ValidateRequest{
 			Token: request.Token,
 		},
 	)

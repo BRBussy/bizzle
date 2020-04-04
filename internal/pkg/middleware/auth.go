@@ -67,9 +67,11 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 		}
 
 		// validate token to get claims
-		validateResponse, err := a.tokenValidator.Validate(&tokenValidator.ValidateRequest{
-			Token: jwt,
-		})
+		validateResponse, err := a.tokenValidator.Validate(
+			tokenValidator.ValidateRequest{
+				Token: jwt,
+			},
+		)
 		if err != nil {
 			log.Error().Err(err).Msg("token validation failure")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -78,7 +80,7 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 
 		// validate service access
 		if _, err := a.authenticator.AuthenticateService(
-			&bizzleAuthenticator.AuthenticateServiceRequest{
+			bizzleAuthenticator.AuthenticateServiceRequest{
 				Claims:  validateResponse.Claims,
 				Service: method,
 			},

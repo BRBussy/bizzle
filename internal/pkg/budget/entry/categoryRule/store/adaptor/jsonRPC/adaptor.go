@@ -49,11 +49,13 @@ func (a *adaptor) FindMany(r *http.Request, request *FindManyRequest, response *
 		return bizzleException.ErrUnexpected{}
 	}
 
-	findManyResponse, err := a.store.FindMany(&budgetCategoryRuleStore.FindManyRequest{
-		Claims:   c,
-		Criteria: request.Criteria.Criteria,
-		Query:    request.Query,
-	})
+	findManyResponse, err := a.store.FindMany(
+		budgetCategoryRuleStore.FindManyRequest{
+			Claims:   c,
+			Criteria: request.Criteria.Criteria,
+			Query:    request.Query,
+		},
+	)
 	if err != nil {
 		return err
 	}

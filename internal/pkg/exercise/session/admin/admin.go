@@ -3,7 +3,7 @@ package admin
 import "github.com/BRBussy/bizzle/internal/pkg/exercise/session"
 
 type Admin interface {
-	CreateOne(*CreateOneRequest) (*CreateOneResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
 }
 
 const ServiceProvider = "Session-Admin"

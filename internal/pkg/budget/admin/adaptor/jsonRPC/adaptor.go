@@ -43,11 +43,13 @@ func (a *adaptor) GetBudgetForDateRange(r *http.Request, request *GetBudgetForDa
 		return bizzleException.ErrUnexpected{}
 	}
 
-	getBudgetForMonthInYearResponse, err := a.admin.GetBudgetForDateRange(&budgetAdmin.GetBudgetForDateRangeRequest{
-		Claims:    c,
-		StartDate: request.StartDate,
-		EndDate:   request.EndDate,
-	})
+	getBudgetForMonthInYearResponse, err := a.admin.GetBudgetForDateRange(
+		budgetAdmin.GetBudgetForDateRangeRequest{
+			Claims:    c,
+			StartDate: request.StartDate,
+			EndDate:   request.EndDate,
+		},
+	)
 	if err != nil {
 		return err
 	}

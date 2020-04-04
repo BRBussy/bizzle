@@ -30,7 +30,7 @@ func New(
 	}
 }
 
-func (a *admin) CreateOne(request *budgetEntryCategoryRuleAdmin.CreateOneRequest) (*budgetEntryCategoryRuleAdmin.CreateOneResponse, error) {
+func (a *admin) CreateOne(request budgetEntryCategoryRuleAdmin.CreateOneRequest) (*budgetEntryCategoryRuleAdmin.CreateOneResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -39,7 +39,7 @@ func (a *admin) CreateOne(request *budgetEntryCategoryRuleAdmin.CreateOneRequest
 	request.CategoryRule.ID = identifier.ID(uuid.NewV4().String())
 	request.CategoryRule.OwnerID = request.Claims.ScopingID()
 
-	if _, err := a.budgetEntryCategoryRuleStore.CreateOne(&budgetEntryCategoryRuleStore.CreateOneRequest{
+	if _, err := a.budgetEntryCategoryRuleStore.CreateOne(budgetEntryCategoryRuleStore.CreateOneRequest{
 		CategoryRule: request.CategoryRule,
 	}); err != nil {
 		log.Error().Err(err).Msg("could not create budget entry category rule")
@@ -49,17 +49,19 @@ func (a *admin) CreateOne(request *budgetEntryCategoryRuleAdmin.CreateOneRequest
 	return &budgetEntryCategoryRuleAdmin.CreateOneResponse{CategoryRule: request.CategoryRule}, nil
 }
 
-func (a *admin) UpdateOne(request *budgetEntryCategoryRuleAdmin.UpdateOneRequest) (*budgetEntryCategoryRuleAdmin.UpdateOneResponse, error) {
+func (a *admin) UpdateOne(request budgetEntryCategoryRuleAdmin.UpdateOneRequest) (*budgetEntryCategoryRuleAdmin.UpdateOneResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
 	// retrieve category rule to update
-	findOneRuleResponse, err := a.budgetEntryCategoryRuleStore.FindOne(&budgetEntryCategoryRuleStore.FindOneRequest{
-		Identifier: request.CategoryRule.ID,
-		Claims:     request.Claims,
-	})
+	findOneRuleResponse, err := a.budgetEntryCategoryRuleStore.FindOne(
+		budgetEntryCategoryRuleStore.FindOneRequest{
+			Identifier: request.CategoryRule.ID,
+			Claims:     request.Claims,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("could not retrieve budget entry rule to update")
 		return nil, bizzleException.ErrUnexpected{}
@@ -72,9 +74,11 @@ func (a *admin) UpdateOne(request *budgetEntryCategoryRuleAdmin.UpdateOneRequest
 	findOneRuleResponse.CategoryRule.ExpectedAmountPeriod = request.CategoryRule.ExpectedAmountPeriod
 
 	// perform update
-	if _, err := a.budgetEntryCategoryRuleStore.UpdateOne(&budgetEntryCategoryRuleStore.UpdateOneRequest{
-		CategoryRule: findOneRuleResponse.CategoryRule,
-	}); err != nil {
+	if _, err := a.budgetEntryCategoryRuleStore.UpdateOne(
+		budgetEntryCategoryRuleStore.UpdateOneRequest{
+			CategoryRule: findOneRuleResponse.CategoryRule,
+		},
+	); err != nil {
 		log.Error().Err(err).Msg("could not perform update")
 		return nil, bizzleException.ErrUnexpected{}
 	}
@@ -82,18 +86,20 @@ func (a *admin) UpdateOne(request *budgetEntryCategoryRuleAdmin.UpdateOneRequest
 	return &budgetEntryCategoryRuleAdmin.UpdateOneResponse{}, nil
 }
 
-func (a *admin) CategoriseBudgetEntry(request *budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryRequest) (*budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse, error) {
+func (a *admin) CategoriseBudgetEntry(request budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryRequest) (*budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse, error) {
 	if err := a.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}
 
 	// find all category rules owned by user
-	findManyResponse, err := a.budgetEntryCategoryRuleStore.FindMany(&budgetEntryCategoryRuleStore.FindManyRequest{
-		Claims:   request.Claims,
-		Criteria: make(criteria.Criteria, 0),
-		Query:    mongo.Query{},
-	})
+	findManyResponse, err := a.budgetEntryCategoryRuleStore.FindMany(
+		budgetEntryCategoryRuleStore.FindManyRequest{
+			Claims:   request.Claims,
+			Criteria: make(criteria.Criteria, 0),
+			Query:    mongo.Query{},
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("could not find budget entry rules")
 		return nil, bizzleException.ErrUnexpected{}

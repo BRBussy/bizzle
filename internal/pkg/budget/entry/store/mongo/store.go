@@ -78,10 +78,12 @@ func (s *store) FindOne(request budgetEntryStore.FindOneRequest) (*budgetEntrySt
 		return nil, err
 	}
 
-	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(&scope.ApplyScopeToIdentifierRequest{
-		Claims:            request.Claims,
-		IdentifierToScope: request.Identifier,
-	})
+	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(
+		scope.ApplyScopeToIdentifierRequest{
+			Claims:            request.Claims,
+			IdentifierToScope: request.Identifier,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("could not apply scope to identifier")
 		return nil, bizzleException.ErrUnexpected{}
@@ -109,10 +111,12 @@ func (s *store) FindMany(request budgetEntryStore.FindManyRequest) (*budgetEntry
 		return nil, err
 	}
 
-	applyScopeToCriteriaResponse, err := s.scopeAdmin.ApplyScopeToCriteria(&scope.ApplyScopeToCriteriaRequest{
-		Claims:          request.Claims,
-		CriteriaToScope: request.Criteria,
-	})
+	applyScopeToCriteriaResponse, err := s.scopeAdmin.ApplyScopeToCriteria(
+		scope.ApplyScopeToCriteriaRequest{
+			Claims:          request.Claims,
+			CriteriaToScope: request.Criteria,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("could not apply scope to criteria")
 		return nil, bizzleException.ErrUnexpected{}
@@ -210,10 +214,12 @@ func (s *store) UpdateOne(request budgetEntryStore.UpdateOneRequest) (*budgetEnt
 		return nil, err
 	}
 
-	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(&scope.ApplyScopeToIdentifierRequest{
-		Claims:            request.Claims,
-		IdentifierToScope: request.Entry.ID,
-	})
+	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(
+		scope.ApplyScopeToIdentifierRequest{
+			Claims:            request.Claims,
+			IdentifierToScope: request.Entry.ID,
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("could not apply scope to identifier")
 		return nil, bizzleException.ErrUnexpected{}
@@ -234,7 +240,7 @@ func (s *store) DeleteOne(request budgetEntryStore.DeleteOneRequest) (*budgetEnt
 	}
 
 	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(
-		&scope.ApplyScopeToIdentifierRequest{
+		scope.ApplyScopeToIdentifierRequest{
 			Claims:            request.Claims,
 			IdentifierToScope: request.Identifier,
 		},

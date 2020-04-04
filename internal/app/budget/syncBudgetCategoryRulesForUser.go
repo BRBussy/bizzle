@@ -32,7 +32,7 @@ func SyncBudgetCategoryRulesForUser(
 	}
 
 	// retrieve all rules owned by user
-	findManyRulesResponse, err := budgetEntryCategoryRuleStoreImp.FindMany(&budgetEntryCategoryRuleStore.FindManyRequest{
+	findManyRulesResponse, err := budgetEntryCategoryRuleStoreImp.FindMany(budgetEntryCategoryRuleStore.FindManyRequest{
 		Criteria: make(criteria.Criteria, 0),
 		Claims:   claims.Login{UserID: userID},
 	})
@@ -69,7 +69,7 @@ nextRuleToSync:
 					log.Info().Msg(fmt.Sprintf("  Rule %s has changed - Updating", ruleToSync.Name))
 					existingRule.Strict = ruleToSync.Strict
 					existingRule.CategoryIdentifiers = ruleToSync.CategoryIdentifiers
-					if _, err := budgetEntryCategoryRuleAdminImp.UpdateOne(&budgetEntryCategoryRuleAdmin.UpdateOneRequest{
+					if _, err := budgetEntryCategoryRuleAdminImp.UpdateOne(budgetEntryCategoryRuleAdmin.UpdateOneRequest{
 						Claims:       claims.Login{UserID: userID},
 						CategoryRule: ruleToSync,
 					}); err != nil {
@@ -87,7 +87,7 @@ nextRuleToSync:
 
 		//create it
 		ruleToSync.OwnerID = findOneUserResponse.User.ID
-		if _, err := budgetEntryCategoryRuleAdminImp.CreateOne(&budgetEntryCategoryRuleAdmin.CreateOneRequest{
+		if _, err := budgetEntryCategoryRuleAdminImp.CreateOne(budgetEntryCategoryRuleAdmin.CreateOneRequest{
 			Claims:       claims.Login{UserID: userID},
 			CategoryRule: ruleToSync,
 		}); err != nil {

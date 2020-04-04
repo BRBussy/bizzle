@@ -39,7 +39,7 @@ func Setup(
 				},
 			)
 		}
-		roleFindResponse, err := roleStoreImp.FindMany(&roleStore.FindManyRequest{
+		roleFindResponse, err := roleStoreImp.FindMany(roleStore.FindManyRequest{
 			Criteria: roleFindCriteria,
 		})
 		if err != nil {

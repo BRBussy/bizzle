@@ -3,7 +3,7 @@ package validator
 import "github.com/BRBussy/bizzle/internal/pkg/security/claims"
 
 type Validator interface {
-	Validate(request *ValidateRequest) (*ValidateResponse, error)
+	Validate(request ValidateRequest) (*ValidateResponse, error)
 }
 
 const ServiceProvider = "Token-Validator"
