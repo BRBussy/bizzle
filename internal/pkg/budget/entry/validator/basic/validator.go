@@ -34,12 +34,25 @@ func (v *validator) ValidateForCreate(request *budgetEntryValidator.ValidateForC
 
 	reasonsInvalid := make(reasonInvalid.ReasonsInvalid, 0)
 
-	if request.BudgetEntry.CategoryRuleID != "" {
+	// ensure that category rule is not blank
+	if request.BudgetEntry.CategoryRuleID == "" {
+		reasonsInvalid = append(
+			reasonsInvalid,
+			reasonInvalid.ReasonInvalid{
+				Field: "categoryRuleID",
+				Type:  reasonInvalid.Blank,
+				Help:  "cannot be blank",
+				Data:  request.BudgetEntry.CategoryRuleID,
+			},
+		)
+	} else {
 		// if category rule ID is not blank, this user should be able to retrieve it
-		if _, err := v.budgetEntryCategoryRuleStore.FindOne(budgetEntryCategoryRuleStore.FindOneRequest{
-			Claims:     request.Claims,
-			Identifier: request.BudgetEntry.CategoryRuleID,
-		}); err != nil {
+		if _, err := v.budgetEntryCategoryRuleStore.FindOne(
+			budgetEntryCategoryRuleStore.FindOneRequest{
+				Claims:     request.Claims,
+				Identifier: request.BudgetEntry.CategoryRuleID,
+			},
+		); err != nil {
 			switch err.(type) {
 			case mongo.ErrNotFound:
 				reasonsInvalid = append(
@@ -69,12 +82,25 @@ func (v *validator) ValidateForUpdate(request *budgetEntryValidator.ValidateForU
 
 	reasonsInvalid := make(reasonInvalid.ReasonsInvalid, 0)
 
-	if request.BudgetEntry.CategoryRuleID != "" {
+	// ensure that category rule is not blank
+	if request.BudgetEntry.CategoryRuleID == "" {
+		reasonsInvalid = append(
+			reasonsInvalid,
+			reasonInvalid.ReasonInvalid{
+				Field: "categoryRuleID",
+				Type:  reasonInvalid.Blank,
+				Help:  "cannot be blank",
+				Data:  request.BudgetEntry.CategoryRuleID,
+			},
+		)
+	} else {
 		// if category rule ID is not blank, this user should be able to retrieve it
-		if _, err := v.budgetEntryCategoryRuleStore.FindOne(budgetEntryCategoryRuleStore.FindOneRequest{
-			Claims:     request.Claims,
-			Identifier: request.BudgetEntry.CategoryRuleID,
-		}); err != nil {
+		if _, err := v.budgetEntryCategoryRuleStore.FindOne(
+			budgetEntryCategoryRuleStore.FindOneRequest{
+				Claims:     request.Claims,
+				Identifier: request.BudgetEntry.CategoryRuleID,
+			},
+		); err != nil {
 			switch err.(type) {
 			case mongo.ErrNotFound:
 				reasonsInvalid = append(
