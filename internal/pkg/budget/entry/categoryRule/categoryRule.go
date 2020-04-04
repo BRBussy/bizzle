@@ -10,7 +10,7 @@ type CategoryRule struct {
 	CategoryIdentifiers  []string      `validate:"required,gt=0" json:"categoryIdentifiers" bson:"categoryIdentifiers"`
 	Name                 string        `validate:"required" json:"name" bson:"name"`
 	Strict               bool          `json:"strict" bson:"strict"`
-	ExpectedAmount       float32       `json:"expectedAmount" bson:"expectedAmount"`
+	ExpectedAmount       float64       `json:"expectedAmount" bson:"expectedAmount"`
 	ExpectedAmountPeriod int           `json:"expectedAmountPeriod" bson:"expectedAmountPeriod"`
 }
 
