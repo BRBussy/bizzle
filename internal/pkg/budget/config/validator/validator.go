@@ -8,8 +8,8 @@ import (
 
 // Validator provides validation functions for budget config
 type Validator interface {
-	ValidateForCreate(*ValidateForCreateRequest) (*ValidateForCreateResponse, error)
-	ValidateForUpdate(*ValidateForUpdateRequest) (*ValidateForUpdateResponse, error)
+	ValidateForCreate(ValidateForCreateRequest) (*ValidateForCreateResponse, error)
+	ValidateForUpdate(ValidateForUpdateRequest) (*ValidateForUpdateResponse, error)
 }
 
 // ValidateForCreateRequest is the request object for the ValidateForCreate service

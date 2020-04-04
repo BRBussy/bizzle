@@ -77,4 +77,72 @@ func (a *admin) SetMyConfig(request budgetConfigAdmin.SetMyConfigRequest) (*budg
 		log.Error().Err(err)
 		return nil, err
 	}
+
+	// try and retrieve the budget config for this user
+	findOneBudgetConfigResponse, err := a.budgetConfigStore.FindOne(
+		budgetConfigStore.FindOneRequest{
+			Claims:     request.Claims,
+			Identifier: identifier.OwnerID(request.Claims.ScopingID()),
+		},
+	)
+	switch err.(type) {
+	case mongo.ErrNotFound:
+		// config not yet set for user
+		// set default fields on the given config
+		request.Config.ID = identifier.ID(uuid.NewV4().String())
+		request.Config.OwnerID = request.Claims.ScopingID()
+
+		// validate for creation
+		validateForCreateResponse, err := a.budgetConfigValidator.ValidateForCreate(
+			budgetConfigValidator.ValidateForCreateRequest{
+				Claims:       request.Claims,
+				BudgetConfig: request.Config,
+			},
+		)
+		if err != nil {
+			log.Error().Err(err).Msg("unable to validate budget config for creation")
+			return nil, bizzleException.ErrUnexpected{}
+		}
+		if len(validateForCreateResponse.ReasonsInvalid) > 0 {
+			return nil, budgetConfig.ErrInvalidConfig{ReasonsInvalid: validateForCreateResponse.ReasonsInvalid}
+		}
+
+		// create it
+		if _, err := a.budgetConfigStore.CreateOne(
+			budgetConfigStore.CreateOneRequest{
+				Config: request.Config,
+			},
+		); err != nil {
+			log.Error().Err(err).Msg("could not create budget config")
+			return nil, bizzleException.ErrUnexpected{}
+		}
+		return &budgetConfigAdmin.SetMyConfigResponse{}, nil
+
+	case nil:
+		// config already exists for user
+		// set default fields on given config
+		request.Config.ID = findOneBudgetConfigResponse.Config.ID
+		request.Config.OwnerID = findOneBudgetConfigResponse.Config.OwnerID
+
+		// validate for update
+		validateForUpdateResponse, err := a.budgetConfigValidator.ValidateForUpdate(
+			budgetConfigValidator.ValidateForUpdateRequest{
+				Claims:       request.Claims,
+				BudgetConfig: request.Config,
+			},
+		)
+		if err != nil {
+			log.Error().Err(err).Msg("unable to validate budget config for update")
+			return nil, bizzleException.ErrUnexpected{}
+		}
+		if len(validateForUpdateResponse.ReasonsInvalid) > 0 {
+			return nil, budgetConfig.ErrInvalidConfig{ReasonsInvalid: validateForUpdateResponse.ReasonsInvalid}
+		}
+		return &budgetConfigAdmin.SetMyConfigResponse{}, nil
+
+	default:
+		// some other retrieval error occurred
+		log.Error().Err(err).Msg("could not find budget config")
+		return nil, bizzleException.ErrUnexpected{}
+	}
 }

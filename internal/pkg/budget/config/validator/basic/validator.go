@@ -26,7 +26,7 @@ func New(
 	}
 }
 
-func (v *validator) ValidateForCreate(request *budgetConfigValidator.ValidateForCreateRequest) (*budgetConfigValidator.ValidateForCreateResponse, error) {
+func (v *validator) ValidateForCreate(request budgetConfigValidator.ValidateForCreateRequest) (*budgetConfigValidator.ValidateForCreateResponse, error) {
 	if err := v.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
@@ -63,7 +63,7 @@ func (v *validator) ValidateForCreate(request *budgetConfigValidator.ValidateFor
 	return &budgetConfigValidator.ValidateForCreateResponse{}, nil
 }
 
-func (v *validator) ValidateForUpdate(request *budgetConfigValidator.ValidateForUpdateRequest) (*budgetConfigValidator.ValidateForUpdateResponse, error) {
+func (v *validator) ValidateForUpdate(request budgetConfigValidator.ValidateForUpdateRequest) (*budgetConfigValidator.ValidateForUpdateResponse, error) {
 	if err := v.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
