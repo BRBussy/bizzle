@@ -110,7 +110,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		CategoryIdentifiers: []string{
 			"other",
 		},
-		ExpectedAmount:       -3200,
+		ExpectedAmount:       -4000,
 		ExpectedAmountPeriod: 31,
 	},
 	{
