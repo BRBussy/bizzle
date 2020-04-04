@@ -2,15 +2,14 @@ package XLSXStandardBank
 
 import (
 	"fmt"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"math"
 	"strconv"
 	"time"
 
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
-	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
 	statementParser "github.com/BRBussy/bizzle/internal/pkg/budget/statement/parser"
-	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	"github.com/tealeg/xlsx"
@@ -142,20 +141,13 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 		description := transactionsSheet.Rows[2:][rowIdx].Cells[colHeaderIndex[DescriptionColumnHeader]].String()
 
 		// try and categorise
-		var categoryRule budgetEntryCategoryRule.CategoryRule
 		categoriseResponse, err := p.budgetEntryCategoryRuleAdmin.CategoriseBudgetEntry(
 			budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryRequest{
 				Claims:                 request.Claims,
 				BudgetEntryDescription: description,
 			},
 		)
-		switch err.(type) {
-		case budgetEntryCategoryRule.ErrCouldNotClassify:
-			// do nothing, use blank category ID
-		case nil:
-			// successfully categorised
-			categoryRule = categoriseResponse.CategoryRule
-		default:
+		if err != nil {
 			log.Error().Err(err).Msg("classifying budget entry")
 			return nil, bizzleException.ErrUnexpected{}
 		}
@@ -166,7 +158,7 @@ func (p parser) ParseStatementToBudgetEntries(request *statementParser.ParseStat
 				Date:           entryDate,
 				Description:    description,
 				Amount:         amount,
-				CategoryRuleID: categoryRule.ID,
+				CategoryRuleID: categoriseResponse.CategoryRule.ID,
 			},
 		)
 	}
