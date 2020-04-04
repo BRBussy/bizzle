@@ -201,7 +201,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"the flower & nut marke",
 		},
 		Strict:               false,
-		ExpectedAmount:       -800,
+		ExpectedAmount:       -3000,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -235,7 +235,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"we make coffee",
 		},
 		Strict:               false,
-		ExpectedAmount:       -500,
+		ExpectedAmount:       -1000,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -246,7 +246,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"ferngate pharmacy",
 		},
 		Strict:               false,
-		ExpectedAmount:       -3000,
+		ExpectedAmount:       -500,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -254,6 +254,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		CategoryIdentifiers: []string{
 			"rentjune",
 			"richardrent",
+			"richard ## - fee: payment confirm",
 		},
 		Strict:               false,
 		ExpectedAmount:       -5500,

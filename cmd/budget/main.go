@@ -90,6 +90,9 @@ func main() {
 		BasicScopeAdmin,
 		mongoDb,
 	)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating mongo budget config store")
+	}
 	BasicBudgetConfigValidator := basicBudgetConfigValidator.New(
 		RequestValidator,
 		MongoBudgetCategoryRuleStore,

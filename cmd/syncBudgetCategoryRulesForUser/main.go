@@ -2,6 +2,9 @@ package main
 
 import (
 	"flag"
+	basicBudgetConfigAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/config/admin/basic"
+	mongoBudgetConfigStore "github.com/BRBussy/bizzle/internal/pkg/budget/config/store/mongo"
+	basicBudgetConfigValidator "github.com/BRBussy/bizzle/internal/pkg/budget/config/validator/basic"
 	basicScopeAdmin "github.com/BRBussy/bizzle/internal/pkg/security/scope/basic"
 
 	syncBudgetCategoryRulesForUserConfig "github.com/BRBussy/bizzle/configs/syncBudgetCategoryRulesForUser"
@@ -74,9 +77,27 @@ func main() {
 		log.Fatal().Err(err).Msg("creating budget entry category rule mongo store")
 	}
 
+	MongoBudgetConfigStore, err := mongoBudgetConfigStore.New(
+		RequestValidator,
+		BasicScopeAdmin,
+		mongoDb,
+	)
+	if err != nil {
+		log.Fatal().Err(err).Msg("creating mongo budget config store")
+	}
+	BasicBudgetConfigValidator := basicBudgetConfigValidator.New(
+		RequestValidator,
+		BudgetEntryCategoryRuleMongoStore,
+	)
+	BasicBudgetConfigAdmin := basicBudgetConfigAdmin.New(
+		RequestValidator,
+		MongoBudgetConfigStore,
+		BasicBudgetConfigValidator,
+	)
 	BudgetEntryCategoryRuleBasicAdmin := budgetEntryCategoryRuleBasicAdmin.New(
 		RequestValidator,
 		BudgetEntryCategoryRuleMongoStore,
+		BasicBudgetConfigAdmin,
 	)
 
 	if err := budget.SyncBudgetCategoryRulesForUser(
