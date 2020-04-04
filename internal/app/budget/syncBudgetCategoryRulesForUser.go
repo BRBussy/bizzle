@@ -121,7 +121,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		},
 		Name:                 "Electricity",
 		Strict:               false,
-		ExpectedAmount:       -400,
+		ExpectedAmount:       -405,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -139,7 +139,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"prepaid",
 		},
 		Strict:               true,
-		ExpectedAmount:       -200,
+		ExpectedAmount:       -100,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -183,7 +183,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"bp hillcrest",
 		},
 		Strict:               false,
-		ExpectedAmount:       -800,
+		ExpectedAmount:       -1500,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -257,7 +257,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"richard ## - fee: payment confirm",
 		},
 		Strict:               false,
-		ExpectedAmount:       -5500,
+		ExpectedAmount:       -5502,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -266,7 +266,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"relapse prevention",
 		},
 		Strict:               true,
-		ExpectedAmount:       -1000,
+		ExpectedAmount:       -1200,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -276,7 +276,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"overdraft interest",
 		},
 		Strict:               false,
-		ExpectedAmount:       0,
+		ExpectedAmount:       -70,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -304,7 +304,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"primal gym",
 		},
 		Strict:               true,
-		ExpectedAmount:       -900,
+		ExpectedAmount:       -903,
 		ExpectedAmountPeriod: 31,
 	},
 	{
