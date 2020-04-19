@@ -60,6 +60,32 @@ func (v *validator) ValidateForCreate(request budgetConfigValidator.ValidateForC
 		}
 	}
 
+	if request.BudgetConfig.SummaryDatePeriodCategoryRuleID != "" {
+		// if summary date period category rule ID is not blank, this user should be able to retrieve it
+		if _, err := v.budgetEntryCategoryRuleStore.FindOne(
+			budgetEntryCategoryRuleStore.FindOneRequest{
+				Claims:     request.Claims,
+				Identifier: request.BudgetConfig.SummaryDatePeriodCategoryRuleID,
+			},
+		); err != nil {
+			switch err.(type) {
+			case mongo.ErrNotFound:
+				reasonsInvalid = append(
+					reasonsInvalid,
+					reasonInvalid.ReasonInvalid{
+						Field: "summaryDatePeriodCategoryRuleID",
+						Type:  reasonInvalid.DoesntExist,
+						Help:  "must exist",
+						Data:  request.BudgetConfig.SummaryDatePeriodCategoryRuleID,
+					},
+				)
+			default:
+				log.Error().Err(err).Msg("unable to retrieve budget config summary date period category rule")
+				return nil, bizzleException.ErrUnexpected{}
+			}
+		}
+	}
+
 	return &budgetConfigValidator.ValidateForCreateResponse{}, nil
 }
 
@@ -92,6 +118,32 @@ func (v *validator) ValidateForUpdate(request budgetConfigValidator.ValidateForU
 				)
 			default:
 				log.Error().Err(err).Msg("unable to retrieve budget category rule")
+				return nil, bizzleException.ErrUnexpected{}
+			}
+		}
+	}
+
+	if request.BudgetConfig.SummaryDatePeriodCategoryRuleID != "" {
+		// if summary date period category rule ID is not blank, this user should be able to retrieve it
+		if _, err := v.budgetEntryCategoryRuleStore.FindOne(
+			budgetEntryCategoryRuleStore.FindOneRequest{
+				Claims:     request.Claims,
+				Identifier: request.BudgetConfig.SummaryDatePeriodCategoryRuleID,
+			},
+		); err != nil {
+			switch err.(type) {
+			case mongo.ErrNotFound:
+				reasonsInvalid = append(
+					reasonsInvalid,
+					reasonInvalid.ReasonInvalid{
+						Field: "summaryDatePeriodCategoryRuleID",
+						Type:  reasonInvalid.DoesntExist,
+						Help:  "must exist",
+						Data:  request.BudgetConfig.SummaryDatePeriodCategoryRuleID,
+					},
+				)
+			default:
+				log.Error().Err(err).Msg("unable to retrieve budget config summary date period category rule")
 				return nil, bizzleException.ErrUnexpected{}
 			}
 		}
