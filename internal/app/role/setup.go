@@ -16,6 +16,7 @@ import (
 	securityRole "github.com/BRBussy/bizzle/internal/pkg/security/role"
 	roleAdmin "github.com/BRBussy/bizzle/internal/pkg/security/role/admin"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
+	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 )
@@ -51,7 +52,10 @@ var initialRoles = []securityRole.Role{
 }
 
 var rootOnlyPermissions = []securityPermission.Permission{
+	userStore.FindOneService,
+	userStore.FindManyService,
 	roleStore.FindOneService,
+	roleStore.FindManyService,
 	exerciseAdmin.CreateOneService,
 }
 

@@ -5,6 +5,7 @@ import (
 	ybbusJsonRpcClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client/ybbus"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	userStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/store/adaptor/jsonRpc"
+	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
@@ -67,6 +68,32 @@ func (s *store) FindOne(request userStore.FindOneRequest) (*userStore.FindOneRes
 
 	return &userStore.FindOneResponse{
 		User: findOneResponse.User,
+	}, nil
+}
+
+func (s *store) FindMany(request userStore.FindManyRequest) (*userStore.FindManyResponse, error) {
+	if err := s.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	findManyResponse := new(userStoreJsonRpcAdaptor.FindManyResponse)
+	if err := s.jsonRpcClient.JsonRpcRequest(
+		userStore.FindManyService,
+		userStoreJsonRpcAdaptor.FindManyRequest{
+			Criteria: criteria.Serialized{
+				Criteria: request.Criteria,
+			},
+			Query: request.Query,
+		},
+		findManyResponse); err != nil {
+		log.Error().Err(err).Msg("user jsonrpc store find many")
+		return nil, err
+	}
+
+	return &userStore.FindManyResponse{
+		Records: findManyResponse.Records,
+		Total:   findManyResponse.Total,
 	}, nil
 }
 

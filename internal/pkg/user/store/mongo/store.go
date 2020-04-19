@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
@@ -64,6 +65,28 @@ func (s *store) FindOne(request userStore.FindOneRequest) (*userStore.FindOneRes
 		}
 	}
 	return &userStore.FindOneResponse{User: result}, nil
+}
+
+func (s *store) FindMany(request userStore.FindManyRequest) (*userStore.FindManyResponse, error) {
+	if err := s.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	var records []user.User
+	count, err := s.collection.FindMany(&records, request.Criteria, request.Query)
+	if err != nil {
+		log.Error().Err(err).Msg("finding users")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+	if records == nil {
+		records = make([]user.User, 0)
+	}
+
+	return &userStore.FindManyResponse{
+		Records: records,
+		Total:   count,
+	}, nil
 }
 
 func (s *store) UpdateOne(request userStore.UpdateOneRequest) (*userStore.UpdateOneResponse, error) {
