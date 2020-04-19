@@ -59,7 +59,7 @@ func (a *admin) GetBudgetForDateRange(request budgetAdmin.GetBudgetForDateRangeR
 					},
 					End: dateTimeCriterion.RangeValue{
 						Date:      request.EndDate,
-						Inclusive: false,
+						Inclusive: true,
 					},
 				},
 			},
