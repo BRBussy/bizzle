@@ -39,14 +39,14 @@ func (s *Sorting) ToMongoSortFormat() (*mongoBSON.E, error) {
 	case SortOrderDescending:
 		return &mongoBSON.E{
 			Key:   s.Field,
-			Value: s.SortOrder,
+			Value: -1,
 		}, nil
 	case SortOrderAscending:
 		fallthrough
 	default:
 		return &mongoBSON.E{
 			Key:   s.Field,
-			Value: s.SortOrder,
+			Value: 1,
 		}, nil
 	}
 }

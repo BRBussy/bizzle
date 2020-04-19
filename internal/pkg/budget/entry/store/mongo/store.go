@@ -125,7 +125,7 @@ func (s *store) FindMany(request budgetEntryStore.FindManyRequest) (*budgetEntry
 	var records []budgetEntry.Entry
 	count, err := s.collection.FindMany(&records, applyScopeToCriteriaResponse.ScopedCriteria, request.Query)
 	if err != nil {
-		log.Error().Err(err).Msg("finding exercises")
+		log.Error().Err(err).Msg("finding budget entries")
 		return nil, bizzleException.ErrUnexpected{}
 	}
 	if records == nil {
