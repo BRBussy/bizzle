@@ -146,8 +146,9 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 		Name: "Internet",
 		CategoryIdentifiers: []string{
 			"telkommobi",
+			"kevin grenfell",
 		},
-		ExpectedAmount:       -455,
+		ExpectedAmount:       -301,
 		ExpectedAmountPeriod: 31,
 	},
 	{
@@ -276,7 +277,7 @@ var categoryRulesToSyncForUser = []budgetEntryCategoryRule.CategoryRule{
 			"overdraft interest",
 		},
 		Strict:               false,
-		ExpectedAmount:       -70,
+		ExpectedAmount:       -71,
 		ExpectedAmountPeriod: 31,
 	},
 	{
