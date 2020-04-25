@@ -25,6 +25,10 @@ func SyncBudgetCategoryRulesForUser(
 	// retrieve the user
 	findOneUserResponse, err := userStoreImp.FindOne(
 		userStore.FindOneRequest{
+			Claims: claims.Login{
+				UserID:         userID,
+				ExpirationTime: 1234,
+			},
 			Identifier: userID,
 		},
 	)
@@ -34,10 +38,15 @@ func SyncBudgetCategoryRulesForUser(
 	}
 
 	// retrieve all rules owned by user
-	findManyRulesResponse, err := budgetEntryCategoryRuleStoreImp.FindMany(budgetEntryCategoryRuleStore.FindManyRequest{
-		Criteria: make(criteria.Criteria, 0),
-		Claims:   claims.Login{UserID: userID},
-	})
+	findManyRulesResponse, err := budgetEntryCategoryRuleStoreImp.FindMany(
+		budgetEntryCategoryRuleStore.FindManyRequest{
+			Criteria: make(criteria.Criteria, 0),
+			Claims: claims.Login{
+				UserID:         userID,
+				ExpirationTime: 1234,
+			},
+		},
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("retrieving all budget entry category rules owned by user")
 		return bizzleException.ErrUnexpected{}
@@ -91,7 +100,10 @@ nextRuleToSync:
 		ruleToSync.OwnerID = findOneUserResponse.User.ID
 		if _, err := budgetEntryCategoryRuleAdminImp.CreateOne(
 			budgetEntryCategoryRuleAdmin.CreateOneRequest{
-				Claims:       claims.Login{UserID: userID},
+				Claims: claims.Login{
+					UserID:         userID,
+					ExpirationTime: 1234,
+				},
 				CategoryRule: ruleToSync,
 			},
 		); err != nil {

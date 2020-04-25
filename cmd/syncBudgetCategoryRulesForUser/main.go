@@ -59,6 +59,7 @@ func main() {
 	//
 	UserMongoStore, err := userMongoStore.New(
 		RequestValidator,
+		BasicScopeAdmin,
 		mongoDb,
 	)
 	if err != nil {

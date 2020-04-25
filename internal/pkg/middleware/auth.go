@@ -60,7 +60,7 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 				return
 			}
 			// otherwise place claims into request context and carry on
-			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "Claims", serializedClaims)))
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "Claims", []byte(serializedClaims))))
 			return
 		}
 

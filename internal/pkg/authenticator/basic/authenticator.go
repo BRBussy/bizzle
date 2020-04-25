@@ -95,6 +95,7 @@ func (a *authenticator) AuthenticateService(request bizzleAuthenticator.Authenti
 			},
 		)
 		if err != nil {
+			log.Error().Err(err).Msg("could not retrieve user")
 			return nil, bizzleException.ErrUnauthorized{Reason: "could not retrieve user: " + err.Error()}
 		}
 

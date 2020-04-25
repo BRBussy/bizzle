@@ -2,11 +2,14 @@ package jsonRpc
 
 import (
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -55,8 +58,15 @@ type FindOneResponse struct {
 }
 
 func (a *adaptor) FindOne(r *http.Request, request *FindOneRequest, response *FindOneResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not pass claims for context")
+		return bizzleException.ErrUnexpected{}
+	}
+
 	findOneResponse, err := a.store.FindOne(
 		userStore.FindOneRequest{
+			Claims:     c,
 			Identifier: request.Identifier.Identifier,
 		},
 	)
@@ -80,8 +90,15 @@ type FindManyResponse struct {
 }
 
 func (a *adaptor) FindMany(r *http.Request, request *FindManyRequest, response *FindManyResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not pass claims for context")
+		return bizzleException.ErrUnexpected{}
+	}
+
 	findOneResponse, err := a.store.FindMany(
 		userStore.FindManyRequest{
+			Claims:   c,
 			Criteria: request.Criteria.Criteria,
 			Query:    request.Query,
 		},
@@ -105,9 +122,16 @@ type UpdateOneResponse struct {
 }
 
 func (a *adaptor) UpdateOne(r *http.Request, request *UpdateOneRequest, response *UpdateOneResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not pass claims for context")
+		return bizzleException.ErrUnexpected{}
+	}
+
 	if _, err := a.store.UpdateOne(
 		userStore.UpdateOneRequest{
-			User: request.User,
+			Claims: c,
+			User:   request.User,
 		},
 	); err != nil {
 		return err
