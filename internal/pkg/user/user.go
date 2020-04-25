@@ -5,12 +5,12 @@ import (
 )
 
 type User struct {
-	ID         identifier.ID   `json:"id" bson:"id"`
-	Name       string          `validate:"required" json:"name" bson:"name"`
-	Email      string          `validate:"required,email" json:"email" bson:"email"`
-	RoleIDs    []identifier.ID `validate:"required" json:"roleIDs" bson:"roleIDs"`
-	Password   []byte          `json:"password" bson:"password"`
-	Registered bool            `json:"registered" bson:"registered"`
+	ID         identifier.ID    `json:"id" bson:"id"`
+	Name       string           `validate:"required" json:"name" bson:"name"`
+	Email      identifier.Email `validate:"required,email" json:"email" bson:"email"`
+	RoleIDs    []identifier.ID  `validate:"required" json:"roleIDs" bson:"roleIDs"`
+	Password   []byte           `json:"-" bson:"password"`
+	Registered bool             `json:"registered" bson:"registered"`
 }
 
 func CompareUsers(a, b User) bool {

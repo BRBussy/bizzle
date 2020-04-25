@@ -6,6 +6,7 @@ import (
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	userValidator "github.com/BRBussy/bizzle/internal/pkg/user/validator"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/BRBussy/bizzle/pkg/validate/reasonInvalid"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
@@ -29,7 +30,7 @@ func New(
 	}
 }
 
-func (v *validator) ValidateForCreate(request userValidator.ValidateForCreateRequest) (*userValidator.ValidateForCreateResponse, error) {
+func (v *validator) ValidateForCreate(request *userValidator.ValidateForCreateRequest) (*userValidator.ValidateForCreateResponse, error) {
 	if err := v.validator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err

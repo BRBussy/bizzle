@@ -32,9 +32,13 @@ func New(
 }
 
 func (a *admin) CreateOne(request userAdmin.CreateOneRequest) (*userAdmin.CreateOneResponse, error) {
-	validateResponse, err := a.userValidator.ValidateForCreate(&userValidator.ValidateForCreateRequest{User: request.User})
+	validateResponse, err := a.userValidator.ValidateForCreate(
+		userValidator.ValidateForCreateRequest{
+			User: request.User,
+		},
+	)
 	if err != nil {
-		log.Error().Err(err).Msg("validating user for create")
+		log.Error().Err(err).Msg("error validating user for create")
 		return nil, bizzleException.ErrUnexpected{}
 	}
 	if len(validateResponse.ReasonsInvalid) > 0 {
@@ -44,7 +48,7 @@ func (a *admin) CreateOne(request userAdmin.CreateOneRequest) (*userAdmin.Create
 	request.User.ID = identifier.ID(uuid.NewV4().String())
 
 	if _, err := a.userStore.CreateOne(userStore.CreateOneRequest{User: request.User}); err != nil {
-		log.Error().Err(err).Msg("creating user")
+		log.Error().Err(err).Msg("error creating user")
 		return nil, bizzleException.ErrUnexpected{}
 	}
 
@@ -57,26 +61,39 @@ func (a *admin) UpdateOne(userAdmin.UpdateOneRequest) (*userAdmin.UpdateOneRespo
 
 func (a *admin) RegisterOne(request userAdmin.RegisterOneRequest) (*userAdmin.RegisterOneResponse, error) {
 	// retrieve user being registered
-	retrieveUserResponse, err := a.userStore.FindOne(userStore.FindOneRequest{Identifier: request.Identifier})
+	retrieveUserResponse, err := a.userStore.FindOne(
+		userStore.FindOneRequest{
+			Identifier: request.Identifier,
+		},
+	)
 	if err != nil {
-		log.Error().Err(err).Msg("finding user")
+		log.Error().Err(err).Msg("error finding user to register")
 		return nil, bizzleException.ErrUnexpected{}
 	}
 
 	// hash user password
-	pwdHash, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+	pwdHash, err := bcrypt.GenerateFromPassword(
+		[]byte(request.Password),
+		bcrypt.DefaultCost,
+	)
 	if err != nil {
-		log.Error().Err(err).Msg("hashing password")
+		log.Error().Err(err).Msg("error hashing user's password")
 		return nil, bizzleException.ErrUnexpected{}
 	}
 
 	// set user password
 	retrieveUserResponse.User.Password = pwdHash
+
+	// set user to registered
 	retrieveUserResponse.User.Registered = true
 
 	// update user
-	if _, err := a.userStore.UpdateOne(userStore.UpdateOneRequest{User: retrieveUserResponse.User}); err != nil {
-		log.Error().Err(err).Msg("update password")
+	if _, err := a.userStore.UpdateOne(
+		userStore.UpdateOneRequest{
+			User: retrieveUserResponse.User,
+		},
+	); err != nil {
+		log.Error().Err(err).Msg("error updating user")
 		return nil, bizzleException.ErrUnexpected{}
 	}
 
