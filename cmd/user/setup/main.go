@@ -5,11 +5,9 @@ import (
 	basicScopeAdmin "github.com/BRBussy/bizzle/internal/pkg/security/scope/basic"
 
 	setupConfig "github.com/BRBussy/bizzle/configs/setup"
-	"github.com/BRBussy/bizzle/internal/app/role"
 	"github.com/BRBussy/bizzle/internal/app/user"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
-	basicRoleAdmin "github.com/BRBussy/bizzle/internal/pkg/security/role/admin/basic"
 	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
 	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
 	requestValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
@@ -67,7 +65,6 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo role store")
 	}
-	BasicRoleAdmin := basicRoleAdmin.New(MongoRoleStore)
 
 	//
 	// User
@@ -79,14 +76,6 @@ func main() {
 	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
-	}
-
-	log.Info().Msg("Running role setup")
-	if err := role.Setup(
-		BasicRoleAdmin,
-		MongoRoleStore,
-	); err != nil {
-		log.Fatal().Err(err).Msg("role setup failed")
 	}
 
 	log.Info().Msg("Running user setup")

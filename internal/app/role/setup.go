@@ -7,15 +7,12 @@ import (
 	budgetEntryCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin"
 	budgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store"
 	budgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store"
-	exerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin"
-	sessionAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/session/admin"
-	sessionStore "github.com/BRBussy/bizzle/internal/pkg/exercise/session/store"
-	exerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	securityPermission "github.com/BRBussy/bizzle/internal/pkg/security/permission"
 	securityRole "github.com/BRBussy/bizzle/internal/pkg/security/role"
 	roleAdmin "github.com/BRBussy/bizzle/internal/pkg/security/role/admin"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
+	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
@@ -25,11 +22,6 @@ var initialRoles = []securityRole.Role{
 	{
 		Name: "user",
 		Permissions: []securityPermission.Permission{
-			exerciseStore.FindOneService,
-			exerciseStore.FindManyService,
-			sessionStore.FindManyService,
-			sessionStore.FindOneService,
-			sessionAdmin.CreateOneService,
 			budgetEntryAdmin.XLSXStandardBankStatementToBudgetCompositeEntriesService,
 			budgetEntryAdmin.DuplicateCheckService,
 			budgetEntryAdmin.CreateOneService,
@@ -54,9 +46,10 @@ var initialRoles = []securityRole.Role{
 var rootOnlyPermissions = []securityPermission.Permission{
 	userStore.FindOneService,
 	userStore.FindManyService,
+	userAdmin.CreateOneService,
+	userAdmin.RegisterOneService,
 	roleStore.FindOneService,
 	roleStore.FindManyService,
-	exerciseAdmin.CreateOneService,
 }
 
 func Setup(

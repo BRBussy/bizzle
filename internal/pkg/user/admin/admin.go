@@ -15,6 +15,7 @@ type Admin interface {
 const ServiceProvider = "User-Admin"
 
 const CreateOneService = ServiceProvider + ".CreateOne"
+const RegisterOneService = ServiceProvider + ".RegisterOne"
 
 type CreateOneRequest struct {
 	Claims claims.Claims `validate:"required"`
