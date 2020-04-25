@@ -7,7 +7,7 @@ import (
 	basicBudgetConfigValidator "github.com/BRBussy/bizzle/internal/pkg/budget/config/validator/basic"
 	basicScopeAdmin "github.com/BRBussy/bizzle/internal/pkg/security/scope/basic"
 
-	syncBudgetCategoryRulesForUserConfig "github.com/BRBussy/bizzle/configs/syncBudgetCategoryRulesForUser"
+	syncBudgetCategoryRulesForUserConfig "github.com/BRBussy/bizzle/configs/syncBCR"
 	"github.com/BRBussy/bizzle/internal/app/budget"
 	budgetEntryCategoryRuleBasicAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin/basic"
 	budgetEntryCategoryRuleMongoStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/mongo"
