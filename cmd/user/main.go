@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	basicScopeAdmin "github.com/BRBussy/bizzle/internal/pkg/security/scope/basic"
 	"net/http"
 	"os"
 	"os/signal"
@@ -52,9 +53,17 @@ func main() {
 		}
 	}()
 
+	//
+	// Scope Admin
+	//
+	BasicScopeAdmin := basicScopeAdmin.New(
+		RequestValidator,
+	)
+
 	// create service providers
 	MongoUserStore, err := mongoUserStore.New(
 		RequestValidator,
+		BasicScopeAdmin,
 		mongoDb,
 	)
 	if err != nil {

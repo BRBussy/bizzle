@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 )
@@ -18,23 +19,25 @@ const UpdateOneService = ServiceProvider + ".UpdateOne"
 const RegisterOneService = ServiceProvider + ".RegisterOne"
 
 type CreateOneRequest struct {
-	User user.User
+	Claims claims.Claims `validate:"required"`
+	User   user.User     `validate:"required"`
 }
 
 type CreateOneResponse struct {
-	User user.User
 }
 
 type UpdateOneRequest struct {
-	User user.User
+	Claims claims.Claims `validate:"required"`
+	User   user.User     `validate:"required"`
 }
 
 type UpdateOneResponse struct {
 }
 
 type RegisterOneRequest struct {
-	Identifier identifier.Identifier
-	Password   string
+	Claims     claims.Claims         `validate:"required"`
+	Identifier identifier.Identifier `validate:"required"`
+	Password   string                `validate:"required"`
 }
 
 type RegisterOneResponse struct {

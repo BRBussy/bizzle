@@ -37,6 +37,19 @@ func (v *validator) ValidateForCreate(request userValidator.ValidateForCreateReq
 
 	reasonsInvalid := make(reasonInvalid.ReasonsInvalid, 0)
 
+	// user must be owned by user invoking service
+	if request.User.OwnerID != request.Claims.ScopingID() {
+		reasonsInvalid = append(
+			reasonsInvalid,
+			reasonInvalid.ReasonInvalid{
+				Field: "ownerID",
+				Type:  reasonInvalid.Invalid,
+				Help:  "must be owned by service invoker",
+				Data:  request.User.OwnerID,
+			},
+		)
+	}
+
 	// users cannot be registered on creation
 	if request.User.Registered {
 		reasonsInvalid = append(

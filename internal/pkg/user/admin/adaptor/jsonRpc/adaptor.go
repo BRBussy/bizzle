@@ -4,27 +4,24 @@ import (
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"net/http"
 )
 
 type adaptor struct {
-	admin userAdmin.Admin
+	userAdmin userAdmin.Admin
 }
 
 func New(
-	authenticator userAdmin.Admin,
+	userAdmin userAdmin.Admin,
 ) *adaptor {
 	return &adaptor{
-		admin: authenticator,
+		userAdmin: userAdmin,
 	}
 }
 
 func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 	return userAdmin.ServiceProvider
-}
-
-func (a *adaptor) MethodRequiresAuthorization(method string) bool {
-	return false
 }
 
 type CreateOneRequest struct {
@@ -36,14 +33,24 @@ type CreateOneResponse struct {
 }
 
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
-	_, err := a.admin.CreateOne(
-		&userAdmin.CreateOneRequest{
+	if _, err := a.userAdmin.CreateOne(
+		userAdmin.CreateOneRequest{
 			User: request.User,
 		},
-	)
-	if err != nil {
+	); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+type RegisterOneRequest struct {
+	UserIdentifier identifier.Serialized `json:"userIdentifier"`
+	Password       string                `json:"password"`
+}
+
+type RegisterOneResponse struct {
+}
+
+func (a *adaptor) RegisterOne(r *http.Request, request *RegisterOneRequest, response *RegisterOneResponse) error {
 }

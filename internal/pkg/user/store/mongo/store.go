@@ -3,6 +3,7 @@ package mongo
 import (
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	"github.com/BRBussy/bizzle/internal/pkg/security/scope"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
@@ -11,12 +12,14 @@ import (
 )
 
 type store struct {
+	scopeAdmin scope.Admin
 	validator  validationValidator.Validator
 	collection *mongo.Collection
 }
 
 func New(
 	validator validationValidator.Validator,
+	scopeAdmin scope.Admin,
 	database *mongo.Database,
 ) (userStore.Store, error) {
 	// get user collection
@@ -32,6 +35,7 @@ func New(
 	}
 
 	return &store{
+		scopeAdmin: scopeAdmin,
 		collection: database.Collection("user"),
 		validator:  validator,
 	}, nil
@@ -42,8 +46,9 @@ func (s *store) CreateOne(request userStore.CreateOneRequest) (*userStore.Create
 		log.Error().Err(err)
 		return nil, err
 	}
+
 	if err := s.collection.CreateOne(request.User); err != nil {
-		log.Error().Err(err).Msg("creating user")
+		log.Error().Err(err).Msg("error creating user")
 		return nil, err
 	}
 	return &userStore.CreateOneResponse{}, nil
@@ -54,8 +59,20 @@ func (s *store) FindOne(request userStore.FindOneRequest) (*userStore.FindOneRes
 		log.Error().Err(err)
 		return nil, err
 	}
+
+	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(
+		scope.ApplyScopeToIdentifierRequest{
+			Claims:            request.Claims,
+			IdentifierToScope: request.Identifier,
+		},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("could not apply scope to identifier")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
 	var result user.User
-	if err := s.collection.FindOne(&result, request.Identifier); err != nil {
+	if err := s.collection.FindOne(&result, applyScopeToIdentifierResponse.ScopedIdentifier); err != nil {
 		switch err.(type) {
 		case mongo.ErrNotFound:
 			return nil, err
@@ -73,8 +90,19 @@ func (s *store) FindMany(request userStore.FindManyRequest) (*userStore.FindMany
 		return nil, err
 	}
 
+	applyScopeToCriteriaResponse, err := s.scopeAdmin.ApplyScopeToCriteria(
+		scope.ApplyScopeToCriteriaRequest{
+			Claims:          request.Claims,
+			CriteriaToScope: request.Criteria,
+		},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("could not apply scope to criteria")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
 	var records []user.User
-	count, err := s.collection.FindMany(&records, request.Criteria, request.Query)
+	count, err := s.collection.FindMany(&records, applyScopeToCriteriaResponse.ScopedCriteria, request.Query)
 	if err != nil {
 		log.Error().Err(err).Msg("finding users")
 		return nil, bizzleException.ErrUnexpected{}
@@ -94,7 +122,19 @@ func (s *store) UpdateOne(request userStore.UpdateOneRequest) (*userStore.Update
 		log.Error().Err(err)
 		return nil, err
 	}
-	if err := s.collection.UpdateOne(request.User, request.User.ID); err != nil {
+
+	applyScopeToIdentifierResponse, err := s.scopeAdmin.ApplyScopeToIdentifier(
+		scope.ApplyScopeToIdentifierRequest{
+			Claims:            request.Claims,
+			IdentifierToScope: request.User.ID,
+		},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("could not apply scope to identifier")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	if err := s.collection.UpdateOne(request.User, applyScopeToIdentifierResponse.ScopedIdentifier); err != nil {
 		log.Error().Err(err).Msg("updating user")
 		return nil, err
 	}

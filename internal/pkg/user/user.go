@@ -6,6 +6,7 @@ import (
 
 type User struct {
 	ID         identifier.ID    `json:"id" bson:"id"`
+	OwnerID    identifier.ID    `validate:"required" json:"ownerID" bson:"ownerID"`
 	Name       string           `validate:"required" json:"name" bson:"name"`
 	Email      identifier.Email `validate:"required,email" json:"email" bson:"email"`
 	RoleIDs    []identifier.ID  `validate:"required" json:"roleIDs" bson:"roleIDs"`

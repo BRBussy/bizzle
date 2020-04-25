@@ -12,7 +12,7 @@ type Validator interface {
 
 type ValidateForCreateRequest struct {
 	Claims claims.Claims `validate:"required"`
-	User   user.User
+	User   user.User     `validate:"required"`
 }
 
 type ValidateForCreateResponse struct {

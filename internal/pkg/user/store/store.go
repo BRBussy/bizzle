@@ -2,6 +2,7 @@ package store
 
 import (
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	"github.com/BRBussy/bizzle/pkg/search/criteria"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
@@ -29,6 +30,7 @@ type CreateOneResponse struct {
 }
 
 type FindOneRequest struct {
+	Claims     claims.Claims         `validate:"required"`
 	Identifier identifier.Identifier `validate:"required"`
 }
 
@@ -37,6 +39,7 @@ type FindOneResponse struct {
 }
 
 type FindManyRequest struct {
+	Claims   claims.Claims     `validate:"required"`
 	Criteria criteria.Criteria `validate:"required"`
 	Query    mongo.Query
 }
@@ -47,7 +50,8 @@ type FindManyResponse struct {
 }
 
 type UpdateOneRequest struct {
-	User user.User
+	Claims claims.Claims `validate:"required"`
+	User   user.User
 }
 
 type UpdateOneResponse struct {

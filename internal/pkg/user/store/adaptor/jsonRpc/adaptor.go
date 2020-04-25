@@ -26,10 +26,6 @@ func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 	return userStore.ServiceProvider
 }
 
-func (a *adaptor) MethodRequiresAuthorization(method string) bool {
-	return false
-}
-
 type CreateOneRequest struct {
 	User user.User `json:"user"`
 }
