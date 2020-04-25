@@ -2,9 +2,12 @@ package jsonRpc
 
 import (
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -33,9 +36,16 @@ type CreateOneResponse struct {
 }
 
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not pass claims for context")
+		return bizzleException.ErrUnexpected{}
+	}
+
 	if _, err := a.userAdmin.CreateOne(
 		userAdmin.CreateOneRequest{
-			User: request.User,
+			Claims: c,
+			User:   request.User,
 		},
 	); err != nil {
 		return err
@@ -53,4 +63,20 @@ type RegisterOneResponse struct {
 }
 
 func (a *adaptor) RegisterOne(r *http.Request, request *RegisterOneRequest, response *RegisterOneResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not pass claims for context")
+		return bizzleException.ErrUnexpected{}
+	}
+
+	if _, err := a.userAdmin.RegisterOne(
+		userAdmin.RegisterOneRequest{
+			Claims:         c,
+			UserIdentifier: request.UserIdentifier.Identifier,
+		},
+	); err != nil {
+		return err
+	}
+
+	return nil
 }

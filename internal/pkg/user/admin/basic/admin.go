@@ -84,7 +84,7 @@ func (a *admin) RegisterOne(request userAdmin.RegisterOneRequest) (*userAdmin.Re
 	// retrieve user being registered
 	retrieveUserResponse, err := a.userStore.FindOne(
 		userStore.FindOneRequest{
-			Identifier: request.Identifier,
+			Identifier: request.UserIdentifier,
 		},
 	)
 	if err != nil {

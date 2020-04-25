@@ -12,25 +12,25 @@ import (
 )
 
 type validator struct {
-	validator validationValidator.Validator
-	userStore userStore.Store
-	roleStore roleStore.Store
+	requestValidator validationValidator.Validator
+	userStore        userStore.Store
+	roleStore        roleStore.Store
 }
 
 func New(
-	validationValidator validationValidator.Validator,
+	requestValidator validationValidator.Validator,
 	userStore userStore.Store,
 	roleStore roleStore.Store,
 ) userValidator.Validator {
 	return &validator{
-		validator: validationValidator,
-		userStore: userStore,
-		roleStore: roleStore,
+		requestValidator: requestValidator,
+		userStore:        userStore,
+		roleStore:        roleStore,
 	}
 }
 
 func (v *validator) ValidateForCreate(request userValidator.ValidateForCreateRequest) (*userValidator.ValidateForCreateResponse, error) {
-	if err := v.validator.Validate(request); err != nil {
+	if err := v.requestValidator.Validate(request); err != nil {
 		log.Error().Err(err)
 		return nil, err
 	}

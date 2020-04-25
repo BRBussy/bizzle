@@ -12,11 +12,9 @@ type Admin interface {
 	RegisterOne(RegisterOneRequest) (*RegisterOneResponse, error)
 }
 
-const ServiceProvider = "User-Store"
+const ServiceProvider = "User-Admin"
 
 const CreateOneService = ServiceProvider + ".CreateOne"
-const UpdateOneService = ServiceProvider + ".UpdateOne"
-const RegisterOneService = ServiceProvider + ".RegisterOne"
 
 type CreateOneRequest struct {
 	Claims claims.Claims `validate:"required"`
@@ -35,9 +33,9 @@ type UpdateOneResponse struct {
 }
 
 type RegisterOneRequest struct {
-	Claims     claims.Claims         `validate:"required"`
-	Identifier identifier.Identifier `validate:"required"`
-	Password   string                `validate:"required"`
+	Claims         claims.Claims         `validate:"required"`
+	UserIdentifier identifier.Identifier `validate:"required"`
+	Password       string                `validate:"required"`
 }
 
 type RegisterOneResponse struct {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	jsonRPCRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/jsonRpc"
 	basicScopeAdmin "github.com/BRBussy/bizzle/internal/pkg/security/scope/basic"
 	"net/http"
 	"os"
@@ -15,8 +16,11 @@ import (
 	"github.com/BRBussy/bizzle/internal/pkg/middleware"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	jsonRPCTokenValidator "github.com/BRBussy/bizzle/internal/pkg/security/token/validator/jsonRPC"
+	userAdminJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/admin/adaptor/jsonRpc"
+	basicUserAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin/basic"
 	userStoreJsonRpcAdaptor "github.com/BRBussy/bizzle/internal/pkg/user/store/adaptor/jsonRpc"
 	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
+	basicUserValidator "github.com/BRBussy/bizzle/internal/pkg/user/validator/basic"
 	requestValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
 )
@@ -61,6 +65,12 @@ func main() {
 	)
 
 	// create service providers
+	JSONRPCRoleStore := jsonRPCRoleStore.New(
+		RequestValidator,
+		config.RoleURL,
+		config.PreSharedSecret,
+	)
+
 	MongoUserStore, err := mongoUserStore.New(
 		RequestValidator,
 		BasicScopeAdmin,
@@ -69,6 +79,18 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
 	}
+	BasicUserValidator := basicUserValidator.New(
+		RequestValidator,
+		MongoUserStore,
+		JSONRPCRoleStore,
+	)
+	BasicUserAdmin := basicUserAdmin.New(
+		RequestValidator,
+		BasicUserValidator,
+		MongoUserStore,
+		JSONRPCRoleStore,
+	)
+
 	JSONRPCTokenValidator := jsonRPCTokenValidator.New(
 		config.AuthURL,
 		config.PreSharedSecret,
@@ -94,6 +116,7 @@ func main() {
 		},
 		[]jsonRPCServiceProvider.Provider{
 			userStoreJsonRpcAdaptor.New(MongoUserStore),
+			userAdminJSONRPCAdaptor.New(BasicUserAdmin),
 		},
 	)
 
