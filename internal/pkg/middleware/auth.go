@@ -34,14 +34,6 @@ func NewAuthentication(
 
 func (a *Authentication) Apply(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// look for pre-shared secret header
-		pss := r.Header.Get("Pre-Shared-Secret")
-		if pss == a.preSharedSecret {
-			// if pre-shared secret present no authentication required
-			next.ServeHTTP(w, r)
-			return
-		}
-
 		// get json rpc method
 		method, err := getMethod(r)
 		if err != nil {
@@ -50,15 +42,31 @@ func (a *Authentication) Apply(next http.Handler) http.Handler {
 			return
 		}
 
-		// if method is login not authentication is required
+		// if method is login no authentication is required
 		// allow request to pass to service provider
 		if method == bizzleAuthenticator.LoginService {
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		// all other requests need to be authenticated with a token header
-		// look for token in header
+		// if a valid pre-shared secret is present then this is an inter-microservice call
+		// if there is a claims header the value needs to be placed into the request context
+		if pss := r.Header.Get("Pre-Shared-Secret"); pss == a.preSharedSecret {
+			// look for claims header
+			serializedClaims := r.Header.Get("Claims")
+			if serializedClaims == "" {
+				// if it is blank - do nothing and carry on
+				next.ServeHTTP(w, r)
+				return
+			}
+			// otherwise place claims into request context and carry on
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "Claims", serializedClaims)))
+			return
+		}
+
+		// otherwise this request originates from outside of the bizzle cluster
+		// an authorisation header with a valid jwt token should be present
+		// derive auth claims from it and place it into the request context
 		jwt := r.Header.Get("Authorization")
 		if jwt == "" {
 			log.Error().Err(err).Msg("no token in authentication header")

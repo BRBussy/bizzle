@@ -1,7 +1,10 @@
 package ybbus
 
 import (
+	"encoding/json"
 	jsonRPCClient "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/client"
+	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/rs/zerolog/log"
 	"github.com/ybbus/jsonrpc"
 	"net/http"
@@ -9,29 +12,41 @@ import (
 )
 
 type client struct {
-	jsonrpc.RPCClient
+	preSharedSecret string
+	url             string
 }
 
 func New(
 	url, preSharedSecret string,
 ) jsonRPCClient.Client {
 	return &client{
-		RPCClient: jsonrpc.NewClientWithOpts(
-			url,
-			&jsonrpc.RPCClientOpts{
-				HTTPClient:    &http.Client{Timeout: time.Second * 10},
-				CustomHeaders: map[string]string{"Pre-Shared-Secret": preSharedSecret},
-			},
-		),
+		preSharedSecret: preSharedSecret,
+		url:             url,
 	}
 }
 
-func (c *client) JsonRpcRequest(method string, request, response interface{}) error {
-	// perform json rpc request
-	rpcResponse, err := c.Call(
-		method,
-		request,
-	)
+func (c *client) JSONRPCRequest(method string, authClaims claims.Claims, request, response interface{}) error {
+	var marshalledClaimsForHeader string
+	if authClaims != nil {
+		marshalledClaims, err := json.Marshal(claims.Serialized{Claims: authClaims})
+		if err != nil {
+			log.Error().Err(err).Msg("could not marshall claims")
+			return bizzleException.ErrUnexpected{}
+		}
+		marshalledClaimsForHeader = string(marshalledClaims)
+	}
+
+	rpcResponse, err := jsonrpc.NewClientWithOpts(
+		c.url,
+		&jsonrpc.RPCClientOpts{
+			HTTPClient: &http.Client{Timeout: time.Second * 10},
+			CustomHeaders: map[string]string{
+				"Pre-Shared-Secret": c.preSharedSecret,
+				"Claims":            marshalledClaimsForHeader,
+			},
+		},
+	).Call(method, request)
+
 	if err != nil {
 		return err
 	}

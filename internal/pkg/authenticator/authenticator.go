@@ -1,6 +1,9 @@
 package authenticator
 
-import "github.com/BRBussy/bizzle/internal/pkg/security/claims"
+import (
+	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
+)
 
 type Authenticator interface {
 	Login(LoginRequest) (*LoginResponse, error)
@@ -12,8 +15,8 @@ const LoginService = ServiceProvider + ".Login"
 const AuthenticateServiceService = ServiceProvider + ".AuthenticateService"
 
 type LoginRequest struct {
-	Email    string `validate:"required,email"`
-	Password string `validate:"required"`
+	Email    identifier.Email `validate:"required,email"`
+	Password string           `validate:"required"`
 }
 
 type LoginResponse struct {

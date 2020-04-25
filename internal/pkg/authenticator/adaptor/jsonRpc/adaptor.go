@@ -4,6 +4,7 @@ import (
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
+	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"net/http"
 )
 
@@ -24,8 +25,8 @@ func (a *adaptor) Name() jsonRPCServiceProvider.Name {
 }
 
 type SignUpRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    identifier.Email `json:"email"`
+	Password string           `json:"password"`
 }
 
 type SignUpResponse struct {

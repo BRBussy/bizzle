@@ -34,8 +34,9 @@ func (s *store) CreateOne(request userStore.CreateOneRequest) (*userStore.Create
 	}
 
 	createResponse := new(userStoreJsonRpcAdaptor.CreateOneResponse)
-	if err := s.jsonRpcClient.JsonRpcRequest(
+	if err := s.jsonRpcClient.JSONRPCRequest(
 		userStore.CreateOneService,
+		nil,
 		userStoreJsonRpcAdaptor.CreateOneRequest{
 			User: request.User,
 		},
@@ -54,8 +55,9 @@ func (s *store) FindOne(request userStore.FindOneRequest) (*userStore.FindOneRes
 	}
 
 	findOneResponse := new(userStoreJsonRpcAdaptor.FindOneResponse)
-	if err := s.jsonRpcClient.JsonRpcRequest(
+	if err := s.jsonRpcClient.JSONRPCRequest(
 		userStore.FindOneService,
+		request.Claims,
 		userStoreJsonRpcAdaptor.FindOneRequest{
 			Identifier: identifier.Serialized{
 				Identifier: request.Identifier,
@@ -78,8 +80,9 @@ func (s *store) FindMany(request userStore.FindManyRequest) (*userStore.FindMany
 	}
 
 	findManyResponse := new(userStoreJsonRpcAdaptor.FindManyResponse)
-	if err := s.jsonRpcClient.JsonRpcRequest(
+	if err := s.jsonRpcClient.JSONRPCRequest(
 		userStore.FindManyService,
+		request.Claims,
 		userStoreJsonRpcAdaptor.FindManyRequest{
 			Criteria: criteria.Serialized{
 				Criteria: request.Criteria,
@@ -104,8 +107,9 @@ func (s *store) UpdateOne(request userStore.UpdateOneRequest) (*userStore.Update
 	}
 
 	updateOneResponse := new(userStoreJsonRpcAdaptor.UpdateOneResponse)
-	if err := s.jsonRpcClient.JsonRpcRequest(
+	if err := s.jsonRpcClient.JSONRPCRequest(
 		userStore.UpdateOneService,
+		request.Claims,
 		userStoreJsonRpcAdaptor.UpdateOneRequest{
 			User: request.User,
 		},

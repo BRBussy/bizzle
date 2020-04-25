@@ -3,13 +3,14 @@ package basic
 import (
 	bizzleAuthenticator "github.com/BRBussy/bizzle/internal/pkg/authenticator"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
+	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	tokenGenerator "github.com/BRBussy/bizzle/internal/pkg/security/token/generator"
+	"github.com/BRBussy/bizzle/internal/pkg/user"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 	"github.com/BRBussy/bizzle/pkg/search/criterion/text"
-	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	validationValidator "github.com/BRBussy/bizzle/pkg/validate/validator"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
@@ -21,6 +22,7 @@ type authenticator struct {
 	roleStore        roleStore.Store
 	tokenGenerator   tokenGenerator.Generator
 	requestValidator validationValidator.Validator
+	database         *mongo.Database
 }
 
 func New(
@@ -28,12 +30,14 @@ func New(
 	roleStore roleStore.Store,
 	tokenGenerator tokenGenerator.Generator,
 	requestValidator validationValidator.Validator,
+	database *mongo.Database,
 ) bizzleAuthenticator.Authenticator {
 	return &authenticator{
 		roleStore:        roleStore,
 		requestValidator: requestValidator,
 		userStore:        userStore,
 		tokenGenerator:   tokenGenerator,
+		database:         database,
 	}
 }
 
@@ -43,19 +47,15 @@ func (a *authenticator) Login(request bizzleAuthenticator.LoginRequest) (*bizzle
 		return nil, err
 	}
 
-	// try and retrieve user by email address
-	retrieveResponse, err := a.userStore.FindOne(
-		userStore.FindOneRequest{
-			Identifier: identifier.Email(request.Email),
-		},
-	)
+	var userLoggingIn user.User
+	err := a.database.Collection("user").FindOne(&userLoggingIn, request.Email)
 	if err != nil {
 		log.Error().Err(err).Msg("retrieving user for log in")
 		return nil, err
 	}
 
 	// check password is correct
-	if err := bcrypt.CompareHashAndPassword(retrieveResponse.User.Password, []byte(request.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword(userLoggingIn.Password, []byte(request.Password)); err != nil {
 		log.Error().Err(err).Msg("invalid password login")
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (a *authenticator) Login(request bizzleAuthenticator.LoginRequest) (*bizzle
 	generateTokenResponse, err := a.tokenGenerator.GenerateToken(
 		&tokenGenerator.GenerateTokenRequest{
 			Claims: claims.Login{
-				UserID:         retrieveResponse.User.ID,
+				UserID:         userLoggingIn.ID,
 				ExpirationTime: time.Now().Add(time.Hour * 1).UTC().Unix(),
 			},
 		},
@@ -90,6 +90,7 @@ func (a *authenticator) AuthenticateService(request bizzleAuthenticator.Authenti
 		// try and retrieve user that owns claims
 		findOneUserResponse, err := a.userStore.FindOne(
 			userStore.FindOneRequest{
+				Claims:     request.Claims,
 				Identifier: typedClaims.UserID,
 			},
 		)

@@ -94,6 +94,7 @@ func main() {
 		JSONRPCRoleStore,
 		BasicTokenGenerator,
 		RequestValidator,
+		mongoDb,
 	)
 
 	authenticationMiddleware := middleware.NewAuthentication(

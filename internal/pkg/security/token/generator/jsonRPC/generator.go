@@ -32,7 +32,7 @@ func (a *generator) GenerateToken(request *tokenGenerator.GenerateTokenRequest) 
 	}
 
 	generateResponse := new(tokenGeneratorJSONRPCAdaptor.GenerateTokenResponse)
-	if err := a.jsonRpcClient.JsonRpcRequest(
+	if err := a.jsonRpcClient.JSONRPCRequest(
 		tokenGenerator.GenerateTokenService,
 		tokenGeneratorJSONRPCAdaptor.GenerateTokenRequest{
 			Claims: claims.Serialized{

@@ -23,8 +23,9 @@ func New(
 
 func (a *validator) Validate(request tokenValidator.ValidateRequest) (*tokenValidator.ValidateResponse, error) {
 	response := new(tokenValidatorJSONRPCAdaptor.ValidateResponse)
-	if err := a.jsonRpcClient.JsonRpcRequest(
+	if err := a.jsonRpcClient.JSONRPCRequest(
 		tokenValidator.ValidateService,
+		nil,
 		tokenValidatorJSONRPCAdaptor.ValidateRequest{
 			Token: request.Token,
 		},

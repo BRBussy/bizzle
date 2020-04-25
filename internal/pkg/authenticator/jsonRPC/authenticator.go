@@ -38,8 +38,9 @@ func (a *authenticator) AuthenticateService(request bizzleAuthenticator.Authenti
 	}
 
 	authenticateServiceResponse := new(bizzleAuthenticatorJSONRPCAdaptor.AuthenticateServiceResponse)
-	if err := a.jsonRpcClient.JsonRpcRequest(
+	if err := a.jsonRpcClient.JSONRPCRequest(
 		bizzleAuthenticator.AuthenticateServiceService,
+		nil,
 		bizzleAuthenticatorJSONRPCAdaptor.AuthenticateServiceRequest{
 			Claims: claims.Serialized{
 				Claims: request.Claims,
