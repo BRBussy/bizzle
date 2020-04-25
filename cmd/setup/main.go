@@ -2,20 +2,16 @@ package main
 
 import (
 	"flag"
+	basicScopeAdmin "github.com/BRBussy/bizzle/internal/pkg/security/scope/basic"
 
 	setupConfig "github.com/BRBussy/bizzle/configs/setup"
-	"github.com/BRBussy/bizzle/internal/app/exercise"
 	"github.com/BRBussy/bizzle/internal/app/role"
 	"github.com/BRBussy/bizzle/internal/app/user"
-	basicExerciseAdmin "github.com/BRBussy/bizzle/internal/pkg/exercise/admin/basic"
-	mongoExerciseStore "github.com/BRBussy/bizzle/internal/pkg/exercise/store/mongo"
 	"github.com/BRBussy/bizzle/internal/pkg/logs"
 	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	basicRoleAdmin "github.com/BRBussy/bizzle/internal/pkg/security/role/admin/basic"
 	mongoRoleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store/mongo"
-	basicUserAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin/basic"
 	mongoUserStore "github.com/BRBussy/bizzle/internal/pkg/user/store/mongo"
-	basicUserValidator "github.com/BRBussy/bizzle/internal/pkg/user/validator/basic"
 	requestValidator "github.com/BRBussy/bizzle/pkg/validate/validator/request"
 	"github.com/rs/zerolog/log"
 )
@@ -49,7 +45,17 @@ func main() {
 		}
 	}()
 
+	//
+	// Request Validator
+	//
 	RequestValidator := requestValidator.New()
+
+	//
+	// Scope Admin
+	//
+	BasicScopeAdmin := basicScopeAdmin.New(
+		RequestValidator,
+	)
 
 	//
 	// Role
@@ -68,56 +74,27 @@ func main() {
 	//
 	MongoUserStore, err := mongoUserStore.New(
 		RequestValidator,
+		BasicScopeAdmin,
 		mongoDb,
 	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("creating mongo user role store")
 	}
-	BasicUserValidator := basicUserValidator.New(MongoRoleStore)
-	BasicUserAdmin := basicUserAdmin.New(
-		BasicUserValidator,
-		MongoUserStore,
-		MongoRoleStore,
-	)
-
-	//
-	// Exercise
-	//
-	MongoExerciseStore, err := mongoExerciseStore.New(
-		RequestValidator,
-		mongoDb,
-	)
-	if err != nil {
-		log.Fatal().Err(err).Msg("creating mongo exercise store")
-	}
-	BasicExerciseAdmin := basicExerciseAdmin.New(
-		RequestValidator,
-		MongoExerciseStore,
-	)
 
 	log.Info().Msg("Running role setup")
 	if err := role.Setup(
 		BasicRoleAdmin,
 		MongoRoleStore,
 	); err != nil {
-		log.Fatal().Err(err).Msg("role setup")
+		log.Fatal().Err(err).Msg("role setup failed")
 	}
 
 	log.Info().Msg("Running user setup")
 	if err := user.Setup(
-		BasicUserAdmin,
 		MongoUserStore,
 		MongoRoleStore,
 		config.RootPassword,
 	); err != nil {
-		log.Fatal().Err(err).Msg("user setup")
-	}
-
-	log.Info().Msg("Running exercise setup")
-	if err := exercise.Setup(
-		BasicExerciseAdmin,
-		MongoExerciseStore,
-	); err != nil {
-		log.Fatal().Err(err).Msg("performing exercise setup")
+		log.Fatal().Err(err).Msg("user setup failed")
 	}
 }

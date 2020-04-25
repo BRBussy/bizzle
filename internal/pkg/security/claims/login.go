@@ -7,8 +7,8 @@ import (
 )
 
 type Login struct {
-	UserID         identifier.ID `json:"userID"`
-	ExpirationTime int64         `json:"expirationTime"`
+	UserID         identifier.ID `validate:"required" json:"userID"`
+	ExpirationTime int64         `validate:"required" json:"expirationTime"`
 }
 
 func (l Login) Type() Type {

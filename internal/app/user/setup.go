@@ -2,15 +2,15 @@ package user
 
 import (
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
-	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	"github.com/BRBussy/bizzle/internal/pkg/user"
-	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
 	userStore "github.com/BRBussy/bizzle/internal/pkg/user/store"
 	"github.com/BRBussy/bizzle/pkg/search/criterion"
 	stringCriterion "github.com/BRBussy/bizzle/pkg/search/criterion/text"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
+	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var rootUserToCreate = user.User{
@@ -22,12 +22,11 @@ var rootUserToCreate = user.User{
 }
 
 func Setup(
-	userAdminImp userAdmin.Admin,
 	userStoreImp userStore.Store,
 	roleStoreImp roleStore.Store,
 	rootPassword string,
 ) error {
-	// if root user to be created has any roles, find the role ids now
+	// find roles which need to be assigned to root user
 	if len(rootUserToCreate.RoleIDs) > 0 {
 		roleFindCriteria := make([]criterion.Criterion, 0)
 		for i := range rootUserToCreate.RoleIDs {
@@ -45,7 +44,7 @@ func Setup(
 			},
 		)
 		if err != nil {
-			log.Error().Err(err).Msg("finding root user roles")
+			log.Error().Err(err).Msg("error finding root user's roles")
 			return bizzleException.ErrUnexpected{}
 		}
 		rootUserToCreate.RoleIDs = make([]identifier.ID, 0)
@@ -54,46 +53,29 @@ func Setup(
 		}
 	}
 
-	// try and retrieve root user's user
-	findRootUserResponse, err := userStoreImp.FindOne(
-		userStore.FindOneRequest{
-			Identifier: identifier.Email(rootUserToCreate.Email),
-		},
+	// populate root user ID and ownerID
+	rootUserToCreate.ID = identifier.ID(uuid.NewV4().String())
+	rootUserToCreate.OwnerID = rootUserToCreate.ID
+
+	// hash and populate root user's password
+	pwdHash, err := bcrypt.GenerateFromPassword(
+		[]byte(rootPassword),
+		bcrypt.DefaultCost,
 	)
 	if err != nil {
-		switch err.(type) {
-		case mongo.ErrNotFound:
-			// root user not found, create it
-			createResponse, err := userAdminImp.CreateOne(
-				userAdmin.CreateOneRequest{User: rootUserToCreate},
-			)
-			if err != nil {
-				log.Error().Err(err).Msg("creating bizzle root user")
-				return bizzleException.ErrUnexpected{}
-			}
-			// register it
-			if _, err := userAdminImp.RegisterOne(
-				userAdmin.RegisterOneRequest{
-					Identifier: createResponse.User.ID,
-					Password:   rootPassword,
-				},
-			); err != nil {
-				log.Error().Err(err).Msg("registering bizzle root user")
-				return bizzleException.ErrUnexpected{}
-			}
-			findRootUserResponse = &userStore.FindOneResponse{User: createResponse.User}
-		default:
-			log.Error().Err(err).Msg("retrieving root user")
-			return bizzleException.ErrUnexpected{}
-		}
+		log.Error().Err(err).Msg("error hashing root user's password")
+		return bizzleException.ErrUnexpected{}
 	}
+	rootUserToCreate.Password = pwdHash
 
-	// root user has been found or created, populate id before comparison
-	rootUserToCreate.ID = findRootUserResponse.User.ID
-
-	// check if found user is different from that which should be created
-	if !user.CompareUsers(rootUserToCreate, findRootUserResponse.User) {
-		return bizzleException.ErrUnexpected{Reasons: []string{"root user not in sync"}}
+	// create the root user
+	if _, err := userStoreImp.CreateOne(
+		userStore.CreateOneRequest{
+			User: rootUserToCreate,
+		},
+	); err != nil {
+		log.Error().Err(err).Msg("creating bizzle root user")
+		return bizzleException.ErrUnexpected{}
 	}
 
 	return nil
