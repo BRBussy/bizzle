@@ -91,6 +91,7 @@ func (v *validator) ValidateForCreate(request userValidator.ValidateForCreateReq
 	// check that user doesn't already exist with this email address
 	_, err := v.userStore.FindOne(
 		userStore.FindOneRequest{
+			Claims:     request.Claims,
 			Identifier: request.User.Email,
 		},
 	)

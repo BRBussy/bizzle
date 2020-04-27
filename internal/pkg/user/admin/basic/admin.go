@@ -47,7 +47,8 @@ func (a *admin) CreateOne(request userAdmin.CreateOneRequest) (*userAdmin.Create
 	// validate user for creation
 	validateResponse, err := a.userValidator.ValidateForCreate(
 		userValidator.ValidateForCreateRequest{
-			User: request.User,
+			Claims: request.Claims,
+			User:   request.User,
 		},
 	)
 	if err != nil {

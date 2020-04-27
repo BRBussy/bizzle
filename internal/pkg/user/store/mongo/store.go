@@ -28,7 +28,7 @@ func New(
 	// setup collection indices
 	if err := userCollection.SetupIndices([]mongoDriver.IndexModel{
 		mongo.NewUniqueIndex("id"),
-		mongo.NewUniqueIndex("emailAddress"),
+		mongo.NewUniqueIndex("email"),
 	}); err != nil {
 		log.Error().Err(err).Msg("error setting up user collection indices")
 		return nil, err

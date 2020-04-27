@@ -32,7 +32,6 @@ type CreateOneRequest struct {
 }
 
 type CreateOneResponse struct {
-	User user.User `json:"user"`
 }
 
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest, response *CreateOneResponse) error {
