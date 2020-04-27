@@ -48,6 +48,7 @@ var rootOnlyPermissions = []securityPermission.Permission{
 	userStore.FindManyService,
 	userAdmin.CreateOneService,
 	userAdmin.RegisterOneService,
+	userAdmin.ChangePasswordService,
 	roleStore.FindOneService,
 	roleStore.FindManyService,
 }

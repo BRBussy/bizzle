@@ -79,3 +79,30 @@ func (a *adaptor) RegisterOne(r *http.Request, request *RegisterOneRequest, resp
 
 	return nil
 }
+
+type ChangePasswordRequest struct {
+	UserIdentifier identifier.Serialized `json:"userIdentifier"`
+	Password       string                `json:"password"`
+}
+
+type ChangePasswordResponse struct {
+}
+
+func (a *adaptor) ChangePassword(r *http.Request, request *ChangePasswordRequest, response *ChangePasswordResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not pass claims for context")
+		return bizzleException.ErrUnexpected{}
+	}
+
+	if _, err := a.userAdmin.ChangePassword(
+		userAdmin.ChangePasswordRequest{
+			Claims:         c,
+			UserIdentifier: request.UserIdentifier.Identifier,
+		},
+	); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -1,7 +1,6 @@
 package basic
 
 import (
-	"errors"
 	bizzleException "github.com/BRBussy/bizzle/internal/pkg/exception"
 	roleStore "github.com/BRBussy/bizzle/internal/pkg/security/role/store"
 	userAdmin "github.com/BRBussy/bizzle/internal/pkg/user/admin"
@@ -72,10 +71,6 @@ func (a *admin) CreateOne(request userAdmin.CreateOneRequest) (*userAdmin.Create
 	return &userAdmin.CreateOneResponse{}, nil
 }
 
-func (a *admin) UpdateOne(userAdmin.UpdateOneRequest) (*userAdmin.UpdateOneResponse, error) {
-	return nil, errors.New("implement update one")
-}
-
 func (a *admin) RegisterOne(request userAdmin.RegisterOneRequest) (*userAdmin.RegisterOneResponse, error) {
 	if err := a.requestValidator.Validate(request); err != nil {
 		log.Error().Err(err)
@@ -120,4 +115,46 @@ func (a *admin) RegisterOne(request userAdmin.RegisterOneRequest) (*userAdmin.Re
 	}
 
 	return &userAdmin.RegisterOneResponse{}, nil
+}
+
+func (a *admin) ChangePassword(request userAdmin.ChangePasswordRequest) (*userAdmin.ChangePasswordResponse, error) {
+	if err := a.requestValidator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	// retrieve user being registered
+	retrieveUserResponse, err := a.userStore.FindOne(
+		userStore.FindOneRequest{
+			Identifier: request.UserIdentifier,
+		},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("error finding user to register")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	// hash user password
+	pwdHash, err := bcrypt.GenerateFromPassword(
+		[]byte(request.Password),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("error hashing user's password")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	// set user password
+	retrieveUserResponse.User.Password = pwdHash
+
+	if _, err := a.userStore.UpdateOne(
+		userStore.UpdateOneRequest{
+			User: retrieveUserResponse.User,
+		},
+	); err != nil {
+		log.Error().Err(err).Msg("error updating user")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	return &userAdmin.ChangePasswordResponse{}, nil
 }

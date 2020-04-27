@@ -8,14 +8,15 @@ import (
 
 type Admin interface {
 	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
-	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
 	RegisterOne(RegisterOneRequest) (*RegisterOneResponse, error)
+	ChangePassword(ChangePasswordRequest) (*ChangePasswordResponse, error)
 }
 
 const ServiceProvider = "User-Admin"
 
 const CreateOneService = ServiceProvider + ".CreateOne"
 const RegisterOneService = ServiceProvider + ".RegisterOne"
+const ChangePasswordService = ServiceProvider + ".ChangePassword"
 
 type CreateOneRequest struct {
 	Claims claims.Claims `validate:"required"`
@@ -25,14 +26,6 @@ type CreateOneRequest struct {
 type CreateOneResponse struct {
 }
 
-type UpdateOneRequest struct {
-	Claims claims.Claims `validate:"required"`
-	User   user.User     `validate:"required"`
-}
-
-type UpdateOneResponse struct {
-}
-
 type RegisterOneRequest struct {
 	Claims         claims.Claims         `validate:"required"`
 	UserIdentifier identifier.Identifier `validate:"required"`
@@ -40,4 +33,13 @@ type RegisterOneRequest struct {
 }
 
 type RegisterOneResponse struct {
+}
+
+type ChangePasswordRequest struct {
+	Claims         claims.Claims         `validate:"required"`
+	UserIdentifier identifier.Identifier `validate:"required"`
+	Password       string                `validate:"required"`
+}
+
+type ChangePasswordResponse struct {
 }
