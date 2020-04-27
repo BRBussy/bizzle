@@ -1,19 +1,17 @@
 steps:
-  # ------------------------------------------ build, push and deploy auth ------------------------------------------
-  # Step #0: decrypt auth config file
   - name: gcr.io/cloud-builders/gcloud
-    id: 'decrypt auth config file'
+    id: 'decrypt config files'
     args:
       - kms
-      - decrypt
-      - --ciphertext-file=configs/auth/config.toml.enc
-      - --plaintext-file=configs/auth/config.toml
-      - --location=global
-      - --keyring=bizzle
-      - --key=cryptographer
+      - decrypt --ciphertext-file=configs/auth/config.toml.enc --plaintext-file=configs/auth/config.toml --location=global --keyring=bizzle --key=cryptographer
+      - decrypt --ciphertext-file=configs/role/config.toml.enc --plaintext-file=configs/role/config.toml --location=global --keyring=bizzle --key=cryptographer
+      - decrypt --ciphertext-file=configs/user/config.toml.enc --plaintext-file=configs/user/config.toml --location=global --keyring=bizzle --key=cryptographer
+      - decrypt --ciphertext-file=configs/budget/config.toml.enc --plaintext-file=configs/budget/config.toml --location=global --keyring=bizzle --key=cryptographer
     waitFor: ['-']
 
-  # Step #1: build auth image
+  #
+  # -------- auth service ------
+  #
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build auth image'
     entrypoint: 'bash'
@@ -22,60 +20,16 @@ steps:
       - |
         docker build -f build/package/auth/Dockerfile -t gcr.io/$PROJECT_ID/auth .
         docker push gcr.io/$PROJECT_ID/auth
-    waitFor: ['decrypt auth config file']
+    waitFor: ['decrypt config files']
 
-  # Step #2: deploy auth image
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'deploy auth'
     args: ['beta', 'run', 'deploy', 'auth', '--image', 'gcr.io/$PROJECT_ID/auth', '--region', 'us-central1','--platform', 'managed', '--quiet']
     waitFor: ['build auth image']
 
-  # ------------------------------------------ build, push and deploy budget ------------------------------------------
-  # Step #3: decrypt budget config file
-  - name: gcr.io/cloud-builders/gcloud
-    id: 'decrypt budget config file'
-    args:
-      - kms
-      - decrypt
-      - --ciphertext-file=configs/budget/config.toml.enc
-      - --plaintext-file=configs/budget/config.toml
-      - --location=global
-      - --keyring=bizzle
-      - --key=cryptographer
-    waitFor: ['-']
-
-  # Step #4: build budget image
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'build budget image'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        docker build -f build/package/budget/Dockerfile -t gcr.io/$PROJECT_ID/budget .
-        docker push gcr.io/$PROJECT_ID/budget
-    waitFor: ['decrypt budget config file']
-
-  # Step #5: deploy budget image
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'deploy budget'
-    args: ['beta', 'run', 'deploy', 'budget', '--image', 'gcr.io/$PROJECT_ID/budget', '--region', 'us-central1','--platform', 'managed', '--quiet']
-    waitFor: ['build budget image']
-
-  # ------------------------------------------ build, push and deploy role ------------------------------------------
-  # Step #9: decrypt role config file
-  - name: gcr.io/cloud-builders/gcloud
-    id: 'decrypt role config file'
-    args:
-      - kms
-      - decrypt
-      - --ciphertext-file=configs/role/config.toml.enc
-      - --plaintext-file=configs/role/config.toml
-      - --location=global
-      - --keyring=bizzle
-      - --key=cryptographer
-    waitFor: ['-']
-
-  # Step #10: build role image
+  #
+  # -------- role service ------
+  #
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build role image'
     entrypoint: 'bash'
@@ -84,29 +38,16 @@ steps:
       - |
         docker build -f build/package/role/Dockerfile -t gcr.io/$PROJECT_ID/role .
         docker push gcr.io/$PROJECT_ID/role
-    waitFor: ['decrypt role config file']
+    waitFor: ['decrypt config files']
 
-  # Step #11: deploy role image
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'deploy role'
     args: ['beta', 'run', 'deploy', 'role', '--image', 'gcr.io/$PROJECT_ID/role', '--region', 'us-central1','--platform', 'managed', '--quiet']
     waitFor: ['build role image']
 
-  # ------------------------------------------ build, push and deploy user ------------------------------------------
-  # Step #12: decrypt user config file
-  - name: gcr.io/cloud-builders/gcloud
-    id: 'decrypt user config file'
-    args:
-      - kms
-      - decrypt
-      - --ciphertext-file=configs/user/config.toml.enc
-      - --plaintext-file=configs/user/config.toml
-      - --location=global
-      - --keyring=bizzle
-      - --key=cryptographer
-    waitFor: ['-']
-
-  # Step #13: build user image
+  #
+  # -------- user service ------
+  #
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build user image'
     entrypoint: 'bash'
@@ -115,12 +56,29 @@ steps:
       - |
         docker build -f build/package/user/Dockerfile -t gcr.io/$PROJECT_ID/user .
         docker push gcr.io/$PROJECT_ID/user
-    waitFor: ['decrypt user config file']
+    waitFor: ['decrypt config files']
 
-  # Step #14: deploy user image
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'deploy user'
     args: ['beta', 'run', 'deploy', 'user', '--image', 'gcr.io/$PROJECT_ID/user', '--region', 'us-central1','--platform', 'managed', '--quiet']
     waitFor: ['build user image']
+
+  #
+  # -------- budget service ------
+  #
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build budget image'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker build -f build/package/budget/Dockerfile -t gcr.io/$PROJECT_ID/budget .
+        docker push gcr.io/$PROJECT_ID/budget
+    waitFor: ['decrypt config files']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'deploy budget'
+    args: ['beta', 'run', 'deploy', 'budget', '--image', 'gcr.io/$PROJECT_ID/budget', '--region', 'us-central1','--platform', 'managed', '--quiet']
+    waitFor: ['build budget image']
 
 timeout: 1200s
