@@ -59,7 +59,7 @@ steps:
     args:
       - '-c'
       - |
-        docker build -f build/package/auth/Dockerfile -t gcr.io/$PROJECT_ID/auth .
+        docker build -f build/package/auth/Dockerfile -t gcr.io/$PROJECT_ID/auth:latest .
         docker push gcr.io/$PROJECT_ID/auth
     waitFor: ['decrypt auth config file']
 
@@ -69,7 +69,7 @@ steps:
     args:
       - '-c'
       - |
-        docker build -f build/package/role/Dockerfile -t gcr.io/$PROJECT_ID/role .
+        docker build -f build/package/role/Dockerfile -t gcr.io/$PROJECT_ID/role:latest .
         docker push gcr.io/$PROJECT_ID/role
     waitFor: ['decrypt role config file']
 
@@ -79,7 +79,7 @@ steps:
     args:
       - '-c'
       - |
-        docker build -f build/package/user/Dockerfile -t gcr.io/$PROJECT_ID/user .
+        docker build -f build/package/user/Dockerfile -t gcr.io/$PROJECT_ID/user:latest .
         docker push gcr.io/$PROJECT_ID/user
     waitFor: ['decrypt user config file']
 
@@ -89,7 +89,7 @@ steps:
     args:
       - '-c'
       - |
-        docker build -f build/package/budget/Dockerfile -t gcr.io/$PROJECT_ID/budget .
+        docker build -f build/package/budget/Dockerfile -t gcr.io/$PROJECT_ID/budget:latest .
         docker push gcr.io/$PROJECT_ID/budget
     waitFor: ['decrypt budget config file']
 
