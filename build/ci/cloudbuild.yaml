@@ -4,12 +4,14 @@ steps:
   #
   - name: gcr.io/cloud-builders/gcloud
     id: 'decrypt config files'
+    entrypoint: 'bash'
     args:
-      - kms
-      - decrypt --ciphertext-file=configs/auth/config.toml.enc --plaintext-file=configs/auth/config.toml --location=global --keyring=bizzle --key=cryptographer
-      - decrypt --ciphertext-file=configs/role/config.toml.enc --plaintext-file=configs/role/config.toml --location=global --keyring=bizzle --key=cryptographer
-      - decrypt --ciphertext-file=configs/user/config.toml.enc --plaintext-file=configs/user/config.toml --location=global --keyring=bizzle --key=cryptographer
-      - decrypt --ciphertext-file=configs/budget/config.toml.enc --plaintext-file=configs/budget/config.toml --location=global --keyring=bizzle --key=cryptographer
+      - '-c'
+      - |
+      gcloud kms decrypt --ciphertext-file=configs/auth/config.toml.enc --plaintext-file=configs/auth/config.toml --location=global --keyring=bizzle --key=cryptographer
+      gcloud kms decrypt --ciphertext-file=configs/role/config.toml.enc --plaintext-file=configs/role/config.toml --location=global --keyring=bizzle --key=cryptographer
+      gcloud kms decrypt --ciphertext-file=configs/user/config.toml.enc --plaintext-file=configs/user/config.toml --location=global --keyring=bizzle --key=cryptographer
+      gcloud kms decrypt --ciphertext-file=configs/budget/config.toml.enc --plaintext-file=configs/budget/config.toml --location=global --keyring=bizzle --key=cryptographer
 
   #
   # -------- build services ------
