@@ -11,19 +11,37 @@ steps:
   - name: gcr.io/cloud-builders/gcloud
     id: 'decrypt role config file'
     args:
-      - kms decrypt --ciphertext-file=configs/role/config.toml.enc --plaintext-file=configs/role/config.toml --location=global --keyring=bizzle --key=cryptographer
+      - kms
+      - decrypt
+      - --ciphertext-file=configs/role/config.toml.enc
+      - --plaintext-file=configs/role/config.toml
+      - --location=global
+      - --keyring=bizzle
+      - --key=cryptographer
     waitFor: ['-']
 
   - name: gcr.io/cloud-builders/gcloud
     id: 'decrypt user config file'
     args:
-      - kms decrypt --ciphertext-file=configs/user/config.toml.enc --plaintext-file=configs/user/config.toml --location=global --keyring=bizzle --key=cryptographer
+      - kms
+      - decrypt
+      - --ciphertext-file=configs/user/config.toml.enc
+      - --plaintext-file=configs/user/config.toml
+      - --location=global
+      - --keyring=bizzle
+      - --key=cryptographer
     waitFor: ['-']
 
   - name: gcr.io/cloud-builders/gcloud
     id: 'decrypt budget config file'
     args:
-      - kms decrypt --ciphertext-file=configs/budget/config.toml.enc --plaintext-file=configs/budget/config.toml --location=global --keyring=bizzle --key=cryptographer
+      - kms
+      - decrypt
+      - --ciphertext-file=configs/budget/config.toml.enc
+      - --plaintext-file=configs/budget/config.toml
+      - --location=global
+      - --keyring=bizzle
+      - --key=cryptographer
     waitFor: ['-']
 
   #
