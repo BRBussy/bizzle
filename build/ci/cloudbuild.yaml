@@ -1,17 +1,30 @@
 steps:
   #
-  # -------- decrypt config files ------
+  # -------- decrypt config file ------
   #
   - name: gcr.io/cloud-builders/gcloud
-    id: 'decrypt config files'
-    entrypoint: 'bash'
+    id: 'decrypt auth config file'
     args:
-      - '-c'
-      - |
-      gcloud kms decrypt --ciphertext-file=configs/auth/config.toml.enc --plaintext-file=configs/auth/config.toml --location=global --keyring=bizzle --key=cryptographer
-      gcloud kms decrypt --ciphertext-file=configs/role/config.toml.enc --plaintext-file=configs/role/config.toml --location=global --keyring=bizzle --key=cryptographer
-      gcloud kms decrypt --ciphertext-file=configs/user/config.toml.enc --plaintext-file=configs/user/config.toml --location=global --keyring=bizzle --key=cryptographer
-      gcloud kms decrypt --ciphertext-file=configs/budget/config.toml.enc --plaintext-file=configs/budget/config.toml --location=global --keyring=bizzle --key=cryptographer
+      - kms decrypt --ciphertext-file=configs/auth/config.toml.enc --plaintext-file=configs/auth/config.toml --location=global --keyring=bizzle --key=cryptographer
+    waitFor: ['-']
+
+  - name: gcr.io/cloud-builders/gcloud
+    id: 'decrypt role config file'
+    args:
+      - kms decrypt --ciphertext-file=configs/role/config.toml.enc --plaintext-file=configs/role/config.toml --location=global --keyring=bizzle --key=cryptographer
+    waitFor: ['-']
+
+  - name: gcr.io/cloud-builders/gcloud
+    id: 'decrypt user config file'
+    args:
+      - kms decrypt --ciphertext-file=configs/user/config.toml.enc --plaintext-file=configs/user/config.toml --location=global --keyring=bizzle --key=cryptographer
+    waitFor: ['-']
+
+  - name: gcr.io/cloud-builders/gcloud
+    id: 'decrypt budget config file'
+    args:
+      - kms decrypt --ciphertext-file=configs/budget/config.toml.enc --plaintext-file=configs/budget/config.toml --location=global --keyring=bizzle --key=cryptographer
+    waitFor: ['-']
 
   #
   # -------- build services ------
@@ -24,7 +37,7 @@ steps:
       - |
         docker build -f build/package/auth/Dockerfile -t gcr.io/$PROJECT_ID/auth .
         docker push gcr.io/$PROJECT_ID/auth
-    waitFor: ['decrypt config files']
+    waitFor: ['decrypt auth config file']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build role image'
@@ -34,7 +47,7 @@ steps:
       - |
         docker build -f build/package/role/Dockerfile -t gcr.io/$PROJECT_ID/role .
         docker push gcr.io/$PROJECT_ID/role
-    waitFor: ['decrypt config files']
+    waitFor: ['decrypt role config file']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build user image'
@@ -44,7 +57,7 @@ steps:
       - |
         docker build -f build/package/user/Dockerfile -t gcr.io/$PROJECT_ID/user .
         docker push gcr.io/$PROJECT_ID/user
-    waitFor: ['decrypt config files']
+    waitFor: ['decrypt user config file']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build budget image'
@@ -54,7 +67,7 @@ steps:
       - |
         docker build -f build/package/budget/Dockerfile -t gcr.io/$PROJECT_ID/budget .
         docker push gcr.io/$PROJECT_ID/budget
-    waitFor: ['decrypt config files']
+    waitFor: ['decrypt budget config file']
 
     #
     # deploy services
