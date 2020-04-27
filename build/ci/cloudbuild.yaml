@@ -5,7 +5,13 @@ steps:
   - name: gcr.io/cloud-builders/gcloud
     id: 'decrypt auth config file'
     args:
-      - kms decrypt --ciphertext-file=configs/auth/config.toml.enc --plaintext-file=configs/auth/config.toml --location=global --keyring=bizzle --key=cryptographer
+      - kms
+      - decrypt
+      - --ciphertext-file=configs/auth/config.toml.enc
+      - --plaintext-file=configs/auth/config.toml
+      - --location=global
+      - --keyring=bizzle
+      - --key=cryptographer
     waitFor: ['-']
 
   - name: gcr.io/cloud-builders/gcloud
