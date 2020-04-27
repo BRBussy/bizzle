@@ -80,12 +80,17 @@ func (a *admin) RegisterOne(request userAdmin.RegisterOneRequest) (*userAdmin.Re
 	// retrieve user being registered
 	retrieveUserResponse, err := a.userStore.FindOne(
 		userStore.FindOneRequest{
+			Claims:     request.Claims,
 			Identifier: request.UserIdentifier,
 		},
 	)
 	if err != nil {
 		log.Error().Err(err).Msg("error finding user to register")
 		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	if retrieveUserResponse.User.Registered {
+		return nil, userAdmin.ErrUserAlreadyRegistered{}
 	}
 
 	// hash user password
@@ -107,7 +112,8 @@ func (a *admin) RegisterOne(request userAdmin.RegisterOneRequest) (*userAdmin.Re
 	// update user
 	if _, err := a.userStore.UpdateOne(
 		userStore.UpdateOneRequest{
-			User: retrieveUserResponse.User,
+			Claims: request.Claims,
+			User:   retrieveUserResponse.User,
 		},
 	); err != nil {
 		log.Error().Err(err).Msg("error updating user")
@@ -126,12 +132,17 @@ func (a *admin) ChangePassword(request userAdmin.ChangePasswordRequest) (*userAd
 	// retrieve user being registered
 	retrieveUserResponse, err := a.userStore.FindOne(
 		userStore.FindOneRequest{
+			Claims:     request.Claims,
 			Identifier: request.UserIdentifier,
 		},
 	)
 	if err != nil {
 		log.Error().Err(err).Msg("error finding user to register")
 		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	if !retrieveUserResponse.User.Registered {
+		return nil, userAdmin.ErrUserAlreadyRegistered{}
 	}
 
 	// hash user password
@@ -149,7 +160,8 @@ func (a *admin) ChangePassword(request userAdmin.ChangePasswordRequest) (*userAd
 
 	if _, err := a.userStore.UpdateOne(
 		userStore.UpdateOneRequest{
-			User: retrieveUserResponse.User,
+			Claims: request.Claims,
+			User:   retrieveUserResponse.User,
 		},
 	); err != nil {
 		log.Error().Err(err).Msg("error updating user")

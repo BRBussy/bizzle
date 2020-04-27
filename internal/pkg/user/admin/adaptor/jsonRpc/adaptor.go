@@ -72,6 +72,7 @@ func (a *adaptor) RegisterOne(r *http.Request, request *RegisterOneRequest, resp
 		userAdmin.RegisterOneRequest{
 			Claims:         c,
 			UserIdentifier: request.UserIdentifier.Identifier,
+			Password:       request.Password,
 		},
 	); err != nil {
 		return err
@@ -99,6 +100,7 @@ func (a *adaptor) ChangePassword(r *http.Request, request *ChangePasswordRequest
 		userAdmin.ChangePasswordRequest{
 			Claims:         c,
 			UserIdentifier: request.UserIdentifier.Identifier,
+			Password:       request.Password,
 		},
 	); err != nil {
 		return err
