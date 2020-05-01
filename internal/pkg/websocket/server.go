@@ -30,17 +30,29 @@ func ServeWs(w http.ResponseWriter, r *http.Request, hub *Hub) {
 	}
 
 	// construct a new client
-	newClient := &Client{
-		conn: conn,
-		Send: make(chan []byte),
-		Hub:  hub,
-	}
+	//newClient := &Client{
+	//	conn: conn,
+	//	Send: make(chan []byte),
+	//	Hub:  hub,
+	//}
 
 	// Register Client with hub
-	hub.Register <- newClient
+	// hub.Register <- newClient
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines
-	go newClient.wsClientReader()
-	go newClient.wsClientWriter()
+	//go newClient.wsClientReader()
+	//go newClient.wsClientWriter()
+
+	for {
+		messageType, p, err := conn.ReadMessage()
+		if err != nil {
+			log.Printf("conn.ReadMessage: %v", err)
+			return
+		}
+		if err := conn.WriteMessage(messageType, p); err != nil {
+			log.Printf("conn.WriteMessage: %v", err)
+			return
+		}
+	}
 }
