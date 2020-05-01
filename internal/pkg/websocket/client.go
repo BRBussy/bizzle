@@ -3,6 +3,7 @@ package websocket
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/BRBussy/bizzle/internal/pkg/exception"
 	"github.com/gorilla/websocket"
 	"github.com/rs/zerolog/log"
 	"time"
@@ -25,7 +26,7 @@ type Client struct {
 	// Buffered channel of outbound messages.
 	Send chan []byte
 	// hub
-	Hub *Hub
+	// Hub *Hub
 }
 
 type message struct {
@@ -34,15 +35,25 @@ type message struct {
 }
 
 func (c *Client) wsClientReader() {
+	// close websocket on termination of client reader
 	defer func() {
-		//unregister clients here
 		log.Info().Msg("wsClientReader Connection Closed")
-		c.conn.Close()
+		if err := c.conn.Close(); err != nil {
+			log.Error().Err(err).Msg("error closing websocket client connection")
+		}
 	}()
+
+	// setup connection parameters
 	c.conn.SetReadLimit(maxMessageSize)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
+	if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
+		log.Error().Err(err).Msg("error setting maximum read deadline on websocket")
+		return
+	}
 	c.conn.SetPongHandler(func(string) error {
-		c.conn.SetReadDeadline(time.Now().Add(pongWait))
+		if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
+			log.Error().Err(err).Msg("error setting maximum read deadline on websocket")
+			return exception.ErrUnexpected{}
+		}
 		return nil
 	})
 
@@ -57,6 +68,7 @@ func (c *Client) wsClientReader() {
 		log.Warn().Msg("Unable to marshal message for client")
 	}
 
+	// go into read monitoring
 	for {
 		_, rawMsgData, err := c.conn.ReadMessage()
 		if err != nil {
@@ -66,54 +78,51 @@ func (c *Client) wsClientReader() {
 			log.Debug().Err(err).Msg("Client closed ws connection err: ")
 			break
 		}
-
-		Msg := message{}
-
-		//The web client sends ping messages as normal text
-		if string(rawMsgData) != "Ping" {
-			fmt.Println("Message Received!!:", string(rawMsgData))
-			c.Hub.Broadcast <- rawMsgData
-
-			//if err := json.Unmarshal(rawMsgData, &Msg); err != nil {
-			//	log.Warn(err)
-			//}
-			//fmt.Println("Unmarshalled:")
-			//fmt.Println(Msg)
-		}
-
-		Msg.Data = "Echo: " + string(rawMsgData)
-		Msg.Type = "WSS"
-		marshalledData, _ := json.Marshal(Msg)
-		fmt.Println(string(marshalledData))
-
-		c.Send <- marshalledData
-		// broad cast message here
+		fmt.Println("Message Received!!:", string(rawMsgData))
 	}
 }
 
 func (c *Client) wsClientWriter() {
-	ticker := time.NewTicker(pingPeriod)
+	// create ticker to ping socket connection
+	pingTicker := time.NewTicker(pingPeriod)
+	fmt.Println(pingPeriod)
+
+	// close connection on return of client writer
 	defer func() {
-		c.conn.Close()
-		ticker.Stop()
+		if err := c.conn.Close(); err != nil {
+			log.Error().Err(err).Msg("error closing websocket client connection")
+		}
+		pingTicker.Stop()
 	}()
+
+	// go into write monitor loop
 	for {
 		select {
+
+		// monitor send client channel for outgoing messages to transmit
 		case message, ok := <-c.Send:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if err := c.conn.SetWriteDeadline(time.Now().Add(writeWait)); err != nil {
+				log.Error().Err(err).Msg("error setting write deadline for send message")
+				return
+			}
 			if !ok {
-				// The hub closed the channel.
-				log.Debug().Msg("The hub closed the channel.")
-				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				log.Debug().Msg("send channel closed")
+				if err := c.conn.WriteMessage(websocket.CloseMessage, []byte{}); err != nil {
+					log.Error().Err(err).Msg("error sending close message")
+				}
+				return
+			}
+			if err := c.conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
+				log.Warn().Err(err).Msg("could not write to websocket")
 				return
 			}
 
-			if err := c.conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
-				log.Warn().Err(err).Msg("Could not write to websocket client")
+		// keep websocket connection alive by sending ping messages
+		case <-pingTicker.C:
+			if err := c.conn.SetWriteDeadline(time.Now().Add(writeWait)); err != nil {
+				log.Error().Err(err).Msg("error setting write deadline for ping message")
 				return
 			}
-		case <-ticker.C:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				log.Warn().Err(err).Msg("could not send ping")
 				return

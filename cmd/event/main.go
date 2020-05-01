@@ -23,7 +23,7 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(cors)
 	router.HandleFunc("/_ah/health", healthCheckHandler)
-	router.HandleFunc("/ws/", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		websocket.ServeWs(w, r, hub)
 	})
 
