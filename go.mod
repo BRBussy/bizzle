@@ -10,6 +10,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.3.0 // indirect
 	github.com/gorilla/rpc v1.2.0
+	github.com/gorilla/websocket v1.4.0
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/onsi/gomega v1.7.0 // indirect
