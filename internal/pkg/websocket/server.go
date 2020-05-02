@@ -30,11 +30,7 @@ func ServeWs(w http.ResponseWriter, r *http.Request, hub *Hub) {
 	}
 
 	// construct a new client
-	newClient := &Client{
-		conn: conn,
-		Send: make(chan []byte),
-		// Hub:  hub,
-	}
+	newClient := NewClient(conn)
 
 	// Register Client with hub
 	// hub.Register <- newClient

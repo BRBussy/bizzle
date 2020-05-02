@@ -13,7 +13,7 @@ const (
 	// Time allowed to write a message to the peer.
 	writeWait = 10 * time.Second
 	// Time allowed to read the next pong message from the peer.
-	pongWait = 30 * time.Second
+	pongWait = 20 * time.Second
 	// Send pings to peer with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * 9) / 10
 	// Maximum message size allowed from peer.
@@ -25,8 +25,20 @@ type Client struct {
 	conn *websocket.Conn
 	// Buffered channel of outbound messages.
 	Send chan []byte
+	// To close connection or indicate it has closed
+	Close chan bool
 	// hub
 	// Hub *Hub
+}
+
+func NewClient(
+	conn *websocket.Conn,
+) *Client {
+	return &Client{
+		conn:  conn,
+		Send:  make(chan []byte),
+		Close: make(chan bool),
+	}
 }
 
 type message struct {
@@ -37,10 +49,7 @@ type message struct {
 func (c *Client) wsClientReader() {
 	// close websocket on termination of client reader
 	defer func() {
-		log.Info().Msg("wsClientReader Connection Closed")
-		if err := c.conn.Close(); err != nil {
-			log.Error().Err(err).Msg("error closing websocket client connection")
-		}
+		c.conn.Close()
 	}()
 
 	// setup connection parameters
@@ -70,12 +79,23 @@ func (c *Client) wsClientReader() {
 
 	// go into read monitoring
 	for {
+		// try and ready data from connection
 		_, rawMsgData, err := c.conn.ReadMessage()
+
+		// if there is an error while reading
 		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure) {
-				log.Warn().Err(err).Msg("Client closed ws connection unexpectedly")
+			// check if it is an unexpected error
+			if websocket.IsUnexpectedCloseError(
+				err,
+				// normal manual close
+				websocket.CloseNormalClosure,
+				// refresh browser
+				websocket.CloseGoingAway,
+			) {
+				// was unexpected error
+				log.Warn().Err(err).Msg("client closed ws connection unexpectedly")
 			}
-			log.Debug().Err(err).Msg("Client closed ws connection err: ")
+			c.Close <- true
 			break
 		}
 		fmt.Println("Message Received!!:", string(rawMsgData))
@@ -85,13 +105,10 @@ func (c *Client) wsClientReader() {
 func (c *Client) wsClientWriter() {
 	// create ticker to ping socket connection
 	pingTicker := time.NewTicker(pingPeriod)
-	fmt.Println(pingPeriod)
 
 	// close connection on return of client writer
 	defer func() {
-		if err := c.conn.Close(); err != nil {
-			log.Error().Err(err).Msg("error closing websocket client connection")
-		}
+		c.conn.Close()
 		pingTicker.Stop()
 	}()
 
@@ -127,6 +144,9 @@ func (c *Client) wsClientWriter() {
 				log.Warn().Err(err).Msg("could not send ping")
 				return
 			}
+
+		case <-c.Close:
+			return
 		}
 	}
 }
