@@ -106,6 +106,7 @@ func main() {
 		BudgetEntryCategoryRuleBasicAdmin,
 		BudgetEntryCategoryRuleMongoStore,
 		UserMongoStore,
+		config.Rules,
 	); err != nil {
 		log.Fatal().Err(err).Msg("running SyncBudgetCategoryRulesForUser")
 	}

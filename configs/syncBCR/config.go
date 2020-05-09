@@ -1,6 +1,7 @@
 package setup
 
 import (
+	budgetEntryCategoryRule "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -24,6 +25,7 @@ type Config struct {
 	MongoDBUsername         string
 	MongoDBPassword         string
 	UserID                  identifier.ID
+	Rules                   []budgetEntryCategoryRule.CategoryRule
 }
 
 func GetConfig(configFileName *string) (*Config, error) {

@@ -47,11 +47,6 @@ type message struct {
 }
 
 func (c *Client) wsClientReader() {
-	// close websocket on termination of client reader
-	defer func() {
-		c.conn.Close()
-	}()
-
 	// setup connection parameters
 	c.conn.SetReadLimit(maxMessageSize)
 	if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
@@ -106,9 +101,8 @@ func (c *Client) wsClientWriter() {
 	// create ticker to ping socket connection
 	pingTicker := time.NewTicker(pingPeriod)
 
-	// close connection on return of client writer
 	defer func() {
-		c.conn.Close()
+		// stop ticker on termination of client writer
 		pingTicker.Stop()
 	}()
 
