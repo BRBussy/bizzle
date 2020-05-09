@@ -48,6 +48,9 @@ const DeleteOneService = ServiceProvider + ".DeleteOne"
 // IgnoreOneService is the service name for DeleteOne
 const IgnoreOneService = ServiceProvider + ".IgnoreOne"
 
+// RecogniseOneService is the service name for DeleteOne
+const RecogniseOneService = ServiceProvider + ".RecogniseOne"
+
 // IgnoredCheckService is the service name for DeleteOne
 const IgnoredCheckService = ServiceProvider + ".IgnoredCheck"
 

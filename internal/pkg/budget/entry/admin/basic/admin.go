@@ -410,22 +410,6 @@ func (a *admin) RecogniseOne(request budgetEntryAdmin.RecogniseOneRequest) (*bud
 		return nil, err
 	}
 
-	if _, err := a.budgetEntryIgnoredAdmin.CreateOne(
-		budgetEntryIgnoredAdmin.CreateOneRequest{
-			Claims: request.Claims,
-			Ignored: budgetEntryIgnored.Ignored{
-				Description: fmt.Sprintf(
-					"%s-%s",
-					strings.ToLower(request.BudgetEntry.Description),
-					request.BudgetEntry.Date.Format("Jan-02-2006"),
-				),
-			},
-		},
-	); err != nil {
-		log.Error().Err(err).Msg("unable to create ignored")
-		return nil, bizzleException.ErrUnexpected{}
-	}
-
 	return &budgetEntryAdmin.RecogniseOneResponse{}, nil
 }
 
