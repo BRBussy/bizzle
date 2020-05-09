@@ -1,7 +1,12 @@
 package basic
 
 import (
+	budgetEntryIgnored "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored"
+	budgetEntryIgnoredAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored/admin"
+	budgetEntryIgnoredStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored/store"
+	"github.com/BRBussy/bizzle/internal/pkg/mongo"
 	"math"
+	"strings"
 	"time"
 
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
@@ -23,6 +28,8 @@ type admin struct {
 	budgetEntryStore                budgetEntryStore.Store
 	budgetEntryValidator            budgetEntryValidator.Validator
 	xlsxStandardBankStatementParser statementParser.Parser
+	budgetEntryIgnoredAdmin         budgetEntryIgnoredAdmin.Admin
+	budgetEntryIgnoredStore         budgetEntryIgnoredStore.Store
 }
 
 // New creates a new basic budget entry admin
@@ -31,12 +38,16 @@ func New(
 	budgetEntryStore budgetEntryStore.Store,
 	budgetEntryValidator budgetEntryValidator.Validator,
 	xlsxStandardBankStatementParser statementParser.Parser,
+	budgetEntryIgnoredAdmin budgetEntryIgnoredAdmin.Admin,
+	budgetEntryIgnoredStore budgetEntryIgnoredStore.Store,
 ) budgetEntryAdmin.Admin {
 	return &admin{
 		budgetEntryStore:                budgetEntryStore,
 		validator:                       validator,
 		budgetEntryValidator:            budgetEntryValidator,
 		xlsxStandardBankStatementParser: xlsxStandardBankStatementParser,
+		budgetEntryIgnoredStore:         budgetEntryIgnoredStore,
+		budgetEntryIgnoredAdmin:         budgetEntryIgnoredAdmin,
 	}
 }
 
@@ -365,4 +376,60 @@ func (a *admin) DeleteOne(request budgetEntryAdmin.DeleteOneRequest) (*budgetEnt
 	}
 
 	return &budgetEntryAdmin.DeleteOneResponse{}, nil
+}
+
+func (a *admin) IgnoreOne(request budgetEntryAdmin.IgnoreOneRequest) (*budgetEntryAdmin.IgnoreOneResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	if _, err := a.budgetEntryIgnoredAdmin.CreateOne(
+		budgetEntryIgnoredAdmin.CreateOneRequest{
+			Claims: request.Claims,
+			Ignored: budgetEntryIgnored.Ignored{
+				Description: strings.ToLower(request.BudgetEntry.Description),
+			},
+		},
+	); err != nil {
+		log.Error().Err(err).Msg("unable to create ignored")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	return &budgetEntryAdmin.IgnoreOneResponse{}, nil
+}
+
+func (a *admin) IgnoredCheck(request budgetEntryAdmin.IgnoredCheckRequest) (*budgetEntryAdmin.IgnoredCheckResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	findManyIgnored, err := a.budgetEntryIgnoredStore.FindMany(
+		budgetEntryIgnoredStore.FindManyRequest{
+			Claims:   request.Claims,
+			Criteria: make(criteria.Criteria, 0),
+			Query:    mongo.Query{},
+		},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("unable to find many ignored")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	ignoredBudgetEntries := make([]budgetEntry.Entry, 0)
+	for _, entry := range request.BudgetEntries {
+		for _, ignored := range findManyIgnored.Records {
+			if ignored.Description == strings.ToLower(entry.Description) {
+				ignoredBudgetEntries = append(
+					ignoredBudgetEntries,
+					entry,
+				)
+			}
+		}
+	}
+
+	return &budgetEntryAdmin.IgnoredCheckResponse{
+		BudgetEntries: nil,
+	}, nil
 }

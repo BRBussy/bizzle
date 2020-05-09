@@ -22,6 +22,8 @@ import (
 	basicBudgetCategoryRuleAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/admin/basic"
 	budgetEntryCategoryRuleStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/adaptor/jsonRPC"
 	mongoBudgetCategoryRuleStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/categoryRule/store/mongo"
+	basicBudgetEntryIgnoredAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored/admin/basic"
+	mongoBudgetEntryIgnoredStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored/store/mongo"
 	budgetEntryStoreJSONRPCAdaptor "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store/adaptor/jsonrpc"
 	mongoBudgetEntryStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/store/mongo"
 	basicBudgetEntryValidator "github.com/BRBussy/bizzle/internal/pkg/budget/entry/validator/basic"
@@ -77,6 +79,15 @@ func main() {
 	//
 	// Budget
 	//
+	MongoBudgetEntryIgnoredStore, err := mongoBudgetEntryIgnoredStore.New(
+		RequestValidator,
+		BasicScopeAdmin,
+		mongoDb,
+	)
+	BasicBudgetEntryIgnoredAdmin := basicBudgetEntryIgnoredAdmin.New(
+		RequestValidator,
+		MongoBudgetEntryIgnoredStore,
+	)
 	MongoBudgetCategoryRuleStore, err := mongoBudgetCategoryRuleStore.New(
 		RequestValidator,
 		BasicScopeAdmin,
@@ -128,6 +139,8 @@ func main() {
 		MongoBudgetEntryStore,
 		BasicBudgetEntryValidator,
 		XLSXStandardBankStatementParser,
+		BasicBudgetEntryIgnoredAdmin,
+		MongoBudgetEntryIgnoredStore,
 	)
 	BasicBudgetAdmin := basicBudgetAdmin.New(
 		RequestValidator,

@@ -15,6 +15,8 @@ type Admin interface {
 	DuplicateCheck(DuplicateCheckRequest) (*DuplicateCheckResponse, error)
 	XLSXStandardBankStatementToBudgetEntries(XLSXStandardBankStatementToBudgetEntriesRequest) (*XLSXStandardBankStatementToBudgetEntriesResponse, error)
 	DeleteOne(DeleteOneRequest) (*DeleteOneResponse, error)
+	IgnoreOne(IgnoreOneRequest) (*IgnoreOneResponse, error)
+	IgnoredCheck(IgnoredCheckRequest) (*IgnoredCheckResponse, error)
 }
 
 // ServiceProvider is the budget entry admin service provider name
@@ -40,6 +42,12 @@ const XLSXStandardBankStatementToBudgetCompositeEntriesService = ServiceProvider
 
 // DeleteOneService is the service name for DeleteOne
 const DeleteOneService = ServiceProvider + ".DeleteOne"
+
+// IgnoreOneService is the service name for DeleteOne
+const IgnoreOneService = ServiceProvider + ".IgnoreOne"
+
+// IgnoredCheckService is the service name for DeleteOne
+const IgnoredCheckService = ServiceProvider + ".IgnoredCheck"
 
 // CreateManyRequest is the request object for the CreateMany service
 type CreateManyRequest struct {
@@ -120,4 +128,21 @@ type DeleteOneRequest struct {
 
 // DeleteOneResponse is the response object for the the DeleteOne service
 type DeleteOneResponse struct {
+}
+
+type IgnoreOneRequest struct {
+	Claims      claims.Claims     `validate:"required"`
+	BudgetEntry budgetEntry.Entry `validate:"required"`
+}
+
+type IgnoreOneResponse struct {
+}
+
+type IgnoredCheckRequest struct {
+	Claims        claims.Claims       `validate:"required"`
+	BudgetEntries []budgetEntry.Entry `validate:"required"`
+}
+
+type IgnoredCheckResponse struct {
+	BudgetEntries []budgetEntry.Entry `validate:"required"`
 }
