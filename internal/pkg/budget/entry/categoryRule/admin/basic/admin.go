@@ -142,8 +142,13 @@ func (a *admin) CategoriseBudgetEntry(request budgetEntryCategoryRuleAdmin.Categ
 	// minimise and strip description
 	description := strings.ToLower(strings.Trim(request.BudgetEntryDescription, " "))
 
+	// categorisation score
+	score := make(map[identifier.ID]int)
+
 nextCategorisationRule:
 	for _, rule := range findManyBudgetCategoryRulesResponse.Records {
+
+		// if this is a strict rule score is not considered
 		if rule.Strict {
 			// all identifiers must be found in description
 			for _, id := range rule.CategoryIdentifiers {
@@ -157,7 +162,7 @@ nextCategorisationRule:
 				CategoryRule: rule,
 			}, nil
 		} else {
-			// any identifiers can be found in description
+			// for non-strict rules a score is considered - i.e. count the number of identifiers found in description
 			matchedIdentifiers := make([]string, 0)
 			for _, id := range rule.CategoryIdentifiers {
 				if strings.Contains(description, id) {
@@ -166,14 +171,28 @@ nextCategorisationRule:
 				}
 			}
 			if len(matchedIdentifiers) > 0 {
-				return &budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse{
-					CategoryRule: rule,
-				}, nil
+				score[rule.ID] = len(matchedIdentifiers)
 			}
 		}
 	}
 
-	// if execution reaches here then the entry cannot be categorised it will be labelled other
+	// if execution reaches here then we need to check the score
+	highestScoreID := otherCategoryRule.ID
+	highestScore := 0
+	for budgetCategoryRuleID, score := range score {
+		if score > highestScore {
+			highestScoreID = budgetCategoryRuleID
+			highestScore = score
+		}
+	}
+	for _, rule := range findManyBudgetCategoryRulesResponse.Records {
+		if rule.ID == highestScoreID {
+			return &budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse{
+				CategoryRule: rule,
+			}, nil
+		}
+	}
+
 	return &budgetEntryCategoryRuleAdmin.CategoriseBudgetEntryResponse{
 		CategoryRule: otherCategoryRule,
 	}, nil

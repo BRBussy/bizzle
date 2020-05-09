@@ -82,7 +82,10 @@ nextRuleToSync:
 					existingRule.Strict = ruleToSync.Strict
 					existingRule.CategoryIdentifiers = ruleToSync.CategoryIdentifiers
 					if _, err := budgetEntryCategoryRuleAdminImp.UpdateOne(budgetEntryCategoryRuleAdmin.UpdateOneRequest{
-						Claims:       claims.Login{UserID: userID},
+						Claims: claims.Login{
+							UserID:         userID,
+							ExpirationTime: 1234,
+						},
 						CategoryRule: ruleToSync,
 					}); err != nil {
 						log.Error().Err(err).Msg("  updating budget category rule")
