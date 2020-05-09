@@ -234,3 +234,59 @@ func (a *adaptor) DeleteOne(r *http.Request, request *DeleteOneRequest, response
 
 	return nil
 }
+
+type IgnoreOneRequest struct {
+	BudgetEntry budgetEntry.Entry `json:"budgetEntry"`
+}
+
+type IgnoreOneResponse struct {
+}
+
+func (a *adaptor) IgnoreOne(r *http.Request, request *IgnoreOneRequest, response *IgnoreOneResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not parse claims from context")
+		return exception.ErrUnexpected{}
+	}
+
+	if _, err := a.admin.IgnoreOne(
+		budgetEntryAdmin.IgnoreOneRequest{
+			Claims:      c,
+			BudgetEntry: request.BudgetEntry,
+		},
+	); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type IgnoredCheckRequest struct {
+	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
+}
+
+type IgnoredCheckResponse struct {
+	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
+}
+
+func (a *adaptor) IgnoredCheck(r *http.Request, request *IgnoredCheckRequest, response *IgnoredCheckResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not parse claims from context")
+		return exception.ErrUnexpected{}
+	}
+
+	ignoredCheckResponse, err := a.admin.IgnoredCheck(
+		budgetEntryAdmin.IgnoredCheckRequest{
+			Claims:        c,
+			BudgetEntries: request.BudgetEntries,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	response.BudgetEntries = ignoredCheckResponse.BudgetEntries
+
+	return nil
+}
