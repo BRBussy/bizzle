@@ -29,6 +29,7 @@ func New(
 	// setup collection indices
 	if err := budgetEntryCollection.SetupIndices([]mongoDriver.IndexModel{
 		mongo.NewUniqueIndex("id"),
+		mongo.NewUniqueIndex("description"),
 	}); err != nil {
 		log.Error().Err(err).Msg("error setting up budgetEntryIgnored collection indices")
 		return nil, err

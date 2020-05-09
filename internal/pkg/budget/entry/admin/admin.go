@@ -131,8 +131,8 @@ type DeleteOneResponse struct {
 }
 
 type IgnoreOneRequest struct {
-	Claims      claims.Claims     `validate:"required"`
-	BudgetEntry budgetEntry.Entry `validate:"required"`
+	Claims      claims.Claims `validate:"required"`
+	Description string        `validate:"required"`
 }
 
 type IgnoreOneResponse struct {

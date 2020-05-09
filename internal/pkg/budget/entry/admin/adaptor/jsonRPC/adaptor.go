@@ -236,7 +236,7 @@ func (a *adaptor) DeleteOne(r *http.Request, request *DeleteOneRequest, response
 }
 
 type IgnoreOneRequest struct {
-	BudgetEntry budgetEntry.Entry `json:"budgetEntry"`
+	Description string `json:"description"`
 }
 
 type IgnoreOneResponse struct {
@@ -252,7 +252,7 @@ func (a *adaptor) IgnoreOne(r *http.Request, request *IgnoreOneRequest, response
 	if _, err := a.admin.IgnoreOne(
 		budgetEntryAdmin.IgnoreOneRequest{
 			Claims:      c,
-			BudgetEntry: request.BudgetEntry,
+			Description: request.Description,
 		},
 	); err != nil {
 		return err

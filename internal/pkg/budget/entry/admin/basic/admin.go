@@ -388,7 +388,7 @@ func (a *admin) IgnoreOne(request budgetEntryAdmin.IgnoreOneRequest) (*budgetEnt
 		budgetEntryIgnoredAdmin.CreateOneRequest{
 			Claims: request.Claims,
 			Ignored: budgetEntryIgnored.Ignored{
-				Description: strings.ToLower(request.BudgetEntry.Description),
+				Description: strings.ToLower(request.Description),
 			},
 		},
 	); err != nil {
