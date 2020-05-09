@@ -2,6 +2,7 @@ package admin
 
 import (
 	budgetEntry "github.com/BRBussy/bizzle/internal/pkg/budget/entry"
+	budgetEntryIgnored "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored"
 	"github.com/BRBussy/bizzle/internal/pkg/security/claims"
 	"github.com/BRBussy/bizzle/pkg/search/identifier"
 )
@@ -153,5 +154,5 @@ type IgnoredCheckRequest struct {
 }
 
 type IgnoredCheckResponse struct {
-	BudgetEntries []budgetEntry.Entry `validate:"required"`
+	Ignored []budgetEntryIgnored.Ignored
 }

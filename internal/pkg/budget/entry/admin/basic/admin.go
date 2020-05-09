@@ -391,8 +391,8 @@ func (a *admin) IgnoreOne(request budgetEntryAdmin.IgnoreOneRequest) (*budgetEnt
 			Ignored: budgetEntryIgnored.Ignored{
 				Description: fmt.Sprintf(
 					"%s-%s",
+					request.BudgetEntry.Date.Format("010206"),
 					strings.ToLower(request.BudgetEntry.Description),
-					request.BudgetEntry.Date.Format("Jan-02-2006"),
 				),
 			},
 		},
@@ -447,23 +447,25 @@ func (a *admin) IgnoredCheck(request budgetEntryAdmin.IgnoredCheckRequest) (*bud
 		return nil, bizzleException.ErrUnexpected{}
 	}
 
-	ignoredBudgetEntries := make([]budgetEntry.Entry, 0)
+	ignoredBudgetEntries := make([]budgetEntryIgnored.Ignored, 0)
+NextEntry:
 	for _, entry := range request.BudgetEntries {
 		for _, ignored := range findManyIgnored.Records {
 			if ignored.Description == fmt.Sprintf(
 				"%s-%s",
+				entry.Date.Format("010206"),
 				strings.ToLower(entry.Description),
-				entry.Date.Format("Jan-02-2006"),
 			) {
 				ignoredBudgetEntries = append(
 					ignoredBudgetEntries,
-					entry,
+					ignored,
 				)
+				continue NextEntry
 			}
 		}
 	}
 
 	return &budgetEntryAdmin.IgnoredCheckResponse{
-		BudgetEntries: ignoredBudgetEntries,
+		Ignored: ignoredBudgetEntries,
 	}, nil
 }

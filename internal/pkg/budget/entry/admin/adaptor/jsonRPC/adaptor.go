@@ -2,6 +2,7 @@ package jsonRPC
 
 import (
 	"encoding/base64"
+	budgetEntryIgnored "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored"
 	"net/http"
 
 	jsonRPCServiceProvider "github.com/BRBussy/bizzle/internal/pkg/api/jsonRpc/service/provider"
@@ -275,8 +276,8 @@ func (a *adaptor) RecogniseOne(r *http.Request, request *RecogniseOneRequest, re
 		return exception.ErrUnexpected{}
 	}
 
-	if _, err := a.admin.Recognise(
-		budgetEntryAdmin.RecogniseRequest{
+	if _, err := a.admin.RecogniseOne(
+		budgetEntryAdmin.RecogniseOneRequest{
 			Claims:      c,
 			BudgetEntry: request.BudgetEntry,
 		},
@@ -292,7 +293,7 @@ type IgnoredCheckRequest struct {
 }
 
 type IgnoredCheckResponse struct {
-	BudgetEntries []budgetEntry.Entry `json:"budgetEntries"`
+	Ignored []budgetEntryIgnored.Ignored `json:"ignored"`
 }
 
 func (a *adaptor) IgnoredCheck(r *http.Request, request *IgnoredCheckRequest, response *IgnoredCheckResponse) error {
@@ -312,7 +313,7 @@ func (a *adaptor) IgnoredCheck(r *http.Request, request *IgnoredCheckRequest, re
 		return err
 	}
 
-	response.BudgetEntries = ignoredCheckResponse.BudgetEntries
+	response.Ignored = ignoredCheckResponse.Ignored
 
 	return nil
 }
