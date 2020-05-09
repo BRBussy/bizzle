@@ -16,6 +16,7 @@ type Admin interface {
 	XLSXStandardBankStatementToBudgetEntries(XLSXStandardBankStatementToBudgetEntriesRequest) (*XLSXStandardBankStatementToBudgetEntriesResponse, error)
 	DeleteOne(DeleteOneRequest) (*DeleteOneResponse, error)
 	IgnoreOne(IgnoreOneRequest) (*IgnoreOneResponse, error)
+	RecogniseOne(RecogniseOneRequest) (*RecogniseOneResponse, error)
 	IgnoredCheck(IgnoredCheckRequest) (*IgnoredCheckResponse, error)
 }
 
@@ -131,11 +132,19 @@ type DeleteOneResponse struct {
 }
 
 type IgnoreOneRequest struct {
-	Claims      claims.Claims `validate:"required"`
-	Description string        `validate:"required"`
+	Claims      claims.Claims     `validate:"required"`
+	BudgetEntry budgetEntry.Entry `validate:"required"`
 }
 
 type IgnoreOneResponse struct {
+}
+
+type RecogniseOneRequest struct {
+	Claims      claims.Claims     `validate:"required"`
+	BudgetEntry budgetEntry.Entry `validate:"required"`
+}
+
+type RecogniseOneResponse struct {
 }
 
 type IgnoredCheckRequest struct {

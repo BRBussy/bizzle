@@ -10,7 +10,7 @@ import (
 // Entry is a budget entry
 type Entry struct {
 	ID             identifier.ID `json:"id" bson:"id"`
-	OwnerID        identifier.ID `validate:"required" json:"ownerID" bson:"ownerID"`
+	OwnerID        identifier.ID `json:"ownerID" bson:"ownerID"`
 	Date           time.Time     `validate:"required" json:"date" bson:"date"`
 	Description    string        `validate:"required" json:"description" bson:"description"`
 	Amount         float64       `validate:"required" json:"amount" bson:"amount"`

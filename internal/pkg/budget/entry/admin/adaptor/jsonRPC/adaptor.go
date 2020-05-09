@@ -236,7 +236,7 @@ func (a *adaptor) DeleteOne(r *http.Request, request *DeleteOneRequest, response
 }
 
 type IgnoreOneRequest struct {
-	Description string `json:"description"`
+	BudgetEntry budgetEntry.Entry `json:"budgetEntry"`
 }
 
 type IgnoreOneResponse struct {
@@ -252,7 +252,33 @@ func (a *adaptor) IgnoreOne(r *http.Request, request *IgnoreOneRequest, response
 	if _, err := a.admin.IgnoreOne(
 		budgetEntryAdmin.IgnoreOneRequest{
 			Claims:      c,
-			Description: request.Description,
+			BudgetEntry: request.BudgetEntry,
+		},
+	); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type RecogniseOneRequest struct {
+	BudgetEntry budgetEntry.Entry `json:"budgetEntry"`
+}
+
+type RecogniseOneResponse struct {
+}
+
+func (a *adaptor) RecogniseOne(r *http.Request, request *RecogniseOneRequest, response *RecogniseOneResponse) error {
+	c, err := claims.ParseClaimsFromContext(r.Context())
+	if err != nil {
+		log.Error().Err(err).Msg("could not parse claims from context")
+		return exception.ErrUnexpected{}
+	}
+
+	if _, err := a.admin.Recognise(
+		budgetEntryAdmin.RecogniseRequest{
+			Claims:      c,
+			BudgetEntry: request.BudgetEntry,
 		},
 	); err != nil {
 		return err

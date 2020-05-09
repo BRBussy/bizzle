@@ -1,6 +1,7 @@
 package basic
 
 import (
+	"fmt"
 	budgetEntryIgnored "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored"
 	budgetEntryIgnoredAdmin "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored/admin"
 	budgetEntryIgnoredStore "github.com/BRBussy/bizzle/internal/pkg/budget/entry/ignored/store"
@@ -388,7 +389,11 @@ func (a *admin) IgnoreOne(request budgetEntryAdmin.IgnoreOneRequest) (*budgetEnt
 		budgetEntryIgnoredAdmin.CreateOneRequest{
 			Claims: request.Claims,
 			Ignored: budgetEntryIgnored.Ignored{
-				Description: strings.ToLower(request.Description),
+				Description: fmt.Sprintf(
+					"%s-%s",
+					strings.ToLower(request.BudgetEntry.Description),
+					request.BudgetEntry.Date.Format("Jan-02-2006"),
+				),
 			},
 		},
 	); err != nil {
@@ -397,6 +402,31 @@ func (a *admin) IgnoreOne(request budgetEntryAdmin.IgnoreOneRequest) (*budgetEnt
 	}
 
 	return &budgetEntryAdmin.IgnoreOneResponse{}, nil
+}
+
+func (a *admin) RecogniseOne(request budgetEntryAdmin.RecogniseOneRequest) (*budgetEntryAdmin.RecogniseOneResponse, error) {
+	if err := a.validator.Validate(request); err != nil {
+		log.Error().Err(err)
+		return nil, err
+	}
+
+	if _, err := a.budgetEntryIgnoredAdmin.CreateOne(
+		budgetEntryIgnoredAdmin.CreateOneRequest{
+			Claims: request.Claims,
+			Ignored: budgetEntryIgnored.Ignored{
+				Description: fmt.Sprintf(
+					"%s-%s",
+					strings.ToLower(request.BudgetEntry.Description),
+					request.BudgetEntry.Date.Format("Jan-02-2006"),
+				),
+			},
+		},
+	); err != nil {
+		log.Error().Err(err).Msg("unable to create ignored")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	return &budgetEntryAdmin.RecogniseOneResponse{}, nil
 }
 
 func (a *admin) IgnoredCheck(request budgetEntryAdmin.IgnoredCheckRequest) (*budgetEntryAdmin.IgnoredCheckResponse, error) {
@@ -420,7 +450,11 @@ func (a *admin) IgnoredCheck(request budgetEntryAdmin.IgnoredCheckRequest) (*bud
 	ignoredBudgetEntries := make([]budgetEntry.Entry, 0)
 	for _, entry := range request.BudgetEntries {
 		for _, ignored := range findManyIgnored.Records {
-			if ignored.Description == strings.ToLower(entry.Description) {
+			if ignored.Description == fmt.Sprintf(
+				"%s-%s",
+				strings.ToLower(entry.Description),
+				entry.Date.Format("Jan-02-2006"),
+			) {
 				ignoredBudgetEntries = append(
 					ignoredBudgetEntries,
 					entry,
