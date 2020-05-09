@@ -430,6 +430,6 @@ func (a *admin) IgnoredCheck(request budgetEntryAdmin.IgnoredCheckRequest) (*bud
 	}
 
 	return &budgetEntryAdmin.IgnoredCheckResponse{
-		BudgetEntries: nil,
+		BudgetEntries: ignoredBudgetEntries,
 	}, nil
 }
