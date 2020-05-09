@@ -410,6 +410,33 @@ func (a *admin) RecogniseOne(request budgetEntryAdmin.RecogniseOneRequest) (*bud
 		return nil, err
 	}
 
+	ignoredCheckResponse, err := a.IgnoredCheck(
+		budgetEntryAdmin.IgnoredCheckRequest{
+			Claims:        request.Claims,
+			BudgetEntries: []budgetEntry.Entry{request.BudgetEntry},
+		},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("unable to check if ignored")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+	if len(ignoredCheckResponse.Ignored) == 0 {
+		return &budgetEntryAdmin.RecogniseOneResponse{}, nil
+	} else if len(ignoredCheckResponse.Ignored) > 1 {
+		log.Error().Msg("too many ignore entries")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
+	if _, err := a.budgetEntryIgnoredStore.DeleteOne(
+		budgetEntryIgnoredStore.DeleteOneRequest{
+			Claims:     request.Claims,
+			Identifier: ignoredCheckResponse.Ignored[0].ID,
+		},
+	); err != nil {
+		log.Error().Err(err).Msg("unable to delete ignored")
+		return nil, bizzleException.ErrUnexpected{}
+	}
+
 	return &budgetEntryAdmin.RecogniseOneResponse{}, nil
 }
 
